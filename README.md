@@ -31,16 +31,18 @@ addyosmani  →升级包 生命周期与质量合同  SPEC build auto CONSTRAINT
 **技能构成:基座 15 件(已去 `dev-` 前缀)+ 三栈新增 ~8(pi-dev-mode、spec 工厂、build、wayfinder、constraints、review、perf/ship、retro、use-the-stack)+ 扩展 + opt-in 账本。**
 (散件说明:`~/.agents/skills/` 里留下的 `handoff` 等散件按引用归类,不重复收编。旧 dev-* 原件备份在 `~/.agents/dev-skills-backup-2026-10-15/`。)
 
-**本仓目标形态:**
+**仓库当前形态(P0 完成):**
 ```
 ariesfish/
-  package.json          pi 声明 skills 与 extension
-  pi/index.ts           扩展 取自 pstack-harness agent 工具组 loop mandate 注入
-  skills/               基座 11 件迁入 升级 三栈新增 12 件
-  references/           workflow.md 闭环地图 领域清单 pi-tools 映射
-  adapters/control-web/ browser-harness fork 三处纠偏 自起/ARIA/冻结
-  gates/(opt-in)        gate.sh 与 .sdlc 账本
-  docs/                 四份文档  证据目录
+  package.json          pi 声明 skills 与 extensions(vendored @pstack-claude 94f5ce9,见 NOTICE-pi-extension.md)
+  pi/index.ts +(12件)   扩展:agent/send_message/schedule_wakeup 工具组 + /loop + mandate 注入 + settle-hold + sleep 反轮询
+  hooks/session-start-context.md   路由 mandate(pi-dev 进场条件)
+  references/           pi-host.md 宿主映射 v0
+  models.json           家族别名解析表(anthropic/openai/openai-codex)
+  skills/               16 件(15 基座 + pi-dev-mode 骨架)
+  adapters/control-web/ (P3)browser-harness fork
+  gates/(opt-in)        (P5)
+  docs/                 五份文档 + 证据目录
 ```
 
 ## 路线图(摘要,全文见 docs/04)
@@ -57,7 +59,8 @@ ariesfish/
 - [x] 融合架构与冲突裁决(docs/02,mode 定名 pi-dev-mode)
 - [x] 技能矩阵:基座 升级包 + 新增收编;**2026-10 第二轮补齐 implement/implement-spec/code-review/research 四件工程缺口**(基座 11→15,见 docs/05 检讨)
 - [x] 实施路线图(docs/04)
-- [x] **P0 部分完成:基座 15 件已迁入 `skills/` 并同步 mattp@49dd158**(报告见 docs/05;待办:package.json + pi 扩展 vendor + mandate)
-- [ ] P0 余下:pi 包骨架(package.json + pi/index.ts + 空 pi-dev-mode)
+- [x] **P0 地基完成**:基座 15 件迁入同步(mattp@49dd158,docs/05)+ 前缀去除 + pi 扩展 vendor(@94f5ce9 條款见 NOTICE-pi-extension.md)+ package.json + mandate + pi-dev-mode 骨架。静态检查全绿(13 文件 bun transpile OK / models.json / 16 SKILL.md frontmatter)
+- [ ] P0 验收待跑(需用户环境):`pi install git:<本仓远端>` 三步冒烟(装上+mandate 注入+后台 agent 与 /loop)
+- [ ] P1 意图链:spec 工厂、build、wayfinder、constraints、use-the-stack
 
 > 命名已定:**pi-dev-mode**(与 pi-agent 呼应,继承 XX-mode 命名传统)。mandate、mode 主体、matrix 三处统一使用。

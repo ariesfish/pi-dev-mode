@@ -1,0 +1,37 @@
+{
+  "name": "pi-dev-stack",
+  "private": true,
+  "version": "0.1.0",
+  "description": "ariesfish pi-dev stack: 15 base skills (mattp lineage) fused with addyosmani lifecycle discipline and pstack verification rigor, plus the pi extension (subagent, question, wakeup, loop) and pi-dev-mode routing. Mode and skills are pi-native; host conventions map through references/pi-host.md.",
+  "author": {
+    "name": "ariesfish"
+  },
+  "license": "MIT",
+  "keywords": [
+    "pi-package",
+    "pi-dev",
+    "pi-dev-mode",
+    "skills",
+    "workflow",
+    "dev-workflow"
+  ],
+  "homepage": "https://github.com/ariesfish/ariesfish-stack",
+  "repository": "https://github.com/ariesfish/ariesfish-stack",
+  "pi": {
+    "skills": [
+      "./skills"
+    ],
+    "extensions": [
+      "./pi/index.ts"
+    ]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "peerDependenciesMeta": {
+    "@earendil-works/pi-coding-agent": {
+      "optional": true
+    }
+  }
+}
