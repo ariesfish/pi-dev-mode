@@ -12,7 +12,7 @@
 5. **单点技能保持中立格式**(name + description frontmatter,skills.sh/Agent Skills 规范);宿主差异下沉到一份映射文档(pstack-harness 模式)。
 6. **入口有两条**:大 mode 自动路由(mandate 注入)+ 生命周期命令显式入口(/spec、/build 等,Pi 上注册为扩展命令)。显式永远覆盖自动。
 7. **技能可替换**:每个融合技能标注来源与处置(canonical / fork / reference / drop),fork 的必须有登记理由(学 pstack-harness 的 forks.json 治理)。
-8. **基座优先(dev-* 是宿主)**:已在 `~/.agents/skills/` 使用的 dev-* 11 件是第一语料;三栈只做升级包,不推翻、不重写、可回滚。升级方式优先是"加节/加 reference/加路由",而不是改既有正文。
+8. **基座优先(基座 是宿主)**:已在 `~/.agents/skills/` 使用的 基座 11 件是第一语料;三栈只做升级包,不推翻、不重写、可回滚。升级方式优先是"加节/加 reference/加路由",而不是改既有正文。
 
 ## 2. 四层架构
 
@@ -24,7 +24,7 @@ flowchart TB
         CMD["生命周期命令注册<br/>spec plan build review ship"]
     end
     subgraph L2["L2 模式路由层 大 mode"]
-        MODE["pie-mode<br/>路由表 阶段乘任务类型乘雾级<br/>principles 精选索引<br/>playbooks 子集"]
+        MODE["pi-dev-mode<br/>路由表 阶段乘任务类型乘雾级<br/>principles 精选索引<br/>playbooks 子集"]
     end
     subgraph L1["L1 单点技能层"]
         S1["知识底座组"]
@@ -65,9 +65,9 @@ flowchart TB
 - mandate 注入内容换成我们的路由指令(见 §4)
 
 ### L1 单点技能层(细节在 03-skill-matrix)
-**dev-* 11 件为基座**(知识底座/意图链/实现的主体已就位),叠加三栈新增 ~12 件(spec 工厂、build、wayfinder、constraints、review 管线、benchmark、perf、ship、verify×2、retro、pie-mode、use-the-stack)。
+**15 件基座技能为底座**(知识底座/意图链/实现/执行链的主体已就位,2026-10 去除 `dev-` 前缀),叠加三栈新增 ~8 件(spec 工厂、build、wayfinder、constraints、review 管线、benchmark/perf、ship、verify×2、retro、use-the-stack)。
 
-### L2 模式路由层:`pie-mode`
+### L2 模式路由层:`pi-dev-mode`
 - 入口路由表(§4)+ 精选 principles 索引(从 24 条压到融合栈实际用到的 ~12 条,去重后)+ 精选 playbooks(不需要 23 个全带,带意图链/实现/验证/发布核心 ~10 个)
 - mandate 每 agent-start 注入(复用 pstack-harness 的 before_agent_start 模式)
 
@@ -92,7 +92,7 @@ flowchart TB
 
 ```text
 路 A(自动,零输入):用户随便说话
-    mandate 已在系统提示里 → pie-mode 判断:
+    mandate 已在系统提示里 → pi-dev-mode 判断:
       · 生命周期阶段(还没想清楚?写着?验证?发布?)
       · 任务类型(bug/feature/perf/refactor/docs/评审)
       · 雾级(一次会话装得下?→ wayfinder)
@@ -100,28 +100,28 @@ flowchart TB
 
 路 B(显式,全控制):生命周期命令
     /spec /plan /build /build auto /review /ship
-    → 显式命令覆盖自动路由(不经过 pie-mode 的判断)
+    → 显式命令覆盖自动路由(不经过 pi-dev-mode 的判断)
 
 路 C(单点,无 mode):直接 /skill:grilling、/skill:benchmark-checklist …
     任何技能独立运行,只依赖工件在场(不在场就降级,不强制 setup)
 ```
 
-## 4. 路由表(mandate + pie-mode 的核心数据)
+## 4. 路由表(mandate + pi-dev-mode 的核心数据)
 
 三问路由,判断顺序固定(先阶段,后类型,后雾级):
 
 | 信号(用户原话特征) | 去向 |
 |---|---|
-| "我想做 X 但没想清楚" / 空泛想法 | idea-refine(并入 grilling 侧 references)→ 没有领域语言先 **dev-align** |
-| 没想清 + 说不出术语 | **dev-align**(拷打方案,一次一问,边问边落 CONTEXT/ADR) |
-| 想清楚了要正式立项 | **dev-prd**(PRD 挂 tracker;同步打三类验收标注)→ **spec**(PRD → SPEC.md 升级模板) |
+| "我想做 X 但没想清楚" / 空泛想法 | idea-refine(并入 grilling 侧 references)→ 没有领域语言先 **align** |
+| 没想清 + 说不出术语 | **align**(拷打方案,一次一问,边问边落 CONTEXT/ADR) |
+| 想清楚了要正式立项 | **prd**(PRD 挂 tracker;同步打三类验收标注)→ **spec**(PRD → SPEC.md 升级模板) |
 | "这个仓库质量没标准" / agent 老压低质量 | **constraints**(CONSTRAINTS.md) |
-| 有 SPEC/PRD 要拆活 | **dev-issues**(tracer-bullet + HITL/AFK + 依赖图升级) |
+| 有 SPEC/PRD 要拆活 | **issues**(tracer-bullet + HITL/AFK + 依赖图升级) |
 | 大雾(会话装不下、"这个方向都不确定") | **wayfinder**(决策票地图,plan-don't-do) |
-| "先做两个原型对比 / 我不确定这个状态机对不对" | **dev-proto**(logic/UI 双分支) |
-| 看不懂某块代码 / 改哪里 | **dev-code-map**(区域级)/ **dev-repo-map**(仓库级 REPO.md) |
-| 写代码(bug/feature/refactor/perf) | pie-mode 的 build playbook → 按 pstack 4 类 playbook 分支(重构走 **dev-refact**) |
-| 出 bug / 变慢 / flaky | **dev-diagnose**(反馈环优先;性能症状过 benchmark-checklist) |
+| "先做两个原型对比 / 我不确定这个状态机对不对" | **proto**(logic/UI 双分支) |
+| 看不懂某块代码 / 改哪里 | **code-map**(区域级)/ **repo-map**(仓库级 REPO.md) |
+| 写代码(bug/feature/refactor/perf) | pi-dev-mode 的 build playbook → 按 pstack 4 类 playbook 分支(重构走 **refact**) |
+| 出 bug / 变慢 / flaky | **diagnose**(反馈环优先;性能症状过 benchmark-checklist) |
 | 自主跑通宵 | **build auto**(addyosmani 停止条件)+ /loop(pstack-harness 基础设施)+ decisions.tsv |
 | "帮我看看这个 PR/这段代码" | **review 管线**(§5.5) |
 | 涉及性能数字 | perf playbook + **benchmark-checklist** 出数字前后 |
@@ -158,17 +158,17 @@ mattp code-review、addyosmani code-review-and-quality(五轴)+4 subagents、pst
 **裁决:分离职责。** wayfinder = 找路(decision tickets 到"路清晰"即止,输出是 SPEC 或直接的变更决定);多阶段/orchestrate = 走路(执行栈)。mandate 的雾级判断问一句:"目标本身决定了没有?"没决定 → wayfinder;决定了 → 正常链。
 
 ## 6. 与既有资产的对账
-- `~/.agents/skills/dev-*`(11 件):**第一语料,见 §7**
+- `~/.agents/skills/基座`(11 件):**第一语料,见 §7**
 - `../sdlc-unified-design.md`:L4 状态机 → 降为 opt-in 账本(§5.1);L3 验证适配 → control-web/control-clear 继续(browser-harness fork,见 04 P3);L2 运行时 → pstack-harness 扩展直接顶上;L1 方法论 → 03-matrix 的技能清单。**该设计稿不废,成为账本层与 gate 谓词的规格书。**
 - `../pstack-harness`:不整体安装(避免 mandate 双注入),取 pi/ 扩展 + 若干技能(见 matrix);fork 登记。
 - `../browser-harness`:P3 阶段 fork 为 adapters/control-web,三处纠偏(自起隔离实例/ARIA 优先/helper 冻结)+ Launch/Doctor 补齐。
 
-## 7. 第四源:dev-* 基座策略(融合的落点修正)
+## 7. 第四源:基座 基座策略(融合的落点修正)
 
-用户 `~/.agents/skills/` 里的 dev-* 11 件已是一个成型的第四源(且是**唯一在用**的),它对 mattp 血统的改造质量高,必须作为基座而非被替换:
+用户 `~/.agents/skills/` 里的 基座 11 件已是一个成型的第四源(且是**唯一在用**的),它对 mattp 血统的改造质量高,必须作为基座而非被替换:
 
-**dev-* 已自带的优越性(保留不动):** 双语触发词(description 里 English + Chinese triggers,路由友好);Workflow role 节声明链位;ask_user 一次一问纪律;CONTEXT.md 严格纯 glossary;HITL/AFK 切片分类;dev-diagnose 的 10 种反馈环构造法 + HITL 模板脚本;dev-proto 的 logic/UI 双分支;dev-refact 的 deep-module glossary;triage 的 AGENT-BRIEF/OUT-OF-SCOPE 知识库。
+**基座 已自带的优越性(保留不动):** 双语触发词(description 里 English + Chinese triggers,路由友好);Workflow role 节声明链位;ask_user 一次一问纪律;CONTEXT.md 严格纯 glossary;HITL/AFK 切片分类;diagnose 的 10 种反馈环构造法 + HITL 模板脚本;proto 的 logic/UI 双分支;refact 的 deep-module glossary;triage 的 AGENT-BRIEF/OUT-OF-SCOPE 知识库。
 
-**升级包原则:** 每件的升级内容见 03-matrix §0 升级包矩阵;升级方式限三种——(a)加节(如 dev-tdd 加"成本闸门"节);(b)加 references/(如 dev-code-map 加 pstack how 的多模型探索);(c)互链路由(如 dev-align ↔ dev-proto 互推)。不允许重写既有正文。每次升级在文件头部登记 changelog 一行(来源 + 理由)。
+**升级包原则:** 每件的升级内容见 03-matrix §0 升级包矩阵;升级方式限三种——(a)加节(如 tdd 加"成本闸门"节);(b)加 references/(如 code-map 加 pstack how 的多模型探索);(c)互链路由(如 align ↔ proto 互推)。不允许重写既有正文。每次升级在文件头部登记 changelog 一行(来源 + 理由)。
 
-**迁移路径二选一**(04 文档 P1 定夺):dev-* 留在 `~/.agents/skills/`(全球共享,pie 栈只带新增件,升级以"补丁文件 + 应用脚本"交付)或迁入本仓 `skills/` 统一版本管理(pi.skills 声明本仓,升级即 git diff)。**推荐后者**(升级可审计、可回滚),但保留 `~/.agents` 的散件(handoff/teach-me 等)不动。
+**迁移路径二选一**(04 文档 P1 定夺):基座 留在 `~/.agents/skills/`(全球共享,本栈只带新增件,升级以"补丁文件 + 应用脚本"交付)或迁入本仓 `skills/` 统一版本管理(pi.skills 声明本仓,升级即 git diff)。**推荐后者**(升级可审计、可回滚),但保留 `~/.agents` 的散件(handoff/teach-me 等)不动。
