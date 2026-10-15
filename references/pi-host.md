@@ -15,3 +15,16 @@ Skills in this package descend from Claude Code lineages (mattp, addyosmani, pst
 ## Model family names
 
 Skills may name models by family alias (opus, fable, sonnet, haiku). Pass the alias as the `agent` tool's `model`; it resolves per the current session's provider through `models.json`. To remap: add a `pi models: <alias>=<provider>/<id>` line to `~/.pi/agent/pi-dev-models.md`.
+
+
+## Provider compatibility (system prompt delivery)
+
+Skills, the routing mandate, and steering all ride the **system prompt**. A
+provider must deliver system messages to the model for this stack to exist at
+all. Verified 2026-10 (pi 1.2.0): `deepseek` (direct) delivers everything;
+**`cfgpu` (relay) strips the system message server-side** — tools still work,
+but skills and the mandate are invisible to the model. Prefer a direct
+provider for stack sessions, or `--provider <direct>` per run. Quick audit for
+any provider: ask the model to quote the first ten words of its system prompt;
+a pi session opening with "You are an expert coding assistant operating inside
+pi" means the channel works.
