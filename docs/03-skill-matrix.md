@@ -29,20 +29,23 @@
 
 ## 新增收编清单(三栈 → dev-* 没有的席位)
 
-### B. 意图链组新增(3)
+### B. 意图链组新增(4)
 
 | 技能 | 来源与处置 | 说明 |
 |---|---|---|
 | `spec`(SPEC 工厂,命令形态 /spec) | addyosmani spec-driven **F** | SPEC 模板(含模块递归 SPEC-<id>.md + map 索引)加三类验收标注节;权威源委托声明写法学 addyosmani("若与他技能冲突,以 X 为准");**dev-prd 的 PRD 是它的上游输入**(对话 → dev-align/PRD → SPEC),两级之间不重复访谈 |
-| `wayfinder` | mattp **C** | 大雾工程(decision-ticket 地图,plan-don't-do)。独有,无竞争 |
+| `wayfinder` | mattp **C** | 大雾工程(decision-ticket 地图,plan-don't-do)。独有,无竞争。P1 收编;**其 research 类票依赖 dev-research,已随 2026-10 第二轮补齐** |
+| `dev-research` | mattp research **C(触发词)**(2026-10 第二轮补缺) | 后台调查:一手源 + 每论断带源 + Markdown 落盘。独立可用,兼作 wayfinder 的依赖件 |
 | `constraints` | addyosmani constraint-driven **F** | CONSTRAINTS.md 行格式扩展为机器可读(维度/门槛/检查命令),成为 gate.sh 的 D 类门数据源;保留弱化监测一节与 Floor 兜底 |
 
-### C. 实现组新增(2)
+### C. 实现组新增(4)
 
 | 技能 | 来源与处置 | 说明 |
 |---|---|---|
-| `build`(命令 /build、/build auto) | addyosmani **F** | 单审批门 + 六停止条件 + 每任务一提交。改动:SPEC 检查兼容本地 tracker profile 与 PRD 升级;高风险停止条件指向 doubt 镜头;恢复语义保留 |
-| `pie-mode` 的 build/debug/perf/refactor playbook | pstack **F(以 mode 内嵌形式)** | feature/refactoring → 与 dev-tdd/dev-refact 对接的薄壳;bug-fix 的复现纪律 → 已并入 dev-diagnose 升级;perf-issue/hillclimb 原样 |
+| `build`(命令 /build、/build auto) | addyosmani **F** | 单审批门 + 六停止条件 + 每任务一提交。改动:SPEC 检查兼容本地 tracker profile 与 PRD 升级;高风险停止条件指向 doubt 镜头;恢复语义保留。**与 dev-implement-spec 的分工:串行单审批自主循环 vs 多代理并行编排**,两条路线都保留,pie-mode 按任务图宽度路由 |
+| `dev-implement` | mattp implement **C(引用改造+触发词,2026-10 第二轮补缺)** | 单票串行执行件:fetch ticket→复述标题→dev-tdd 在预定缝→定期类型检查/单测→末尾全套件→dev-code-review→commit。补上 dev-issues 之后的执行断链 |
+| `dev-implement-spec` | mattp implement-spec **C(引用改造+触发词,2026-10 第二轮补缺)** | 整任务图多代理编排:integration branch + frontier + 后台 implementer 各自 worktree + merger 子代理 + 探索笔记存仓外 + context pointers 稀交通信 |
+| `pie-mode` 的 build/debug/perf/refactor playbook | pstack **F(以 mode 内嵌形式)** | feature/refactoring → 与 dev-tdd/dev-refact 对接的薄壳;bug-fix 复现纪律 → 并入 dev-diagnose 升级;perf-issue/hillclimb 原样 |
 
 ### D. 验证评审组新增(5)——融合心脏
 
@@ -50,7 +53,8 @@
 |---|---|---|
 | `create-verification-skill` | pstack **C(F 路径)** | 生成 `.pi/skills/verify-<app>/`;五段 + feature map;**输入兼容 dev-diagnose 冻结环** |
 | `maintain-verification-skill` | pstack **C** | 并行源读 + live pass 防腐巡检 |
-| `review`(管线,N) | **N**(内容 M 四源) | 四镜头:①五轴静态(mattp+addyosmani code-review 合并)②注释纪律(no-comments,R)③对抗(doubt 轻量 C / thermo 重型 R)④CONSTRAINTS diff;四 agent 并行 + 聚合去重加权;subagent 定义收编 code-reviewer、security-auditor 两个 |
+| `dev-code-review` | mattp code-review **C(最新版 3da8c01+触发词,2026-10 第二轮补缺)** | 双轴评审(Standards/Spec)+ Fowler 味觉基线(repo 标准可覆盖)+ 前台双子代理。**独立单点件 + P2 `review` 管线的镜头 1 素材就位** |
+| `review`(管线,N) | **N**(组装件) | 四镜头组装:①dev-code-review ②注释纪律(no-comments,R)③对抗(doubt 轻量 C / thermo 重型 R)④CONSTRAINTS diff;四 agent 并行 + 聚合去重加权;subagent 定义收编 code-reviewer、security-auditor 两个 |
 | `benchmark-checklist` | pstack **C** | 一字不改 |
 | `doubt` | addyosmani doubt-driven **C** | 新鲜上下文对抗评审;独立用于高风险签核,也作 review 第三镜头 |
 
@@ -74,10 +78,12 @@
 
 | 放弃 | 理由 |
 |---|---|
-| mattp `grilling`/`grill-with-docs`/`domain-modeling`/`zoom-out`/`to-spec`/`to-prd`/`to-issues`/`triage`/`tdd`/`diagnosing-bugs`/`prototype`/`improve-codebase-architecture`/`implement`/`implement-spec` 整套 | 已被 dev-* 基座吸收或覆盖(§0),再收编即三份漂移源 |
+| mattp `grilling`/`grill-with-docs`/`domain-modeling`/`zoom-out`/`to-spec`/`to-prd`/`to-issues`/`triage`/`tdd`/`diagnosing-bugs`/`prototype`/`improve-codebase-architecture` 整套 | 已被 dev-* 基座吸收或覆盖(§0),再收编即三份漂移源。**implement/implement-spec/code-review/research 四件原在此列,2026-10 第二轮纠正为真缺口并已收编——教训:上游删除或改名的件不等于不需要(见 docs/05 检讨)** |
+| mattp `codebase-design` | 已被 dev-refact 全量吸收(glossary 与 deep/shallow 图一字不差;references/LANGUAGE.md 即词汇文件),单独收编即重复 |
+| mattp `pr` / `ask-matt` / `wizard` | pr 被 ship(P1)覆盖;ask-matt/wizard 是聊天玩具,无工程用途 |
 | addyosmani `interview-me`/`idea-refine` | 并入 dev-align 的 references(一次一问、发散收敛框架) |
 | addyosmani `spec-driven` 的 to-prd 部分 / `planning-and-task-breakdown` 整件 | 前者被 dev-prd 覆盖;后者以引用并入 dev-issues 升级(依赖图 canonical)而非整收 |
-| addyosmani `debugging-and-error-recovery`、`incremental-implementation`、`using-agent-skills`、`/test` 命令 | 分别被 dev-diagnose、dev-tdd/build、use-the-stack、review 管线覆盖 |
+| addyosmani `debugging-and-error-recovery`、`incremental-implementation`、`using-agent-skills`、`/test` 命令 | 分别被 dev-diagnose、dev-implement/build、use-the-stack、review 管线覆盖 |
 | pstack 24 principles 只收 12(精选清单见 02)+ 23 playbooks 只带 ~10 | 融合栈按需精选;其余靠已装 pstack-harness 时自然可用(R) |
 | pstack `unslop`/`technical-writing` 本体 | 少量条款并入 pie-mode 回复契约;整件不收 |
 

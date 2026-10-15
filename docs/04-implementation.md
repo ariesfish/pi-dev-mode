@@ -20,7 +20,7 @@
 1. dev-align 升级(c 三类标注候选 + 互路由 dev-proto)、dev-prd 升级(a 三类验收标注节)、dev-issues 升级(b 依赖图 + frontier)、dev-diagnose 升级(a commit 序列 + 环冻结纪律)、dev-setup 升级(a 三 tracker profile + CONSTRAINTS/verify 引导)、dev-tdd 升级(a 成本闸门 + 断言纪律)、dev-triage-issue 升级(a 工类型分流)
 (每个升级件头部一行 changelog:日期 + 来源 + 理由)
 
-2. 三栈新增件:`spec` 工厂 F(SPEC 模板 + 三类标注 + dev-prd 承接)、`build`(含 auto)F、`constraints` F、`wayfinder` C、`use-the-stack` N(dev-workflow 闭环图的更新版)
+2. 三栈新增件:`spec` 工厂 F(dev-prd 承接;mattp to-spec 作参考源)、`build`(含 auto)F、`constraints` F、`wayfinder` C(其依赖件 dev-research 已于 2026-10 第二轮就位)、`use-the-stack` N(dev-workflow 闭环图已含 15 件,作底)
 
 3. `docs/pi-tools.md` v0(宿主词映射:Skill→/skill:、Task→agent、AskUserQuestion→ask_user_question、Pi sessions 路径)
 
@@ -29,7 +29,7 @@
 
 ## P2 单点库:剩余收编与中立化(3-4 天,可与 P1 交错)
 
-**做:** 按 03 矩阵完成剩余新增件(不再收编 mattp 主体——已由 dev-* 承载):`wayfinder` 若 P1 未完、`constraints` 若 P1 未完、`doubt` C、`retro` M、review 管线 N(四镜头;comment-sicko 与 thermo 以 R 登记,不依赖)、references/ 收拢(addyosmani 7 清单 + pi-tools + dev-workflow 更新);
+**做:** 按 03 矩阵完成剩余新增件(implement / implement-spec / code-review / research 四件工程缺口已于 2026-10 第二轮就位,不再从零写):`constraints` 若 P1 未完、`doubt` C、`retro` M(mattp 最新版为底)、review 管线 N(四镜头组装,镜头 1 直接挂 dev-code-review;comment-sicko 与 thermo 以 R 登记,不依赖)、references/ 收拢(addyosmani 7 清单 + pi-tools + dev-workflow 最新版);
 frontmatter 统一(name+description 中立格式 + 双语触发词沿用 dev-* 风格扩展到新增件)。
 
 **验收:** `npx skills add --list` 兼容(frontmatter 中立);对同一份代码,`/skill:review` 四镜头全跑一遍产出聚合报告;`benchmark-checklist` 对一次真实 npm 脚本计时输出七问裁决;六类破坏性路由抽查(dev-* 触发词中英各半)。

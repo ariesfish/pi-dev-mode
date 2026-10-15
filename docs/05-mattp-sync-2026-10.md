@@ -57,3 +57,22 @@
 1. **~/.agents/skills/ 旧目录**:迁移后建议删除或改名为 `dev-*.migrated-backup`(避免 pi 双技能同名);散件(handoff/teach-me/skill-author/write-agents-md 等)按计划保留原位不动。待用户确认后执行
 2. **两份 GLOSSARY-FORMAT 副本**(dev-align/references/glossary-format.md 与 dev-refact/references/GLOSSARY-FORMAT.md)内容几乎重复(dev-align 版多一条"只作 glossary"规则)。维持现状(mattp 哲学:每技能自含),未来若漂移再合并
 3. **同步节奏建议**:与 dev-* 自家演进一致,季度 diff 上游一次;下次同步起点即本文档基线 49dd158
+
+## 四、第二轮:工程件缺口补齐(同月追加)
+
+第一轮把"上游删除/改名"的件按有意分歧处理时,把 implement / implement-spec / code-review / research 一并归入了"已被覆盖"——**这是判断失误**。检讨:当时只看了它们与 dev-issues 升级包、review 管线(P2 计划件)的"内容重叠",没看**执行链是否断链**:dev-issues 产出切片后,基座里没有任何"拿票开工"的技能。用户指出后重新评估,四件全部收编:
+
+| 件 | 为什么是真缺口 | 收编处置 |
+|---|---|---|
+| `dev-implement` | 单票执行是意图链的最后一环,断链即 dev-issues 的产物只能手工接 | C(轻,引用改造:tdd→dev-tdd、code-review→dev-code-review、setup→dev-setup,加中文触发词) |
+| `dev-implement-spec` | 整任务图多代理编排(integration branch + frontier + 后台 implementer worktree + merger + 探索笔记仓外 + context pointers)是三栈中最成熟的并行执行实现 | C(同上;与 addyosmani /build auto 是互补两模式:并行编排 vs 串行自主,pie-mode 按任务图宽度路由) |
+| `dev-code-review` | implement/implement-spec 的引用依赖;双轴(Standards/Spec)+ Fowler 味觉基线质量高 | C(最新版 3da8c01;独立单点件 + P2 review 管线镜头 1 素材就位,管线从"从零写"变"组装") |
+| `dev-research` | wayfinder(P1 收编件)的 research 类票直接调它;且独立可用(后台一手源调查+落盘) | C(触发词) |
+
+**明确不收的工程件复核(维持 D):** `codebase-design`(已被 dev-refact 全量吸收,references/LANGUAGE.md 即其词汇文件)、`pr`(被 P1 ship 覆盖)、`ask-matt`/`wizard`(聊天玩具)。
+
+**计划件的素材状态变化:** to-spec → P1 spec 工厂(addyosmani 为主源不变,mattp to-spec 作参考);wayfinder → P1(依赖件 research 已就位);retro → P2_M 不变。
+
+**同步教训(记录给未来的同步):** 上游"删除"不等于"不需要"——to-prd/to-issues 的删除我们有意不跟随(PRD 层分叉),同理,判断"覆盖"时必须以**本基座的链路完整性**为准,而不是以上游的目录形态为准。dev-workflow.md(闭环地图)已同步纳入四件。
+
+基座变为 **15 件 dev-***,核心件计数随之 ~23 → **~27**。

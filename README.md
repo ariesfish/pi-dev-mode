@@ -4,9 +4,9 @@
 **大 mode 一键进场,单点技能独立爆破,工件契约是心脏。**
 
 ```
-dev-*(11件) →基座 宿主      align code/diagnose issues prd proto refact repo setup tdd triage
+dev-*(15件) →基座 宿主      align code/diagnose issues implement* prd proto refact repo research review setup tdd triage
 pstack      →升级包 验证的心脏    证据标准 独立裁决 数字纪律 verify 生成器 反馈环冻结复用
-mattp       →血统确认          grilling domain 哲学 tracker 管道 已在 dev-* 落地
+mattp       →血统确认          grilling domain 哲学 tracker 管道 + 工程件第二轮补齐已在 dev-* 落地
 addyosmani  →升级包 生命周期与质量合同  SPEC build auto CONSTRAINTS 三类验收标注 停止条件
 ```
 
@@ -28,7 +28,7 @@ addyosmani  →升级包 生命周期与质量合同  SPEC build auto CONSTRAINT
 2. 生命周期命令(显式):`/spec` `/build`(含 `/build auto`)`/review` `/ship`
 3. 单点:`/skill:dev-align`、`/skill:benchmark-checklist`、`/skill:constraints`……任何技能独立跑,靠工件在场咬合,不在场就降级
 
-**技能构成:dev-* 基座 11 + 三栈新增 ~12(pie-mode、spec 工厂、build、wayfinder、constraints、review、benchmark、perf、ship、verify×2、retro、use-the-stack)+ 扩展 + opt-in 账本。**
+**技能构成:dev-* 基座 15 + 三栈新增 ~8(pie-mode、spec 工厂、build、wayfinder、constraints、review、perf/ship、retro、use-the-stack)+ 扩展 + opt-in 账本。**
 (散件说明:`~/.agents/skills/` 里非 dev- 前缀的 `handoff` 等按引用归类,不重复收编。)
 
 **本仓目标形态:**
@@ -55,9 +55,9 @@ ariesfish/
 
 - [x] 三栈分析(docs/01)+ dev-* 语料盘点(§0 基座,docs/03)
 - [x] 融合架构与冲突裁决(docs/02,mode 定名 pie-mode)
-- [x] 技能矩阵:dev-* 升级包 + 新增收编(docs/03)
+- [x] 技能矩阵:dev-* 升级包 + 新增收编;**2026-10 第二轮补齐 implement/implement-spec/code-review/research 四件工程缺口**(基座 11→15,见 docs/05 检讨)
 - [x] 实施路线图(docs/04)
-- [x] **P0 部分完成:dev-* 11 件已迁入 `skills/` 并同步 mattp@49dd158**(报告见 docs/05;含 GLOSSARY 改名、红证明、sub-issue、标签创建等七项上游收敛;待办:package.json + pi 扩展 vendor + mandate)
+- [x] **P0 部分完成:dev-* 15 件已迁入 `skills/` 并同步 mattp@49dd158**(报告见 docs/05;待办:package.json + pi 扩展 vendor + mandate)
 - [ ] P0 余下:pi 包骨架(package.json + pi/index.ts + 空 pie-mode)
 
 > 命名已定:**pie-mode**(与 pi-agent 呼应,继承 XX-mode 命名传统)。mandate、mode 主体、matrix 三处统一使用。
