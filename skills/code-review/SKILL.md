@@ -20,7 +20,7 @@ description: >-
   diff audit (lens 4). Standalone use stays valid.
 -->
 
-# Dev Code Review
+# Code Review
 
 Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
 

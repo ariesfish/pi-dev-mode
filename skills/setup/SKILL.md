@@ -12,13 +12,14 @@ description: >-
   配置领域文档, 初始化仓库工作流, 设置开发工作流.
 ---
 
-# Dev Setup
+# Setup
 
 <!-- ariesfish changelog:
 - migrated from ~/.agents/skills/dev-setup (mattp setup-matt-pocock-skills derived)
 - 2026-10-15 synced to mattp@49dd158: GLOSSARY.md naming (#d80fa0f, legacy CONTEXT.md
   declared in domain docs); create missing triage labels when the tracker is GitHub
   (5b7cade); "Label in our tracker" column naming (#801).
+- 2026-10 P1 upgrade (03 matrix row): third tracker profile (Tasks files, tasks/plan.md + todo.md); one-time offers for CONSTRAINTS.md and the verification skill.
 -->
 
 Configure a repository so developer workflow skills can reliably find its issue tracker, triage label vocabulary, and domain documentation.
@@ -73,6 +74,7 @@ Default to:
 
 - **GitHub** when a remote points at GitHub. Use `references/issue-tracker-github.md` as the seed.
 - **Local Markdown** when the repo already uses `.scratch/`, has no remote issue tracker, or the user prefers local files. Use `references/issue-tracker-local.md` as the seed.
+- **Tasks files** when the repo already carries `tasks/plan.md` (or the user prefers file-based plans kept beside the code). Use `references/issue-tracker-tasks.md` as the seed: `tasks/plan.md` holds the ordered slices, `tasks/todo.md` holds per-task checklists, and skills read/write both through plain file edits.
 - **Other** for Jira, Linear, custom trackers, or unknown workflows. Use `ask_user` to ask for the workflow and write `docs/agents/issue-tracker.md` from scratch.
 
 Do not offer or generate GitLab setup in this skill.
@@ -145,3 +147,12 @@ Use the files under `references/` as templates. For an unsupported tracker, writ
 ### 8. Report completion
 
 Report the changed files and mention that later edits can be made directly in `docs/agents/*.md`. Re-run this setup only when switching issue trackers, changing label vocabulary, or changing domain-doc layout.
+
+### 9. One-time offers (never pushy)
+
+After reporting, offer at most once each, and take "no" permanently for this repo:
+
+- If no `CONSTRAINTS.md` exists at the root: offer to run the `constraints` skill to establish the quality bar with numbers.
+- If no project verification skill exists (`.pi/skills/verify-*/` or an equivalent): offer to generate one with `create-verification-skill` when the stack ships it, so agents can prove changes on the real app.
+
+A declined offer is recorded like any other assumption, not re-asked on the next setup run.

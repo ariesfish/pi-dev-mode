@@ -9,10 +9,11 @@ description: >-
   public interface test, 先写测试, 测试驱动开发.
 ---
 
-# Dev TDD
+# TDD
 
 <!-- ariesfish changelog:
 - migrated from ~/.agents/skills/dev-tdd (2026-10); no upstream mattp@49dd158 delta applied this round.
+- 2026-10 P1 upgrade (03 matrix row): cost gate (expensive test paths fall back to the closest executable check with a recorded skip-test entry); behavior-assertion discipline added to the checklist.
 -->
 ## Philosophy
 
@@ -48,6 +49,18 @@ RIGHT (vertical):
   RED→GREEN: test3→impl3
   ...
 ```
+
+## Cost gate
+
+Before writing a test, price it honestly. If the test path is expensive — slow end-to-end runs, heavy fixtures, production-like state, an unclear repro — do not force it. Fall back to the **closest executable check** (a targeted script, a snapshot diff, a log assertion, a focused integration check), and record the decision in the decision trail (`.audit/<task-slug>.tsv`, or a comment on the issue) as:
+
+```
+skip-test: <reason> | fallback: <the check you ran instead>
+```
+
+A bad test — mock-heavy, brittle, testing imagined behavior, deleted a week later — is worse than no test. But "no test" must be a **recorded decision with a fallback check**, never a silent omission.
+
+The assertion discipline that keeps the remaining tests honest: a test that would still pass if every function it called returned `undefined` asserts nothing. If you find one, rewrite the assertion against the observable result, or delete the test.
 
 ## Workflow
 
@@ -113,6 +126,8 @@ After all tests pass, look for [refactor candidates](references/refactoring.md):
 [ ] Test describes behavior, not implementation
 [ ] Test uses public interface only
 [ ] Test would survive internal refactor
+[ ] The test fails if the behavior it names breaks (not if every callee returned undefined)
 [ ] Code is minimal for this test
 [ ] No speculative features added
+[ ] skip-test decisions, if any, are in the decision trail with their fallback check
 ```

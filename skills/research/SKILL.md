@@ -14,7 +14,7 @@ description: >-
   tickets through this skill.
 -->
 
-# Dev Research
+# Research
 
 Spin up a **background agent** to do the research, so you keep working while it reads.
 

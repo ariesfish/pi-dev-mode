@@ -14,7 +14,7 @@ description: >-
   tdd→dev-tdd, code-review→dev-code-review; Chinese triggers added.
 -->
 
-# Dev Implement
+# Implement
 
 Implement the work described by the user in the PRD, spec, or tickets.
 

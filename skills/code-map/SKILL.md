@@ -9,7 +9,7 @@ description: >-
   依赖关系, 影响范围, 从哪里改, 定位代码, 代码地图.
 ---
 
-# Dev Code Map
+# Code Map
 
 <!-- ariesfish changelog:
 - migrated from ~/.agents/skills/dev-code-map (2026-10); no upstream mattp@49dd158 delta applied this round.

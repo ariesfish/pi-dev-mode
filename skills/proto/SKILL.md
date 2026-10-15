@@ -9,7 +9,7 @@ description: >-
   试几个方案, UI 原型, 状态机原型, 让我玩一下, mock 一版, 探索设计.
 ---
 
-# Dev Proto
+# Proto
 
 <!-- ariesfish changelog:
 - migrated from ~/.agents/skills/dev-proto (2026-10); no upstream mattp@49dd158 delta applied this round.

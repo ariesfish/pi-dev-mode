@@ -10,7 +10,7 @@ description: >-
   提高可测试性, 代码结构不好, 整理架构, 找重构机会.
 ---
 
-# Dev Refact
+# Refact
 
 <!-- ariesfish changelog:
 - migrated from ~/.agents/skills/dev-refact (mattp improve-codebase-architecture derived)

@@ -15,15 +15,20 @@ description: >-
 - 2026-10-15 synced to mattp@49dd158 (d80fa0f): CONTEXT.md/CONTEXT-MAP.md renamed to
   GLOSSARY.md/GLOSSARY-MAP.md as the primary convention; legacy CONTEXT.md files are
   read as the glossary. grilling #1193: word questions so "yes" accepts the recommendation.
-Append new entries below this line only. -->
+Append new entries below this line only. - 2026-10 P1 upgrade (03 matrix row): three-label acceptance-criteria seeding; proto inter-routing for build-answerable questions.
+-->
 
-# Dev Align
+# Align
 
 Use this skill to align fuzzy architecture or product-design ideas with precise domain language, explicit trade-offs, and durable project documentation.
 
 ## Workflow role
 
 Use `align` before `prd`, `issues`, `tdd`, or `refact` when the plan has fuzzy domain language, unresolved trade-offs, or decisions that may deserve an ADR. Its output is aligned language and durable context, not implementation.
+
+When an interview surfaces a question that is best answered by building rather than asking ("does this state machine feel right?", "which layout?"), route that one question to `proto`, then resume the interview with the answer. A question a prototype can settle is not the human's to answer.
+
+When an interview surfaces a question that is best answered by building rather than asking ("does this state machine feel right?", "which layout?"), route that one question to `proto`, then resume the interview with the answer. A question a prototype can settle is not the human's to answer.
 
 ## Workflow
 
@@ -71,6 +76,26 @@ Most repos have one context:
 Repos with multiple contexts use a root `GLOSSARY-MAP.md` that points to each context's `GLOSSARY.md` and ADR directory.
 
 When multiple contexts exist, infer which context the topic belongs to. If unclear, ask one focused question.
+
+## Seeding acceptance criteria
+
+When a decision crystallises into something worth building, record it in the conversation as an acceptance-criteria candidate, labeled with exactly one of:
+
+- `[check: <command>]` — verifiable by running the command and reading its output or exit code.
+- `[evidence: <procedure>]` — verifiable by following the procedure and capturing the artifact (screenshot, ARIA snapshot, transcript).
+- `[judgment: <who and why only a human can decide>]` — everything a machine cannot verify.
+
+`prd` and `spec` harvest these verbatim into their Acceptance criteria sections. Do not invent a `[check]` label for a criterion no machine can verify; label it `[judgment]` and say whose call it is.
+
+## Seeding acceptance criteria
+
+When a decision crystallises into something worth building, record it in the conversation as an acceptance-criteria candidate, labeled with exactly one of:
+
+- `[check: <command>]` — verifiable by running the command and reading its output or exit code.
+- `[evidence: <procedure>]` — verifiable by following the procedure and capturing the artifact (screenshot, ARIA snapshot, transcript).
+- `[judgment: <who and why only a human can decide>]` — everything a machine cannot verify.
+
+`prd` and `spec` harvest these verbatim into their Acceptance Criteria sections. Do not invent a `[check]` label for a criterion no machine can verify; label it `[judgment]` and say whose call it is.
 
 ## ADR threshold
 

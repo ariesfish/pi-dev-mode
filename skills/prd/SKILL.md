@@ -7,13 +7,14 @@ description: >-
   整理需求, 需求文档, 产品需求, 把对话整理成 PRD, 写产品文档, 需求沉淀.
 ---
 
-# Dev PRD
+# PRD
 
 <!-- ariesfish changelog:
 - migrated from ~/.agents/skills/dev-prd (mattp to-prd derived; upstream has since
   removed to-prd — keeping the PRD layer is an intentional ariesfish divergence)
 - 2026-10-15 synced to mattp@49dd158 (#1192): each proposed module/seam gets a
   one-line note on what testing there catches and misses.
+- 2026-10 P1 upgrade (03 matrix row): Acceptance Criteria section added to the template with the three-label convention; align's labeled candidates are harvested verbatim.
 -->
 
 This skill takes the current conversation context and codebase understanding and produces a PRD. Do NOT interview the user — synthesize what you already know.
@@ -34,7 +35,9 @@ Give each proposed module or seam a one-line note on what a test there catches a
 
 Check with the user that these modules match their expectations. Check with the user which modules they want tests written for.
 
-3. Write the PRD using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
+3. Harvest acceptance criteria. If `align` ran in this conversation, lift its three-label candidates (`[check]` / `[evidence]` / `[judgment]`) verbatim into the template's Acceptance Criteria section. Where they do not cover a user story, write new criteria and label each one.
+
+4. Write the PRD using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
 
 <prd-template>
 
@@ -85,6 +88,16 @@ A list of testing decisions that were made. Include:
 ## Out of Scope
 
 A description of the things that are out of scope for this PRD.
+
+## Acceptance Criteria
+
+Each criterion carries exactly one label, lowercase and square-bracketed:
+
+- `[check: <command to run>]` — a machine verifies it: run the command, read its output or exit code.
+- `[evidence: <procedure to follow>]` — an agent verifies it by capturing the named artifact (screenshot, ARIA snapshot, log excerpt).
+- `[judgment: <who decides, and why only a human can>]` — no machine can verify it; name the decider.
+
+Every user story has at least one criterion. A criterion with no label is returned to the ladder: either give it a `[check]`/`[evidence]` procedure, or admit it is `[judgment]`.
 
 ## Further Notes
 

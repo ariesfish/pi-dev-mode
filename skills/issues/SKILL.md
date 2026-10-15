@@ -9,13 +9,14 @@ description: >-
   tracer bullet.
 ---
 
-# Dev Issues
+# Issues
 
 <!-- ariesfish changelog:
 - migrated from ~/.agents/skills/dev-issues (mattp to-issues/to-tickets derived;
   upstream has since merged to-prd/to-issues into to-spec/to-tickets — keeping the
   PRD layer is an intentional ariesfish divergence, see docs/02-fusion-architecture.md)
 - 2026-10-15 synced to mattp@49dd158 (cffab50): attach slices as sub-issues of the parent.
+- 2026-10 P1 upgrade (03 matrix row): Blocked-by named as the task-graph edges; frontier semantics and the implement-spec handshake documented.
 -->
 
 Break a plan into independently-grabbable issues using vertical slices (tracer bullets).
@@ -69,6 +70,8 @@ Iterate until the user approves the breakdown.
 For each approved slice, publish a new issue to the issue tracker. Use the issue body template below. These issues are considered ready for AFK agents, so publish them with the correct triage label unless instructed otherwise.
 
 Publish issues in dependency order (blockers first) so you can reference real issue identifiers in the "Blocked by" field. When the source material (plan, PRD, or spec) lives as a tracker issue, attach each published slice as a sub-issue of it (GitHub sub-issues), so the parent reference is structural rather than prose.
+
+The "Blocked by" field is the task graph's edges. The **frontier** — slices with no unfinished blockers — is exactly what `implement-spec` works in parallel, one implementer per frontier ticket in its own worktree. Draft the graph while you slice (Step 4), not after publishing: a slice published without its edges is momentarily a false frontier entry. Where the tracker supports native dependencies, wire those too, so the frontier renders in the tracker's own UI.
 
 <issue-template>
 ## Parent

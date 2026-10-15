@@ -19,7 +19,7 @@ description: >-
   separately as the `build` skill, P1.)
 -->
 
-# Dev Implement Spec
+# Implement Spec
 
 You have been provided a spec (typically the product of `prd` / `issues`). This spec should have tickets associated with it, describing how to implement the spec.
 

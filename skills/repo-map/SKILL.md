@@ -9,7 +9,7 @@ description: >-
   分析仓库, 梳理仓库, 生成 REPO.md, 仓库导航, 项目地图, 快速了解项目, 新仓库上手.
 ---
 
-# Dev Repo Map
+# Repo Map
 
 <!-- ariesfish changelog:
 - migrated from ~/.agents/skills/dev-repo-map

@@ -8,12 +8,13 @@ description: >-
   标记 ready-for-agent, 需要补充信息, wontfix, 准备 agent brief.
 ---
 
-# Dev Triage Issue
+# Triage Issue
 
 <!-- ariesfish changelog:
 - migrated from ~/.agents/skills/dev-triage-issue (mattp triage derived)
 - 2026-10-15 synced to mattp@49dd158: redundancy check ported into Gather context
   (search for an existing implementation by domain concept before grilling).
+- 2026-10 P1 upgrade (03 matrix row): performance reports route to diagnose with a baseline-first brief; agent briefs carry the three-label acceptance criteria.
 -->
 
 Move issues on the project issue tracker through a small state machine of triage roles.
@@ -80,7 +81,7 @@ Show counts and a one-line summary per issue. Let the maintainer pick.
 4. **Align (if needed).** If the issue needs fleshing out, run `align`.
 
 5. **Apply the outcome:**
-   - `ready-for-agent` — post an agent brief comment ([references/AGENT-BRIEF.md](references/AGENT-BRIEF.md)).
+   - `ready-for-agent` — post an agent brief comment ([references/AGENT-BRIEF.md](references/AGENT-BRIEF.md)). A performance report ("slower", "lags", "latency regression") gets a brief that names `diagnose` as the entry skill and requires a baseline measurement before any fix is proposed.
    - `ready-for-human` — same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
    - `needs-info` — post triage notes (template below).
    - `wontfix` (bug) — polite explanation, then close.

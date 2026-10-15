@@ -9,11 +9,12 @@ description: >-
   flaky, 报错, 变慢了, 测试失败.
 ---
 
-# Dev Diagnose
+# Diagnose
 
 <!-- ariesfish changelog:
 - migrated from ~/.agents/skills/dev-diagnose (mattp diagnosing-bugs derived)
 - 2026-10-15 synced to mattp@49dd158 (#1209): a forced red must be proven to land.
+- 2026-10 P1 upgrade (03 matrix row): RED-then-GREEN commit sequence in Phase 5; freeze-the-loop discipline (frozen repro loops feed the verification machinery); perf branch requires benchmark discipline before a speedup is claimed.
 -->
 
 A discipline for hard bugs. Skip phases only when explicitly justified.
@@ -97,7 +98,7 @@ Tool preference:
 
 **Tag every debug log** with a unique prefix, e.g. `[DEBUG-a4f2]`. Cleanup at the end becomes a single grep. Untagged logs survive; tagged logs die.
 
-**Perf branch.** For performance regressions, logs are usually wrong. Instead: establish a baseline measurement (timing harness, `performance.now()`, profiler, query plan), then bisect. Measure first, fix second.
+**Perf branch.** For performance regressions, logs are usually wrong. Instead: establish a baseline measurement (timing harness, `performance.now()`, profiler, query plan), then bisect. Measure first, fix second. Any speedup you report at the end passes the benchmark checklist (limiter named, both sides tuned, errors counted, alternating runs) before the number is claimed; a number without its limiter is not a result.
 
 ## Phase 5 — Fix + regression test
 
@@ -110,10 +111,17 @@ A correct seam is one where the test exercises the **real bug pattern** as it oc
 If a correct seam exists:
 
 1. Turn the minimised repro into a failing test at that seam.
-2. Watch it fail.
-3. Apply the fix.
+2. Watch it fail, and commit it first (RED commit).
+3. Apply the fix, and commit it on top (GREEN commit).
+
+The sequence itself is evidence: `git log` (or the PR's commit list) shows the repro failing at one commit and passing at the next, so the test is provably biting before the fix exists. In squash-merge repos, keep the ordering inside the squashed message ("repro added; fix applied after").
+
 4. Watch it pass.
 5. Re-run the Phase 1 feedback loop against the original (un-minimised) scenario.
+
+## Freeze the loop when it proves itself
+
+A loop that reproduced a real defect is verification capital, not scaffolding. Before cleanup: record the loop verbatim — exact commands, fixtures, seed data — under a `## Repro loop` heading on the issue (or a notes file the repo keeps for it), and freeze it. Frozen means: editing the loop to make it pass invalidates it as evidence; a loop that must change, changes by a new entry, not by rewriting the old one. `create-verification-skill` (the verification machinery, landing later in the stack) consumes frozen loops as feature-map entries — the repro you built once becomes how every future agent verifies that feature.
 
 ## Phase 6 — Cleanup + post-mortem
 
