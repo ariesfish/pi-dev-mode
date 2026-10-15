@@ -10,7 +10,7 @@ description: >-
   慢慢拆解决策, wayfinder.
 ---
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - 2026-10 P1 new acquisition: ported from mattp wayfinder @49dd158 (post-8295b8e:
   wayfinder: labels never triage labels, no placeholder refs, research branches
   pushed but never PR'd). Localized: grilling+domain-modeling → align;

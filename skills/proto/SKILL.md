@@ -11,7 +11,7 @@ description: >-
 
 # Proto
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from ~/.agents/skills/dev-proto (2026-10); no upstream mattp@49dd158 delta applied this round.
 -->
 A prototype is **throwaway code that answers a question**. The question decides the shape.

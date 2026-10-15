@@ -1,4 +1,4 @@
-# ariesfish stack
+# pi-dev-mode
 
 以你自己的 15 件基座技能(源自 `~/.agents/skills/dev-*`,2026-10 迁入并去前缀)为底座,融合 pstack、mattp、addyosmani 三栈升级的 pi-agent 技能栈,mode 定名 **pi-dev-mode**。
 **大 mode 一键进场,单点技能独立爆破,工件契约是心脏。**
@@ -33,7 +33,7 @@ addyosmani  →升级包 生命周期与质量合同  SPEC build auto CONSTRAINT
 
 **仓库当前形态(P0 完成):**
 ```
-ariesfish/
+pi-dev-mode/
   package.json          pi 声明 skills 与 extensions(vendored @pstack-claude 94f5ce9,见 NOTICE-pi-extension.md)
   pi/index.ts +(12件)   扩展:agent/send_message/schedule_wakeup 工具组 + /loop + mandate 注入 + settle-hold + sleep 反轮询
   hooks/session-start-context.md   路由 mandate(pi-dev 进场条件)

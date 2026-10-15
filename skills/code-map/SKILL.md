@@ -11,7 +11,7 @@ description: >-
 
 # Code Map
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from ~/.agents/skills/dev-code-map (2026-10); no upstream mattp@49dd158 delta applied this round.
 -->
 Go up a layer of abstraction before changing code.

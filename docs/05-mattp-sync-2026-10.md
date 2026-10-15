@@ -13,7 +13,7 @@
 | 2 | grilling 问句措辞使 "yes" = 接受推荐答案(#1193) | align | 已并入 Workflow 第 4 条(紧邻"每问带推荐答案") |
 | 3 | diagnosing-bugs:强制的红必须先证明确实落地(Diff 证明变异生效才信红)(#1209) | diagnose | 已并入 Phase 2 Reproduce(附本地化扩展:git diff 或干净检出) |
 | 4 | tdd:每个提议的 seam 附一行"抓得住什么、抓不住什么"(#1192) | prd(模块/seam 讨论所在处) | 已并入 step 2(tdd 未出现 seam 问句,不需改;未来 build/implement 技能复用此纪律) |
-| 5 | setup:tracker 为 GitHub 时主动创建缺失的 triage label;标签文档左列命名为"Label in our tracker"(5b7cade、#801) | setup | 已并入:Add label creation 节(仅 GitHub;本基座明确不做 GitLab);triage-labels 种子左列改为 "Label in ariesfish/基座 skills" |
+| 5 | setup:tracker 为 GitHub 时主动创建缺失的 triage label;标签文档左列命名为"Label in our tracker"(5b7cade、#801) | setup | 已并入:Add label creation 节(仅 GitHub;本基座明确不做 GitLab);triage-labels 种子左列改为本项目名(现 "Label in pi-dev-mode base skills") |
 | 6 | to-tickets:切片作为父 issue 的 sub-issue 挂载(cffab50)+ Blocked-by 措辞收紧(9e2abf8) | issues | 已并入 step 5:源素材是 tracker issue 时,切片作为 sub-issue 挂载(结构化引用而非散文) |
 | 7 | triage:Gather context 增加冗余检查(按领域概念搜既有实现,命中即 already-implemented wontfix) | triage-issue | 已并入 step 1(此前只有 (b) 先前拒绝检查,补齐 (a) 冗余检查) |
 | 8 | implement:传入 ticket 引用时先抓取并复述其标题,有歧义先问(#1196) | (未来 build 技能) | **登记待用**:基座 无 implement 对应件;P1 新增 build 时吸收此纪律 |
@@ -24,7 +24,7 @@
 
 | 上游变化 | 不跟随的理由 |
 |---|---|
-| to-prd、to-issues 被删除,合并为 to-spec + to-tickets(386d4ff) | ariesfish 融合架构有意保留 PRD 层(prd → spec 工厂两级,对应 addyosmani SPEС 管线;见 02 文档 §2.3 工件契约)。"对话 → PRD → SPEC → 切片"四级 vs 上游"对话 → spec/tickets"两级,是我们的分叉决策 |
+| to-prd、to-issues 被删除,合并为 to-spec + to-tickets(386d4ff) | 本栈(pi-dev-mode)融合架构有意保留 PRD 层(prd → spec 工厂两级,对应 addyosmani SPEС 管线;见 02 文档 §2.3 工件契约)。"对话 → PRD → SPEC → 切片"四级 vs 上游"对话 → spec/tickets"两级,是我们的分叉决策 |
 | zoom-out 被删除(e112a6b) | 基座 已将职责拆分为 code-map(区域级)+ repo-map(仓库级 REPO.md),比上游删除前的 zoom-out 更完整 |
 
 ### C. 上游孵化件(不收编,登记)
@@ -50,7 +50,7 @@
 | tdd | ✅ | 原样(#1192 的 seam 注记落在模块/seam 讨论所在处 prd;成本闸门属 P1 升级包,非本次上游同步范围) |
 | triage-issue | ✅ | 冗余检查补齐进 step 1 |
 
-每件头部有 `<!-- ariesfish changelog: ... -->` 登记迁移来源与本轮同步条目;后续升级在此追加。
+每件头部有 `<!-- pi-dev-mode changelog: ... -->` 登记迁移来源与本轮同步条目;后续升级在此追加。
 
 ## 三、遗留与下一步
 

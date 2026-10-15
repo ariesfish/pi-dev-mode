@@ -11,7 +11,7 @@ description: >-
   standards 检查.
 ---
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from mattp/skills/engineering/code-review @49dd158 (post-3da8c01:
   standards-file search, foreground parallel sub-agents, tracker-doc wording),
   localized: setup→dev-setup; Chinese triggers added.

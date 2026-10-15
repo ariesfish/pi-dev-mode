@@ -11,7 +11,7 @@ description: >-
 
 # TDD
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from ~/.agents/skills/dev-tdd (2026-10); no upstream mattp@49dd158 delta applied this round.
 - 2026-10 P1 upgrade (03 matrix row): cost gate (expensive test paths fall back to the closest executable check with a recorded skip-test entry); behavior-assertion discipline added to the checklist.
 -->

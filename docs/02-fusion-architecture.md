@@ -1,4 +1,4 @@
-# 融合架构设计(ariesfish stack v0)
+# 融合架构设计(pi-dev-mode v0)
 
 > 目标:一套 pi-agent 原生的技能栈——**大 mode 一键进场,单点技能独立爆破**,
 > 三栈精华各就各位,并以工件契约(web of artifacts)作为融合的真正心脏。

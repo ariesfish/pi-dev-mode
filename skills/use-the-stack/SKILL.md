@@ -8,7 +8,7 @@ description: >-
   这个栈怎么用, 技能地图, 有什么技能, 怎么开始, use the stack.
 ---
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - 2026-10 P1 new acquisition (N): the discovery page for sessions without the
   mandate or for humans browsing. The closed-loop map lives on in
   setup/references/workflow.md; this page is situation-first.

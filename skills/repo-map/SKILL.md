@@ -11,7 +11,7 @@ description: >-
 
 # Repo Map
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from ~/.agents/skills/dev-repo-map
 - 2026-10-15 synced to mattp@49dd158 (d80fa0f): GLOSSARY.md naming adopted (legacy CONTEXT.md noted).
 -->

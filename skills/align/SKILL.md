@@ -10,7 +10,7 @@ description: >-
   更新 GLOSSARY, 沉淀上下文.
 ---
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from ~/.agents/skills/dev-align (mattp-derived base)
 - 2026-10-15 synced to mattp@49dd158 (d80fa0f): CONTEXT.md/CONTEXT-MAP.md renamed to
   GLOSSARY.md/GLOSSARY-MAP.md as the primary convention; legacy CONTEXT.md files are

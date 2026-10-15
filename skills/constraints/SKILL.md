@@ -11,7 +11,7 @@ description: >-
   设置约束, 别让 AI 偷偷降标准, CONSTRAINTS.
 ---
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - 2026-10 P1 new acquisition: forked from addyosmani constraint-driven-development.
   Adapted: rows are machine-readable (gate.sh reads the Checked-by column when
   the opt-in ledger lands, P5); the diff-watch section is the canonical source

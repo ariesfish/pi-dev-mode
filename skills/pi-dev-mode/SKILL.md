@@ -9,7 +9,7 @@ description: >-
   用 pi-dev, 全流程做这个, 帮我安排这个活, 该用哪个技能, 大干一场.
 ---
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - 2026-10 P0 skeleton: routing table active; playbooks and the principles
   index land in P4 (see docs/04-implementation.md). Until then this skill
   routes with the table below and stays out of the way on small tasks.

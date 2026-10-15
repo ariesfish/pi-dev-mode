@@ -9,7 +9,7 @@ description: >-
   按计划实现, 自动构建, build auto, 一口气做完, 继续做下一件.
 ---
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - 2026-10 P1 new acquisition: forked from addyosmani /build + /build auto.
   Adapted: spec discovery includes the prd→spec upgrade path; the tdd kernel
   and its cost gate live in the tdd skill; decision trail is the .audit

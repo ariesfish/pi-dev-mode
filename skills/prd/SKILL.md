@@ -9,9 +9,9 @@ description: >-
 
 # PRD
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from ~/.agents/skills/dev-prd (mattp to-prd derived; upstream has since
-  removed to-prd — keeping the PRD layer is an intentional ariesfish divergence)
+  removed to-prd — keeping the PRD layer is an intentional pi-dev-mode divergence)
 - 2026-10-15 synced to mattp@49dd158 (#1192): each proposed module/seam gets a
   one-line note on what testing there catches and misses.
 - 2026-10 P1 upgrade (03 matrix row): Acceptance Criteria section added to the template with the three-label convention; align's labeled candidates are harvested verbatim.

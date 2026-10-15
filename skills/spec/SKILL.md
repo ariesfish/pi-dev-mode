@@ -10,7 +10,7 @@ description: >-
   规格文档, 升级 PRD, spec first, 立项.
 ---
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - 2026-10 P1 new acquisition: forked from addyosmani spec-driven-development,
   adapted to this stack: PRD (prd skill) is the upstream input; task breakdown
   delegates to issues; execution delegates to implement / implement-spec /

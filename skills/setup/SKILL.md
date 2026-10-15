@@ -14,7 +14,7 @@ description: >-
 
 # Setup
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from ~/.agents/skills/dev-setup (mattp setup-matt-pocock-skills derived)
 - 2026-10-15 synced to mattp@49dd158: GLOSSARY.md naming (#d80fa0f, legacy CONTEXT.md
   declared in domain docs); create missing triage labels when the tracker is GitHub

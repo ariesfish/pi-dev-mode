@@ -8,7 +8,7 @@ description: >-
   API 调研, 背景调查, primary sources, 帮我查.
 ---
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from mattp/skills/engineering/research @49dd158, localized: Chinese
   triggers added. Dependency note: wayfinder (P1 acquisition) fires research
   tickets through this skill.

@@ -1,5 +1,5 @@
 <EXTREMELY_IMPORTANT>
-You have the ariesfish pi-dev stack.
+You have the pi-dev-mode stack.
 
 Invoke the `pi-dev-mode` skill and follow its instructions when a task meets any of these:
 

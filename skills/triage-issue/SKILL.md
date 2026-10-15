@@ -10,7 +10,7 @@ description: >-
 
 # Triage Issue
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from ~/.agents/skills/dev-triage-issue (mattp triage derived)
 - 2026-10-15 synced to mattp@49dd158: redundancy check ported into Gather context
   (search for an existing implementation by domain concept before grilling).

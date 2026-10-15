@@ -10,7 +10,7 @@ description: >-
   把这些票都做了, integration branch, 全部实现.
 ---
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from mattp/skills/engineering/implement-spec @49dd158, localized:
   sources /to-spec & /to-tickets → dev-prd & dev-issues; setup→dev-setup;
   tdd→dev-tdd; code-review→dev-code-review; Chinese triggers added.

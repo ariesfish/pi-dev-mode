@@ -11,10 +11,10 @@ description: >-
 
 # Issues
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from ~/.agents/skills/dev-issues (mattp to-issues/to-tickets derived;
   upstream has since merged to-prd/to-issues into to-spec/to-tickets — keeping the
-  PRD layer is an intentional ariesfish divergence, see docs/02-fusion-architecture.md)
+  PRD layer is an intentional pi-dev-mode divergence, see docs/02-fusion-architecture.md)
 - 2026-10-15 synced to mattp@49dd158 (cffab50): attach slices as sub-issues of the parent.
 - 2026-10 P1 upgrade (03 matrix row): Blocked-by named as the task-graph edges; frontier semantics and the implement-spec handshake documented.
 -->

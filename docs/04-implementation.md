@@ -6,7 +6,7 @@
 ## P0 地基:pi 包可装(1-2 天)
 
 **做:**
-1. `ariesfish/` 仓库初始化:`package.json`(pi.skills + pi.extensions)、`skills/`、`pi/index.ts`
+1. 仓库初始化(项目名 pi-dev-mode;早期曾名 ariesfish,2026-10 更名):`package.json`(pi.skills + pi.extensions)、`skills/`、`pi/index.ts`
 2. **基座 迁移路径定夺(升级包策略的关键决策,02 §7):** ~~推荐迁入本仓~~ **已执行(2026-10)**:11 件迁入 `skills/` 并同步 mattp@49dd158,报告见 docs/05。 遗待办:`~/.agents/skills/` 旧目录处置(删除或备份改名)待用户确认
 3. 决定 pstack-harness 扩展的取用方式。**推荐 vendor**:`pi/` 目录整体拷入,头部注释登记来源 commit + fork 理由;后续上游更新手动 re-sync
 4. mandate 文案 v0,路由条件用 02 文档 §4 的表(mode 名 **pi-dev-mode** 已定)

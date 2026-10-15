@@ -9,7 +9,7 @@ description: >-
   做这个任务, implement this.
 ---
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from mattp/skills/engineering/implement @49dd158, localized: setup→dev-setup,
   tdd→dev-tdd, code-review→dev-code-review; Chinese triggers added.
 -->

@@ -11,7 +11,7 @@ description: >-
 
 # Diagnose
 
-<!-- ariesfish changelog:
+<!-- pi-dev-mode changelog:
 - migrated from ~/.agents/skills/dev-diagnose (mattp diagnosing-bugs derived)
 - 2026-10-15 synced to mattp@49dd158 (#1209): a forced red must be proven to land.
 - 2026-10 P1 upgrade (03 matrix row): RED-then-GREEN commit sequence in Phase 5; freeze-the-loop discipline (frozen repro loops feed the verification machinery); perf branch requires benchmark discipline before a speedup is claimed.
