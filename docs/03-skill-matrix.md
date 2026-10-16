@@ -42,9 +42,9 @@
 
 | 技能 | 来源与处置 | 说明 |
 |---|---|---|
-| `build`(命令 /build、/build auto) | addyosmani **F** | 单审批门 + 六停止条件 + 每任务一提交。改动:SPEC 检查兼容本地 tracker profile 与 PRD 升级;高风险停止条件指向 doubt 镜头;恢复语义保留。**与 implement-spec 的分工:串行单审批自主循环 vs 多代理并行编排**,两条路线都保留,pi-dev-mode 按任务图宽度路由 |
+| ~~`build`~~ | addyosmani **F**(2026-10 P1.1 退役) | 单审批门 + 六停止条件 + SPEC 发现 + 恢复语义等自主协议,连同默认单任务模式,分别并入 `implement-all`(auto 模式)与 `implement`。理由:默认模式与 implement 重复 ~80%;"build" 名与自身步骤里的 `run the build` 撞车 |
 | `implement` | mattp implement **C(引用改造+触发词,2026-10 第二轮补缺)** | 单票串行执行件:fetch ticket→复述标题→tdd 在预定缝→定期类型检查/单测→末尾全套件→code-review→commit。补上 issues 之后的执行断链 |
-| `implement-spec` | mattp implement-spec **C(引用改造+触发词,2026-10 第二轮补缺)** | 整任务图多代理编排:integration branch + frontier + 后台 implementer 各自 worktree + merger 子代理 + 探索笔记存仓外 + context pointers 稀交通信 |
+| `implement-all`(原 implement-spec,P1.1 更名+吸收 build auto) | mattp implement-spec **C** + addyosmani /build auto **M** | 整任务图双模式:**auto**(串行自主:单审批、六停止条件、恢复语义)/ **parallel**(多代理编排:integration branch + frontier + 后台 implementer 各自 worktree + merger 子代理 + 探索笔记仓外 + context pointers)。模式在开工前选定,frontier 宽度作默认启发 |
 | `pi-dev-mode` 的 build/debug/perf/refactor playbook | pstack **F(以 mode 内嵌形式)** | feature/refactoring → 与 tdd/refact 对接的薄壳;bug-fix 复现纪律 → 并入 diagnose 升级;perf-issue/hillclimb 原样 |
 
 ### D. 验证评审组新增(5)——融合心脏

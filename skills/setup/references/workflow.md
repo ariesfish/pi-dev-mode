@@ -15,8 +15,7 @@ setup
   -> issues          # split the plan into vertical slices (task graph)
   -> triage-issue    # route incoming issues through labels and agent briefs
   -> implement       # one ticket, serial, TDD at the seams
-  -> implement-spec  # the whole task graph, multi-agent parallel
-  -> build           # autonomous loop (build auto) or next-task mode
+  -> implement-all  # the whole task graph: auto (serial, single approval) or parallel (multi-agent worktrees)
   -> code-review     # two-axis review: Standards and Spec
   -> diagnose        # fix bugs/regressions with a feedback loop
   -> refact          # improve seams/locality after learning from code
@@ -25,7 +24,7 @@ wayfinder            # above it all: when the destination is foggy, decision tic
 pi-dev-mode          # the router that picks between all of these
 ```
 
-`tdd` is the implementation kernel `implement`, `implement-spec`, and `build` all drive at the pre-agreed seams; it also stands alone for a single well-specified slice.
+`tdd` is the implementation kernel `implement` and `implement-all` (both modes) drive at the pre-agreed seams; it also stands alone for a single well-specified slice.
 
 ## Durable artifacts
 
@@ -46,11 +45,11 @@ pi-dev-mode          # the router that picks between all of these
 - If a question needs external docs/APIs read, delegate it to `research` and keep working.
 - If language or trade-offs are fuzzy, use `align` before writing PRDs/issues.
 - If the best design is unknown, use `proto` before committing to a PRD or issue breakdown.
-- If the work is feature-shaped: `prd` then `spec` then `issues`, then implementation.
+- If the work is feature-shaped: `prd` then `spec` then `issues`, then `implement-all`.
 - If the destination itself is undecided (big, foggy), use `wayfinder` first — decisions, not deliverables.
 - If no quality bar is written down, `constraints` before an autonomous run.
 - If the work starts as an issue, use `triage-issue`; send ready work to implementation.
-- One ticket in hand: `implement`. Whole task graph with a frontier: `implement-spec`. Run the plan hands-off: `build auto`.
+- One ticket in hand: `implement`. Whole task graph: `implement-all` — auto for an unattended serial run, parallel when the frontier is wide.
 - After implementation, before merging: `code-review` on the diff since the fixed point.
 - If something is broken or slow, use `diagnose` before refactoring.
 - If code friction remains after implementation or diagnosis, use `refact`.

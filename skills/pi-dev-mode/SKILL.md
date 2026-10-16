@@ -33,11 +33,11 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Formalize the work | `prd` -> `issues` |
 | Incoming issue needs routing | `triage-issue` |
 | One ticket to build | `implement` |
-| Whole task graph, parallel implementers | `implement-spec` |
+| Whole task graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
 | Something is broken or slow | `diagnose` (performance numbers pass `benchmark-checklist` before they are reported — lands P2) |
 | Review a diff / PR / branch | `code-review` (more lenses land with the `review` pipeline, P2) |
 | Structural friction, shallow modules | `refact` |
-| Ship / land a green stack | hand to the shipping playbook (lands P1 with `build`/`ship`) |
+| Ship / land a green stack | hand to the shipping playbook (lands P1 with `ship`) |
 | Unfamiliar code area / whole repo | `code-map` / `repo-map` |
 
 **Fog test:** if the destination itself is undecided (more than a session's

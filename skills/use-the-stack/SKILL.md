@@ -20,7 +20,7 @@ Situation → skill. When in doubt, say what you want in plain words and let `pi
 
 ```text
 setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto ─→ prd ─→ spec ─→
- constraints ─→ issues ─→ triage-issue ─→ implement / implement-spec / build ─→
+ constraints ─→ issues ─→ triage-issue ─→ implement / implement-all ─→
  code-review ─→ diagnose ─→ refact … wayfinder above it all
 ```
 
@@ -39,9 +39,8 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 | Define "good enough to ship" with numbers | `constraints` | CONSTRAINTS.md floor + enforced rows + diff watch |
 | Split the plan into work | `issues` | vertical slices, task graph, frontier |
 | Route incoming reports | `triage-issue` | label state machine, agent briefs |
-| Do one ticket now | `implement` | serial, tdd at the seams, review, commit |
-| Do the whole graph in parallel | `implement-spec` | integration branch + frontier + worktrees |
-| Run the plan autonomously | `build` (+ `auto`) | single approval; every task still test-first and committed |
+| Do one ticket now | `implement` | serial, tdd at the seams, AC three-labels, review, commit |
+| Do the whole graph | `implement-all` | auto (single approval, serial) or parallel (integration branch + frontier + worktrees) |
 | Review a diff / branch / PR | `code-review` | Standards axis + Spec axis, parallel subagents |
 | Something is broken or slow | `diagnose` | build a feedback loop first; RED-then-GREEN commits |
 | Structure feels wrong after the fact | `refact` | deepen modules, seams, locality |
@@ -52,7 +51,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 
 - **Intent chain**: align → (proto) → prd → spec → issues → implement-family or build.
 - **Knowledge base (always-on)**: GLOSSARY.md + docs/adr/ from `align`/`refact`; every skill reads them and speaks the project's language.
-- **Quality contract**: CONSTRAINTS.md from `constraints`; `code-review` watches the diff against it; `build` treats rows as gates.
+- **Quality contract**: CONSTRAINTS.md from `constraints`; `code-review` watches the diff against it; `implement-all` treats rows as gates.
 - **Verification**: every build ends on the real artifact; `diagnose` freezes proven repro loops for the verification machinery (landing P3).
 
 ## Where things live

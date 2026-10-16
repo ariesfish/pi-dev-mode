@@ -12,6 +12,7 @@ description: >-
 <!-- pi-dev-mode changelog:
 - migrated from mattp/skills/engineering/implement @49dd158, localized: setup→dev-setup,
   tdd→dev-tdd, code-review→dev-code-review; Chinese triggers added.
+- 2026-10 P1.1: absorbed the retired build skill's default-mode rigor (three-label AC reading, staged commit, evidence-honesty reporting); handoff note to implement-all added.
 -->
 
 # Implement
@@ -22,10 +23,16 @@ If the user passes a ticket reference, fetch it from the issue tracker and state
 
 The issue tracker should have been provided by `setup`. If missing, run `setup` first.
 
-Call the Skill tool with `tdd` where possible, at pre-agreed seams.
+Read the ticket's acceptance criteria before starting. Three labels: `[check: <command>]` runs the command; `[evidence: <procedure>]` follows the procedure and captures the artifact; `[judgment: <who>]` surfaces the question instead of deciding it. A `[judgment]` you find yourself deciding is a stop-and-ask.
+
+Call the Skill tool with `tdd` where possible, at pre-agreed seams. The `tdd` cost gate applies: an expensive test path falls back to the closest executable check, recorded as `skip-test: <reason> | fallback: <check>` in the decision trail.
 
 Run typechecking regularly, single test files regularly, and the full test suite once at the end.
 
 Once done, call the Skill tool with `code-review` to review the work.
 
-Commit your work to the current branch.
+Commit your work to the current branch, staging only the files this ticket touched — never `git add -A`.
+
+Report with evidence, not self-report: the failing-test output (or the skip-test line), suite and build results, the commit hash. "Inconclusive" is not a pass; flag it instead.
+
+For a whole task graph, or an unattended run, use `implement-all` (auto: single approval, serial. parallel: one implementer per frontier ticket, each in its own worktree). This skill stays one ticket, in hand.

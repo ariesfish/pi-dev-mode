@@ -20,16 +20,16 @@
 1. align 升级(c 三类标注候选 + 互路由 proto)、prd 升级(a 三类验收标注节)、issues 升级(b 依赖图 + frontier)、diagnose 升级(a commit 序列 + 环冻结纪律)、setup 升级(a 三 tracker profile + CONSTRAINTS/verify 引导)、tdd 升级(a 成本闸门 + 断言纪律)、triage-issue 升级(a 工类型分流)
 (每个升级件头部一行 changelog:日期 + 来源 + 理由)
 
-2. 三栈新增件:`spec` 工厂 F(prd 承接;mattp to-spec 作参考源)、`build`(含 auto)F、`constraints` F、`wayfinder` C(其依赖件 research 已于 2026-10 第二轮就位)、`use-the-stack` N(dev-workflow 闭环图已含 15 件,作底)
+2. 三栈新增件:`spec` 工厂 F(prd 承接;mattp to-spec 作参考源)、`implement-all`(P1.1 吸收 build auto 后)F、`constraints` F、`wayfinder` C(其依赖件 research 已于 2026-10 第二轮就位)、`use-the-stack` N(dev-workflow 闭环图已含 15 件,作底)
 
 3. `docs/pi-tools.md` v0(宿主词映射:Skill→/skill:、Task→agent、AskUserQuestion→ask_user_question、Pi sessions 路径)
 
-**验收(跑真实场景):** 挑一个真实小需求,现场走:`拷打方案`(align)问出术语落 CONTEXT.md → prd 出 PRD(验收带三类标注)→ 升级出 SPEC.md → issues 拆垂直切片(带依赖 + HITL/AFK)→ `/build auto` 单审批跑完,每任务一条 commit + decisions.tsv 留痕。证据存 `docs/evidence/p1/`。
-**破坏性验收:** 无 SPEC/PRD 直接 /build auto 必须拒绝;grilling 中断、CONTEXT.md 缺席时下游技能必须降级不报错;diagnose 建环后修复,commit 序列必须是"复现在前修复在后"。
+**验收(跑真实场景):** 挑一个真实小需求,现场走:`拷打方案`(align)问出术语落 CONTEXT.md → prd 出 PRD(验收带三类标注)→ 升级出 SPEC.md → issues 拆垂直切片(带依赖 + HITL/AFK)→ `implement-all` auto 单审批跑完,每任务一条 commit + decisions.tsv 留痕。证据存 `docs/evidence/p1/`。
+**破坏性验收:** 无 SPEC/PRD 直接 implement-all 必须拒绝;grilling 中断、CONTEXT.md 缺席时下游技能必须降级不报错;diagnose 建环后修复,commit 序列必须是"复现在前修复在后"。
 
 ## P2 单点库:剩余收编与中立化(3-4 天,可与 P1 交错)
 
-**做:** 按 03 矩阵完成剩余新增件(implement / implement-spec / code-review / research 四件工程缺口已于 2026-10 第二轮就位,不再从零写):`constraints` 若 P1 未完、`doubt` C、`retro` M(mattp 最新版为底)、review 管线 N(四镜头组装,镜头 1 直接挂 code-review;comment-sicko 与 thermo 以 R 登记,不依赖)、references/ 收拢(addyosmani 7 清单 + pi-tools + dev-workflow 最新版);
+**做:** 按 03 矩阵完成剩余新增件(implement / implement-all(已吸收 build)/ code-review / research 已就位,不再从零写):`constraints` 若 P1 未完、`doubt` C、`retro` M(mattp 最新版为底)、review 管线 N(四镜头组装,镜头 1 直接挂 code-review;comment-sicko 与 thermo 以 R 登记,不依赖)、references/ 收拢(addyosmani 7 清单 + pi-tools + dev-workflow 最新版);
 frontmatter 统一(name+description 中立格式 + 双语触发词沿用 基座 风格扩展到新增件)。
 
 **验收:** `npx skills add --list` 兼容(frontmatter 中立);对同一份代码,`/skill:review` 四镜头全跑一遍产出聚合报告;`benchmark-checklist` 对一次真实 npm 脚本计时输出七问裁决;六类破坏性路由抽查(基座 触发词中英各半)。
@@ -52,9 +52,9 @@ frontmatter 统一(name+description 中立格式 + 双语触发词沿用 基座 
 1. pi-dev-mode 正文完成:路由表(02 §4)+ 精选 playbook(意图链/实现/验证/发布 ~10 个)+ principles 12 条索引 + 回复契约节
 2. mandate 定稿并开注入;`wayfinder` C 接入雾级路由(若 P1 未完则此处)
 3. 生命周期命令注册(spec/build/review/ship 四个,内容来自 addyosmani TOML + 融合语义)
-4. `/loop` + build auto + decisions.tsv 组合的 overnight run 手册(mode 的 autonomous 节)
+4. `/loop` + implement-all auto + decisions.tsv 组合的 overnight run 手册(mode 的 autonomous 节)
 
-**验收:** 双盲路由测试 10 条(随机口述任务,中英混合,不走显式命令,对照 02 §4 表,≥8/10 算过);overnight 场景演练:5 任务 plan + `/build auto` + loop 心跳,晨间 decisions.tsv 可审计(每行 before/after/evidence 指针齐全)。
+**验收:** 双盲路由测试 10 条(随机口述任务,中英混合,不走显式命令,对照 02 §4 表,≥8/10 算过);overnight 场景演练:5 任务 plan + `implement-all` auto + loop 心跳,晨间 decisions.tsv 可审计(每行 before/after/evidence 指针齐全)。
 
 ## P5 账本与回路(可选增强,1 周+)
 

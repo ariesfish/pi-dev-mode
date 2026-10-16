@@ -62,7 +62,7 @@ ASSUMPTIONS I'M MAKING:
 → Correct me now or I'll proceed with these.
 ```
 
-**Template** (write to `SPEC.md` at the root, or `docs/SPEC.md`, or `spec/`. Downstream skills — `build` above all — look in exactly these places; a README is not a spec):
+**Template** (write to `SPEC.md` at the root, or `docs/SPEC.md`, or `spec/`. Downstream skills — `implement-all` above all — look in exactly these places; a README is not a spec):
 
 ```markdown
 # Spec: [Name]
@@ -120,7 +120,7 @@ to the ladder (give a procedure, or admit judgment).
 After approval, this stack takes over (this skill hands off, it does not plan or build):
 
 - `issues` — slices the spec into vertical tracer-bullet tickets (task breakdown is **issues'** canonical authority; if this spec ever disagrees with the issue graph, the graph wins and the spec gets updated).
-- `implement` (one ticket) / `implement-spec` (whole graph, parallel) / `build auto` (single-approval autonomous loop) — execution.
+- `implement` (one ticket) / `implement-all` (whole graph: auto serial single-approval, or parallel multi-agent) — execution.
 - `code-review` — the Standards-vs-Spec axis reads this spec back.
 
 ## Keeping the spec alive

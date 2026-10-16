@@ -7,7 +7,7 @@
 基座(15件) →基座 宿主      align code/diagnose issues implement* prd proto refact repo research review setup tdd triage
 pstack      →升级包 验证的心脏    证据标准 独立裁决 数字纪律 verify 生成器 反馈环冻结复用
 mattp       →血统确认          grilling domain 哲学 tracker 管道 + 工程件第二轮补齐已在 基座 落地
-addyosmani  →升级包 生命周期与质量合同  SPEC build auto CONSTRAINTS 三类验收标注 停止条件
+addyosmani  →升级包 生命周期与质量合同  SPEC CONSTRAINTS 三类验收标注 停止条件(已并入 implement-all auto)
 ```
 
 融合原则:**基座 是宿主,三栈是升级包,不推翻、可回滚**(见 docs/02 §7)。
@@ -25,10 +25,10 @@ addyosmani  →升级包 生命周期与质量合同  SPEC build auto CONSTRAINT
 
 **三层使用方式:**
 1. 大 mode:`/skill:pi-dev-mode` 或让它经 mandate 自动进场——路由表按"阶段 × 类型 × 雾级"派发
-2. 生命周期命令(显式):`/spec` `/build`(含 `/build auto`)`/review` `/ship`
+2. 显式技能直调:`/skill:spec` `/skill:implement-all`(auto / parallel 模式)`/skill:code-review` …(独立执行技能无生命周期命令层,直接用具名技能)
 3. 单点:`/skill:align`、`/skill:benchmark-checklist`、`/skill:constraints`……任何技能独立跑,靠工件在场咬合,不在场就降级
 
-**技能构成:P1 后 21 件** = 基座 15(已去前缀)+ P1 新增 6(pi-dev-mode、spec、build、constraints、wayfinder、use-the-stack)。P2 待增:doubt、review 管线、benchmark-checklist、retro、perf/ship。**
+**技能构成:P1.1 后 20 件** = 基座 15(已去前缀)+ P1 新增 5(pi-dev-mode、spec、constraints、wayfinder、use-the-stack)+ **implement-spec 更名 implement-all 并吸收 build(退役)**。P2 待增:doubt、review 管线组装、benchmark-checklist、retro、perf/ship。**
 (散件说明:`~/.agents/skills/` 里留下的 `handoff` 等散件按引用归类,不重复收编。旧 dev-* 原件备份在 `~/.agents/dev-skills-backup-2026-10-15/`。)
 
 **仓库当前形态(P0 完成):**

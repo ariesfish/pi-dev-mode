@@ -77,10 +77,10 @@ flowchart TB
 | 工件 | canonical 来源 | 谁写 | 谁读 |
 |---|---|---|---|
 | `GLOSSARY.md`(+`GLOSSARY-MAP.md` 多上下文)、`CONTEXT.md`、`docs/adr/` | mattp domain-modeling | grilling/domain-modeling/improve-codebase-architecture | 全部技能(domain 语言即压缩) |
-| `PRD`(挂 tracker)→ `SPEC.md` | mattp to-prd + addyosmani spec-driven | to-prd / spec-driven | planning、build auto、triage |
+| `PRD`(挂 tracker)→ `SPEC.md` | mattp to-prd + addyosmani spec-driven | to-prd / spec-driven | planning、implement-all auto、triage |
 | SPEC 的**验收标准三类标注**:`[check: cmd] / [evidence: 规程] / [judgment: 谁]` | 我方设计稿 §6.1 | spec-driven 写入 | gate.sh(D 类门)、verify(A 类门)、review(人审点) |
-| tickets / `tasks/plan.md` + `tasks/todo.md` | mattp to-tickets(格式)+ addyosmani planning(依赖图) | to-tickets / planning | implement-spec、build auto、triage |
-| `CONSTRAINTS.md` | addyosmani constraint-driven | constraint-driven(访谈) | code-review(读门槛)、gate.sh(机械化检查)、build auto(floor 兜底) |
+| tickets / `tasks/plan.md` + `tasks/todo.md` | mattp to-tickets(格式)+ addyosmani planning(依赖图) | to-tickets / planning | implement-all、triage |
+| `CONSTRAINTS.md` | addyosmani constraint-driven | constraint-driven(访谈) | code-review(读门槛)、gate.sh(机械化检查)、implement-all(floor 兜底) |
 | `.pi/skills/verify-<app>/`(五段+feature map) | pstack create-verification-skill(路径 Pi 化) | create-verification-skill | bug-fix、build、review、ship、maintain-verification-skill |
 | `evidence/`(截图/ARIA/trace/基准输出) | pstack 证据标准 | verify 适配器 | review/ship(独立裁决引用) |
 | `decisions.tsv` | pstack show-me-your-work | 自主循环每迭代 | retro、morning audit |
@@ -99,7 +99,7 @@ flowchart TB
     → 匹配 playbook 或直接路由单点技能 → 开 todo
 
 路 B(显式,全控制):生命周期命令
-    /spec /plan /build /build auto /review /ship
+    显式以具名技能直调(/skill:spec /skill:implement-all /skill:code-review ...)
     → 显式命令覆盖自动路由(不经过 pi-dev-mode 的判断)
 
 路 C(单点,无 mode):直接 /skill:grilling、/skill:benchmark-checklist …
@@ -122,7 +122,7 @@ flowchart TB
 | 看不懂某块代码 / 改哪里 | **code-map**(区域级)/ **repo-map**(仓库级 REPO.md) |
 | 写代码(bug/feature/refactor/perf) | pi-dev-mode 的 build playbook → 按 pstack 4 类 playbook 分支(重构走 **refact**) |
 | 出 bug / 变慢 / flaky | **diagnose**(反馈环优先;性能症状过 benchmark-checklist) |
-| 自主跑通宵 | **build auto**(addyosmani 停止条件)+ /loop(pstack-harness 基础设施)+ decisions.tsv |
+| 自主跑通宵 | **implement-all auto**(单审批 + 停止条件)+ /loop(pstack-harness 基础设施)+ decisions.tsv |
 | "帮我看看这个 PR/这段代码" | **review 管线**(§5.5) |
 | 涉及性能数字 | perf playbook + **benchmark-checklist** 出数字前后 |
 | "发布/合掉这个栈" | **ship**(pstack shipping:独立裁决 + 连续验证段) |

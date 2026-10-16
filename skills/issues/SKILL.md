@@ -71,7 +71,7 @@ For each approved slice, publish a new issue to the issue tracker. Use the issue
 
 Publish issues in dependency order (blockers first) so you can reference real issue identifiers in the "Blocked by" field. When the source material (plan, PRD, or spec) lives as a tracker issue, attach each published slice as a sub-issue of it (GitHub sub-issues), so the parent reference is structural rather than prose.
 
-The "Blocked by" field is the task graph's edges. The **frontier** — slices with no unfinished blockers — is exactly what `implement-spec` works in parallel, one implementer per frontier ticket in its own worktree. Draft the graph while you slice (Step 4), not after publishing: a slice published without its edges is momentarily a false frontier entry. Where the tracker supports native dependencies, wire those too, so the frontier renders in the tracker's own UI.
+The "Blocked by" field is the task graph's edges. The **frontier** — slices with no unfinished blockers — is exactly what `implement-all` (parallel mode) works, one implementer per frontier ticket in its own worktree. Draft the graph while you slice (Step 4), not after publishing: a slice published without its edges is momentarily a false frontier entry. Where the tracker supports native dependencies, wire those too, so the frontier renders in the tracker's own UI.
 
 <issue-template>
 ## Parent

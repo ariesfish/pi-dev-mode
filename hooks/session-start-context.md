@@ -8,7 +8,7 @@ Invoke the `pi-dev-mode` skill and follow its instructions when a task meets any
 - it involves a design or architecture choice
 - it is a bug whose cause is not yet known, or a performance issue
 - it is large or foggy: more than one session's worth, or the destination is not yet visible (wayfinder-grade work)
-- it should run autonomously once approved (build auto), or needs a quality bar written down first (constraints)
+- it should run unattended once approved, or spans a whole task graph, or needs a quality bar written down first (constraints)
 
 pi-dev-mode routes to the right skill from there. When the intent is already specific, enter the skill directly by name:
 
@@ -21,8 +21,8 @@ pi-dev-mode routes to the right skill from there. When the intent is already spe
 - `issues` — split a plan into vertical-slice tickets (task graph + frontier)
 - `triage-issue` — route incoming issues through triage labels
 - `implement` — one ticket, serial, TDD at the seams
-- `implement-spec` — the whole task graph, multi-agent parallel
-- `build` — run plan tasks (one per call, or `auto`: single approval, every task still test-first and committed)
+- `implement-all` — the whole task graph: auto (serial, single approval) or parallel (one implementer per frontier ticket, each in its own worktree)
+- `implement-all` — the whole task graph (auto: single approval, serial; parallel: one implementer per frontier ticket in its own worktree)
 - `wayfinder` — when the destination itself is foggy: decision tickets until the way is clear
 - `code-review` — two-axis review (Standards / Spec) of a diff since a fixed point
 - `diagnose` — feedback-loop-first debugging
