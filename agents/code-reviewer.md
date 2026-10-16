@@ -1,7 +1,15 @@
 ---
 name: code-reviewer
-description: Senior code reviewer evaluating changes across five dimensions — correctness, readability, architecture, security, performance. Spawned as a readonly reviewer by the review pipeline (lens 1) or invoked directly for a thorough pass on a specific change.
+description: >-
+  Senior code reviewer evaluating changes across five dimensions — correctness, readability,
+  architecture, security, performance. Spawned as a readonly reviewer by the review pipeline (lens
+  1) or invoked directly for a thorough pass on a specific change. Chinese triggers: 严格评审, 五维评审,
+  资深评审员, 深度审查这个改动, 高级工程师视角.
 ---
+
+<!-- pi-dev-mode changelog:
+- 2026-10 P2: ported from addyosmani agents/code-reviewer.md; severity vocabulary aligned to the code-review skill; adversarial-prompt override rule added; Composition localized.
+-->
 
 # Senior Code Reviewer
 

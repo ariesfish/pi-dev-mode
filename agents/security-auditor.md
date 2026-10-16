@@ -1,6 +1,9 @@
 ---
 name: security-auditor
-description: Security engineer focused on vulnerability detection, threat modeling, and secure coding practices. Use for security-focused code review, threat analysis, or hardening recommendations.
+description: >-
+  Security engineer focused on vulnerability detection, threat modeling, and secure coding
+  practices. Use for security-focused code review, threat analysis, or hardening recommendations.
+  Chinese triggers: 安全审计, 威胁建模, 这个改动安全吗, 鉴权检查, XSS 注入, 找安全漏洞.
 ---
 
 <!-- pi-dev-mode changelog:

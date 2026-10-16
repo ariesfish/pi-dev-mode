@@ -1,11 +1,11 @@
 ---
 name: benchmark-checklist
-description: "Vet a perf measurement (limiter, tuning, limits, errors, repeatability, relevance, and whether the work happened) before you report or act on it. Use when you run a benchmark or report a speedup or regression you measured." Chinese triggers: 审查性能数据, 基准核查, 这个性能数字可信吗, 提速验证, 跑分审查, benchmark 七问."
-disable-model-invocation: true
+description: "Vet a perf measurement (limiter, tuning, limits, errors, repeatability, relevance, and whether the work happened) before you report or act on it. Use when you run a benchmark or report a speedup or regression you measured. Chinese triggers: 审查性能数据, 基准核查, 这个性能数字可信吗, 提速验证, 跑分审查, benchmark 七问."
 ---
 
 <!-- pi-dev-mode changelog:
 - 2026-10 P2: ported verbatim from pstack benchmark-checklist (v0.15.24); frontmatter only: Chinese triggers added, disable-model-invocation dropped (auto-invocable; diagnose and perf routes point here).
+- 2026-10 P2.1 fix: P2 trigger injection broke the quoted description (Skill conflicts on pi update); frontmatter rebuilt by string surgery; acceptance now YAML-parses every frontmatter.
 -->
 
 # Benchmark checklist
