@@ -16,6 +16,7 @@ description: >-
   (search for an existing implementation by domain concept before grilling).
 - 2026-10 P1 upgrade (03 matrix row): performance reports route to diagnose with a baseline-first brief; agent briefs carry the three-label acceptance criteria.
 - 2026-10 P1.2 (pie dogfood observation): missing config bootstraps in place (one confirmation with a recommendation) instead of stopping to demand setup.
+- 2026-10 P1.3 (user refinement): three-tier bootstrap — conclusive evidence → one confirmation; inconclusive or conflicting → ask_user with options labeled by the repo evidence found (or its absence).
 -->
 
 Move issues on the project issue tracker through a small state machine of triage roles.
@@ -48,7 +49,10 @@ Five **state** roles:
 
 Every triaged issue should carry exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
 
-These are canonical role names — the actual label strings used in the issue tracker may differ. The mapping should have been provided by `setup`. If missing, do not stop and send the user away: infer the tracker from repo evidence (git remote on github.com → GitHub; `tasks/plan.md` → Tasks files; `.scratch/` → local markdown; default and no-remote → Tasks files, zero service dependencies), ask exactly ONE confirmation question carrying your recommendation, seed `docs/agents/` from the setup skill's references, then continue the work this skill was invoked for.
+These are canonical role names — the actual label strings used in the issue tracker may differ. The mapping should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `tasks/plan.md` (→ Tasks files), `.scratch/` (→ local markdown), incumbent conventions under `docs/` — then:
+- **One conclusive signal** → ask exactly ONE confirmation question carrying your recommendation.
+- **No signal, or conflicting signals** → use `ask_user` and let the user choose: present each candidate as an option labeled with the evidence you found (or its absence — e.g. "`tasks/plan.md` exists → Tasks files", "no remote, no tracker files → Tasks files (recommended: zero service dependencies)"), recommend one, never invent a tracker the repo shows no evidence for.
+Then seed `docs/agents/` from the setup skill's references and continue the work this skill was invoked for.
 
 State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time — flag transitions that look unusual and ask before proceeding.
 

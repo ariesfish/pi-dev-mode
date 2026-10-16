@@ -101,3 +101,7 @@ delegation:guard-the-context-window。
 - **技能层**:issues / prd / triage-issue 缺配置时**就地自举**——按仓库证据推断 tracker(git remote→GitHub;tasks/plan.md→Tasks files;.scratch→local markdown;默认与无远端→Tasks files),一次带推荐答案的确认,当场种子 docs/agents/,继续被打断的工作。setup 降位为"郑重的全量配置/换 tracker"入口
 - **扩展层**:prompt.ts 新增 `pi-dev-repo-state` section——cwd 无 GLOSSARY/tracker 配置时注入缺席清单与自举提示(全配置仓库零成本:不注入;depth≥1 子代理不注入)
 - **路由层**:pi-dev-mode 路由表首行 + mandate setup 行更新,"no detour" 语义
+
+### §0.1.1 P1.3 三层自举阶梯(用户补充)
+
+结论性证据 → 一次带推荐的确认;**证据缺席或冲突 → `ask_user` 让用户选,选项各自携带仓库证据**(或证据缺席的说明),并给推荐默认;绝不发明仓库没有证据的 tracker。
