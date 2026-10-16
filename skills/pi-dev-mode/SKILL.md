@@ -13,6 +13,7 @@ description: >-
 - 2026-10 P0 skeleton: routing table active; playbooks and the principles
   index land in P4 (see docs/04-implementation.md). Until then this skill
   routes with the table below and stays out of the way on small tasks.
+- 2026-10 P1.2 (pie dogfood observation): routing row for lazy config bootstrap added.
 -->
 
 # Pi Dev Mode
@@ -28,6 +29,7 @@ Three questions, in order: **which stage, what shape, how much fog?**
 
 | Signal | Go to |
 |---|---|
+| Repo has no stack config, and the task needs it | don't detour: the dependent skill bootstraps in place (one confirmation); `setup` only for a deliberate full pass |
 | Fuzzy idea, no shared language yet | `align` (then `proto` if a question is best answered by building) |
 | A question needs external docs read | `research` (background) |
 | Formalize the work | `prd` -> `issues` |

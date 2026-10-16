@@ -29,7 +29,7 @@ pi-dev-mode routes to the right skill from there. When the intent is already spe
 - `refact` — find deepening opportunities in seams and locality
 - `tdd` — the implementation kernel
 - `repo-map` / `code-map` — durable repo map / area-level orientation
-- `setup` — repo configuration for tracker, triage labels, domain docs
+- `setup` — deliberate config pass (tracker, triage labels, domain docs); a dependent skill needing config bootstraps it in place with one confirmation — no detour
 
 For smaller tasks — a contained change to one file with an obvious test, a question, a one-line edit — work directly and verify on the real artifact.
 

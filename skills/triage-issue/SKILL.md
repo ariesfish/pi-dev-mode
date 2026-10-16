@@ -15,6 +15,7 @@ description: >-
 - 2026-10-15 synced to mattp@49dd158: redundancy check ported into Gather context
   (search for an existing implementation by domain concept before grilling).
 - 2026-10 P1 upgrade (03 matrix row): performance reports route to diagnose with a baseline-first brief; agent briefs carry the three-label acceptance criteria.
+- 2026-10 P1.2 (pie dogfood observation): missing config bootstraps in place (one confirmation with a recommendation) instead of stopping to demand setup.
 -->
 
 Move issues on the project issue tracker through a small state machine of triage roles.
@@ -47,7 +48,7 @@ Five **state** roles:
 
 Every triaged issue should carry exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
 
-These are canonical role names — the actual label strings used in the issue tracker may differ. The mapping should have been provided by `setup`. If missing, run `setup` first.
+These are canonical role names — the actual label strings used in the issue tracker may differ. The mapping should have been provided by `setup`. If missing, do not stop and send the user away: infer the tracker from repo evidence (git remote on github.com → GitHub; `tasks/plan.md` → Tasks files; `.scratch/` → local markdown; default and no-remote → Tasks files, zero service dependencies), ask exactly ONE confirmation question carrying your recommendation, seed `docs/agents/` from the setup skill's references, then continue the work this skill was invoked for.
 
 State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time — flag transitions that look unusual and ask before proceeding.
 

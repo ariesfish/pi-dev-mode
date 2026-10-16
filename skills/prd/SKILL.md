@@ -15,13 +15,14 @@ description: >-
 - 2026-10-15 synced to mattp@49dd158 (#1192): each proposed module/seam gets a
   one-line note on what testing there catches and misses.
 - 2026-10 P1 upgrade (03 matrix row): Acceptance Criteria section added to the template with the three-label convention; align's labeled candidates are harvested verbatim.
+- 2026-10 P1.2 (pie dogfood observation): missing config bootstraps in place (one confirmation with a recommendation) instead of stopping to demand setup.
 -->
 
 This skill takes the current conversation context and codebase understanding and produces a PRD. Do NOT interview the user — synthesize what you already know.
 
 This skill sits after `align`, `code-map`, or `proto` in the developer workflow and before `issues`.
 
-The issue tracker and triage label vocabulary should have been provided by `setup`. If missing, run `setup` first.
+The issue tracker and triage label vocabulary should have been provided by `setup`. If missing, do not stop and send the user away: infer the tracker from repo evidence (git remote on github.com → GitHub; `tasks/plan.md` → Tasks files; `.scratch/` → local markdown; default and no-remote → Tasks files, zero service dependencies), ask exactly ONE confirmation question carrying your recommendation, seed `docs/agents/` from the setup skill's references, then continue the work this skill was invoked for.
 
 ## Process
 

@@ -92,3 +92,12 @@ core:laziness-protocol、foundational-thinking、subtract-before-you-add、build
 架构:model-the-domain(与 align/refact 互引)、boundary-discipline、type-system-discipline;
 验证 5 条全收:prove-it-works、fix-root-causes、sequence-verifiable-units、test-behavior-not-implementation、explain-the-number;
 delegation:guard-the-context-window。
+
+## §0.1 P1.2 增补(pie dogfood 观察:setup 的自动路由)
+
+观察:pie 的实际使用是"直接开工"型,setup 从未被跑;依赖技能缺配置时只会"停下来让用户去跑 setup"——配置成了前置仪式,与真实使用方式冲突。
+
+改造(2026-10):
+- **技能层**:issues / prd / triage-issue 缺配置时**就地自举**——按仓库证据推断 tracker(git remote→GitHub;tasks/plan.md→Tasks files;.scratch→local markdown;默认与无远端→Tasks files),一次带推荐答案的确认,当场种子 docs/agents/,继续被打断的工作。setup 降位为"郑重的全量配置/换 tracker"入口
+- **扩展层**:prompt.ts 新增 `pi-dev-repo-state` section——cwd 无 GLOSSARY/tracker 配置时注入缺席清单与自举提示(全配置仓库零成本:不注入;depth≥1 子代理不注入)
+- **路由层**:pi-dev-mode 路由表首行 + mandate setup 行更新,"no detour" 语义

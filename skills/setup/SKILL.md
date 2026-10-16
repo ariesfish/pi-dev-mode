@@ -20,6 +20,7 @@ description: >-
   declared in domain docs); create missing triage labels when the tracker is GitHub
   (5b7cade); "Label in our tracker" column naming (#801).
 - 2026-10 P1 upgrade (03 matrix row): third tracker profile (Tasks files, tasks/plan.md + todo.md); one-time offers for CONSTRAINTS.md and the verification skill.
+- 2026-10 P1.2 (pie dogfood observation): lazy bootstrap is the primary path; this skill is the deliberate/explicit pass. Dependent skills bootstrap in place instead of stopping to demand setup.
 -->
 
 Configure a repository so developer workflow skills can reliably find its issue tracker, triage label vocabulary, and domain documentation.

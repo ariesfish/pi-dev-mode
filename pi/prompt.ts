@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
@@ -8,6 +8,7 @@ const MANDATE_SECTION = "pi-dev-session-start";
 const SHEET_SECTION = "pi-dev-models";
 const PARALLEL_SECTION = "pi-dev-parallel-calls";
 const TOOLS_SECTION = "pi-dev-pi-tools";
+const STATE_SECTION = "pi-dev-repo-state";
 
 // The skills come from a Claude Code lineage (mattp) and occasionally name its
 // tools and models. A session with no mandate, a child agent, or a skill
@@ -23,11 +24,31 @@ function piHostNote(pluginRoot: string): string {
 const PARALLEL_CALLS =
   "If you intend to call multiple tools and there are no dependencies between the calls, make all of the independent calls in the same response, otherwise you MUST wait for previous calls to finish first to determine the dependent values.";
 
+// One glance at the repo's stack artifacts, injected so routing to setup (or
+// to a lazy-bootstrapping skill) happens before the user hits a
+// missing-config wall. A fully configured repo pays nothing: the note stays
+// absent. Read failures inject nothing; state is a hint, not a gate.
+function repoStateNote(cwd: string): string | undefined {
+  try {
+    const has = (...paths: string[]) => paths.some((p) => existsSync(join(cwd, p)));
+    const glossary = has("GLOSSARY.md", "CONTEXT.md", "GLOSSARY-MAP.md");
+    const tracker = has("docs/agents/issue-tracker.md", "tasks/plan.md", ".scratch");
+    if (glossary && tracker) return undefined;
+    const lines = ["This repo is not yet configured for the skills:"];
+    if (!glossary) lines.push("- no domain glossary: GLOSSARY.md (align seeds it lazily)");
+    if (!tracker) lines.push("- no issue-tracker config: docs/agents/issue-tracker.md, tasks/plan.md, or .scratch/ (issues/prd/triage-issue bootstrap it on first use, one confirmation; or run the setup skill)");
+    if (!has("CONSTRAINTS.md")) lines.push("- no CONSTRAINTS.md: define the quality bar before an autonomous run (constraints skill)");
+    return lines.join("\n");
+  } catch {
+    return undefined;
+  }
+}
+
 // Claude Code runs the session hook and loads the sheet through a CLAUDE.md
 // include; Pi has neither, so both ride as system prompt sections, set again
 // on every agent start so compaction cannot drop them.
 // A child gets the sheet, as a Claude Code subagent sees CLAUDE.md, but not
-// the mandate: SessionStart does not run for subagents.
+// the mandate or the repo state: SessionStart does not run for subagents.
 export function registerPromptSections(pi: ExtensionAPI, settings: Settings): void {
   const mandateFile = join(settings.pluginRoot, "hooks", "session-start-context.md");
   pi.on("before_agent_start", (event) => {
@@ -35,7 +56,11 @@ export function registerPromptSections(pi: ExtensionAPI, settings: Settings): vo
     const sections = event.systemPromptOptions.sections;
     sections[PARALLEL_SECTION] = PARALLEL_CALLS;
     sections[TOOLS_SECTION] = piHostNote(settings.pluginRoot);
-    if (settings.depth === 0 && !sheet?.hookOff) sections[MANDATE_SECTION] = readFileSync(mandateFile, "utf8");
+    if (settings.depth === 0 && !sheet?.hookOff) {
+      sections[MANDATE_SECTION] = readFileSync(mandateFile, "utf8");
+      const state = repoStateNote(event.systemPromptOptions.cwd);
+      if (state) sections[STATE_SECTION] = state;
+    }
     if (sheet) sections[SHEET_SECTION] = sheet.text;
   });
 }
