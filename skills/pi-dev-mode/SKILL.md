@@ -14,6 +14,7 @@ description: >-
   index land in P4 (see docs/04-implementation.md). Until then this skill
   routes with the table below and stays out of the way on small tasks.
 - 2026-10 P1.2 (pie dogfood observation): routing row for lazy config bootstrap added.
+- 2026-10 P2: routing rows for review / doubt / benchmark-checklist / retro; P2 placeholders resolved.
 -->
 
 # Pi Dev Mode
@@ -36,10 +37,14 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Incoming issue needs routing | `triage-issue` |
 | One ticket to build | `implement` |
 | Whole task graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
-| Something is broken or slow | `diagnose` (performance numbers pass `benchmark-checklist` before they are reported — lands P2) |
-| Review a diff / PR / branch | `code-review` (more lenses land with the `review` pipeline, P2) |
+| Something is broken or slow | `diagnose` (its perf branch passes `benchmark-checklist` before a number is claimed) |
+| Review a diff / PR / branch (single two-axis pass) | `code-review` |
+| Gate a merge / ship | `review` (four lenses in parallel readonly reviewers, one aggregated verdict) |
+| A measured number is about to be claimed | `benchmark-checklist` before the number leaves the room |
+| Non-trivial decision mid-flight, high stakes | `doubt` (fresh adversarial reviewer, bounded loop) |
+| Session ending / before handoff | `retro` |
 | Structural friction, shallow modules | `refact` |
-| Ship / land a green stack | hand to the shipping playbook (lands P1 with `ship`) |
+| Ship / land a green stack | `review` then the shipping playbook (ship lands P3/P4; pstack shipping 为底) |
 | Unfamiliar code area / whole repo | `code-map` / `repo-map` |
 
 **Fog test:** if the destination itself is undecided (more than a session's

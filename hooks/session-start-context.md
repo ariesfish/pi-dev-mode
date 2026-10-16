@@ -25,6 +25,10 @@ pi-dev-mode routes to the right skill from there. When the intent is already spe
 - `implement-all` — the whole task graph (auto: single approval, serial; parallel: one implementer per frontier ticket in its own worktree)
 - `wayfinder` — when the destination itself is foggy: decision tickets until the way is clear
 - `code-review` — two-axis review (Standards / Spec) of a diff since a fixed point
+- `review` — the four-lens merge gate (two-axis + comment discipline + adversarial doubt + constraints audit)
+- `doubt` — in-flight adversarial cross-examination of a non-trivial decision
+- `benchmark-checklist` — vet a measured performance number before reporting it
+- `retro` — session retrospective routing findings to checks, types, docs, or skill edits
 - `diagnose` — feedback-loop-first debugging
 - `refact` — find deepening opportunities in seams and locality
 - `tdd` — the implementation kernel

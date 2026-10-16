@@ -105,3 +105,14 @@ delegation:guard-the-context-window。
 ### §0.1.1 P1.3 三层自举阶梯(用户补充)
 
 结论性证据 → 一次带推荐的确认;**证据缺席或冲突 → `ask_user` 让用户选,选项各自携带仓库证据**(或证据缺席的说明),并给推荐默认;绝不发明仓库没有证据的 tracker。
+
+### P2 收编落地记录(2026-10)
+
+| 件 | 处置实施 |
+|---|---|
+| `doubt` | addyosmani doubt-driven **F**:五步循环(CLAIM/EXTRACT/DOUBT/RECONCILE/STOP)保留;评审者=readonly 后台 agent(pi 原生);跨模型段收敛为"异构家族 reviewer 一问";CLI 管道段删(pi 的 model 参数即跨模型); nests 场景降级自审并标注 degraded |
+| `retro` | **M** 合成:mattp retro 环境/检查/标准/操纵/访问类别为底(readme #1240 的 writing-for-agents 依赖内联为样式块);pstack reflect 吸收(发现 routed 到具体编辑、批后应用、结构化执法检查);pstack correct 吸收(最高层级执法阶梯表 + rule↔enforcement 配对) |
+| `review` | **N** 四镜头管线:镜头1 指针挂 `code-review`;镜头2 注释纪律内联(pstack no-comments 核心,无 comment-sicko 依赖);镜头3 doubt 对抗 prompt;镜头4 constraints 差异审计;聚合=分镜展示后去重加权,裁决词表 APPROVE/REQUEST CHANGES/INCONCLUSIVE |
+| `benchmark-checklist` | pstack **C** 正文一字不改(diff 校验过);frontmatter 加中文触发词、去 disable-model-invocation |
+| agents/ | code-reviewer(addyosmani F,Composition 本地化)、security-auditor(同)——注册为 `pi-dev:*` subagent 类型 |
+| references/ | addyosmani 7 清单原文收拢 + 映射 README(原文 addyosmani 名→本栈名) |

@@ -16,7 +16,10 @@ setup
   -> triage-issue    # route incoming issues through labels and agent briefs
   -> implement       # one ticket, serial, TDD at the seams
   -> implement-all  # the whole task graph: auto (serial, single approval) or parallel (multi-agent worktrees)
-  -> code-review     # two-axis review: Standards and Spec
+  -> review          # merge gate: four lenses (two-axis, comments, doubt, constraints) in parallel
+  -> benchmark-checklist  # vet a measured number before it is reported
+  -> doubt            # in-flight adversarial cross-exam of a non-trivial decision
+  -> retro            # session retrospective: findings routed to the highest enforcing level
   -> diagnose        # fix bugs/regressions with a feedback loop
   -> refact          # improve seams/locality after learning from code
 
@@ -50,7 +53,10 @@ pi-dev-mode          # the router that picks between all of these
 - If no quality bar is written down, `constraints` before an autonomous run.
 - If the work starts as an issue, use `triage-issue`; send ready work to implementation.
 - One ticket in hand: `implement`. Whole task graph: `implement-all` — auto for an unattended serial run, parallel when the frontier is wide.
-- After implementation, before merging: `code-review` on the diff since the fixed point.
+- After implementation, before merging: `review` (the four-lens merge gate); `code-review` alone for a single two-axis pass.
+- About to commit non-trivial code or take a high-stakes step: `doubt` mid-flight, before the merge gate.
+- A measured number is about to be reported: `benchmark-checklist` first; a number without its limiter is not a result.
+- Session over, before handoff: `retro`; its skill edits feed this stack itself.
 - If something is broken or slow, use `diagnose` before refactoring.
 - If code friction remains after implementation or diagnosis, use `refact`.
 - Browsing/unsure what to pick: `use-the-stack`, or say it in plain words and let `pi-dev-mode` route.

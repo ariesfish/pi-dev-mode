@@ -12,6 +12,7 @@ description: >-
 - 2026-10 P1 new acquisition (N): the discovery page for sessions without the
   mandate or for humans browsing. The closed-loop map lives on in
   setup/references/workflow.md; this page is situation-first.
+- 2026-10 P2: rows and chain updated for review / doubt / benchmark-checklist / retro.
 -->
 
 # Use the Stack
@@ -20,7 +21,7 @@ Situation → skill. When in doubt, say what you want in plain words and let `pi
 
 ```text
 setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto ─→ prd ─→ spec ─→
- constraints ─→ issues ─→ triage-issue ─→ implement / implement-all ─→
+ constraints ─→ issues ─→ triage-issue ─→ implement / implement-all ─→ review ─… doubt / benchmark-checklist / retro 横切其间
  code-review ─→ diagnose ─→ refact … wayfinder above it all
 ```
 
@@ -42,6 +43,10 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 | Do one ticket now | `implement` | serial, tdd at the seams, AC three-labels, review, commit |
 | Do the whole graph | `implement-all` | auto (single approval, serial) or parallel (integration branch + frontier + worktrees) |
 | Review a diff / branch / PR | `code-review` | Standards axis + Spec axis, parallel subagents |
+| Gate a merge: four lenses, one verdict | `review` | two-axis + comments + doubt + constraints, weighted dedup |
+| Cross-examine a decision in flight | `doubt` | fresh adversarial reviewer, 3-cycle bound |
+| Vet a measured number | `benchmark-checklist` | the seven questions, before reporting |
+| Retrospective a session | `retro` | findings routed to checks/types/docs/skill edits |
 | Something is broken or slow | `diagnose` | build a feedback loop first; RED-then-GREEN commits |
 | Structure feels wrong after the fact | `refact` | deepen modules, seams, locality |
 | The work is too big and foggy to plan | `wayfinder` | decision tickets on the tracker until the way is clear |
