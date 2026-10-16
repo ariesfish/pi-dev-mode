@@ -5,6 +5,7 @@ Invoke the `pi-dev-mode` skill and follow its instructions when a task meets any
 
 - it spans the lifecycle: feature-sized work needing prd -> issues -> implementation -> review
 - it touches more than one file, or changes a signature other files call
+- it names multiple areas or modules (a task graph missing its split): slice it first (`issues`), then `implement-all`
 - it involves a design or architecture choice
 - it is a bug whose cause is not yet known, or a performance issue
 - it is large or foggy: more than one session's worth, or the destination is not yet visible (wayfinder-grade work)

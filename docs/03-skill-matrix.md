@@ -123,3 +123,10 @@ delegation:guard-the-context-window。
 - `evals/`:README 格式 + skill-impact 账本 + 首批 5 用例(review:fires/stays-quiet 各一、benchmark-checklist:fires、tdd:成本闸门、issues:自举非墙)
 - retro 第 5 步升级:实质技能编辑必须过 eval 门才应用;拒绝入账本
 - check-skills.py 扩展:evals 结构校验 + 候选面泄题 lint(技能名/元词)
+
+### P2.6 落地(2026-10-16,pie 观察三)
+
+- 观察:pie 会话(显式 /skill:pi-dev-mode 展开)把"多块工作"路由给 implement("Routing:这是 implement 级别的多块工作")——多区域 blob 没有再拆分规则。
+- 修复:pi-dev-mode 路由表加 Scope test 行 + implement 技能加 scope check(多区域拒收 → issues → implement-all)+ mandate 一行 + use-the-stack 标注。
+- **eval 门:PASS**(evals/implement/multi-area-block,Mode A,deepseek,扩展在场):候选把任务定性为"出 SPEC → 按票改三块"并拒绝单 pass 实现;对照组(无 mandate)则回答"逐个区域改"。期间固化两条配方:dialogue 类候选限 `--tools read`(全量工具会无限考古);路由类用例必须带扩展(mandate 是产品的一部分)。
+- 运行期发现(记录):同名工具冲突时 pi 报错拒载第二份(ours vs ours 双份实测);pi-subagents 注册名不冲突,共存无恙。

@@ -13,9 +13,14 @@ description: >-
 - migrated from mattp/skills/engineering/implement @49dd158, localized: setup→dev-setup,
   tdd→dev-tdd, code-review→dev-code-review; Chinese triggers added.
 - 2026-10 P1.1: absorbed the retired build skill's default-mode rigor (three-label AC reading, staged commit, evidence-honesty reporting); handoff note to implement-all added.
+- 2026-10 P2.6 (pie observation #3): scope check added — multi-area blobs refused to issues → implement-all.
 -->
 
 # Implement
+
+## The scope check (run it first)
+
+Count the areas or modules the task names. **More than one is not one ticket.** A checklist-shaped ask ("do X + Y + Z", a whole-area rebuild, porting a reference implementation wholesale) is a task graph missing its split: refuse the blob, route to `issues` to slice it, and let `implement-all` (auto or parallel, per frontier width) execute. Implementing a multi-area blob as a single serial pass buries the split, the tracker bootstrap, and every per-ticket verification.
 
 Implement the work described by the user in the PRD, spec, or tickets.
 
@@ -35,4 +40,4 @@ Commit your work to the current branch, staging only the files this ticket touch
 
 Report with evidence, not self-report: the failing-test output (or the skip-test line), suite and build results, the commit hash. "Inconclusive" is not a pass; flag it instead.
 
-For a whole task graph, or an unattended run, use `implement-all` (auto: single approval, serial. parallel: one implementer per frontier ticket, each in its own worktree). This skill stays one ticket, in hand.
+For a whole task graph, or an unattended run, use `implement-all` (auto: single approval, serial. parallel: one implementer per frontier ticket, each in its own worktree). This skill stays one ticket, in hand; its scope check refuses multi-area blobs back to `issues`.

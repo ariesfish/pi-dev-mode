@@ -19,12 +19,31 @@ Skills may name models by family alias (opus, fable, sonnet, haiku). Pass the al
 
 ## Provider compatibility (system prompt delivery)
 
-Skills, the routing mandate, and steering all ride the **system prompt**. A
-provider must deliver system messages to the model for this stack to exist at
-all. Verified 2026-10 (pi 1.2.0): `deepseek` (direct) delivers everything;
-**`cfgpu` (relay) strips the system message server-side** — tools still work,
-but skills and the mandate are invisible to the model. Prefer a direct
-provider for stack sessions, or `--provider <direct>` per run. Quick audit for
-any provider: ask the model to quote the first ten words of its system prompt;
-a pi session opening with "You are an expert coding assistant operating inside
-pi" means the channel works.
+Skills, the routing mandate, and steering ride the **system prompt**. The
+prompt must reach the model for the stack to exist at all.
+
+**The real failure mode (verified 2026-10-16, wire-level):** pi sends the
+system prompt as `role: "system"` — **except for models with `reasoning: true`
+in models.json, where pi 1.3+ sends `role: "developer"`** (the OpenAI
+reasoning-model convention). An OpenAI-compatible relay or endpoint that does
+not honor the developer role drops the whole message silently: every tool
+still works (declarations ride the `tools` array), but the model has never
+seen a single instruction, skill, or the mandate — and will confidently
+fabricate plausible "quotes" from its system prompt when asked.
+
+**Fix (pi-native):** in `~/.pi/agent/models.json`, add to that model's entry:
+
+```json
+"compat": { "supportsDeveloperRole": false }
+```
+
+pi falls back to `role: "system"`. Verified end to end: after the flag, the
+model finds the mandate verbatim (string-level YES on `pi-dev-mode`,
+`EXTREMELY_IMPORTANT`), lists the skill catalog, and quotes rules correctly.
+
+**Audit method (strong evidence, not model introspection):** ask the model to
+search its instruction text for exact strings (`pi-dev-mode`, `EXTREMELY_IMPORTANT`)
+— introspection-style "quote your prompt" questions are weak evidence; models
+fabricate plausible quotes. For wire-level certainty, hang a probe extension
+on `before_provider_request` and dump `payload.messages[0]` (role + content
+length + string presence).

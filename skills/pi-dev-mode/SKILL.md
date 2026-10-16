@@ -16,6 +16,7 @@ description: >-
 - 2026-10 P1.2 (pie dogfood observation): routing row for lazy config bootstrap added.
 - 2026-10 P2: routing rows for review / doubt / benchmark-checklist / retro; P2 placeholders resolved.
 - 2026-10 P2.5: eval row added (skill-change promotion gate).
+- 2026-10 P2.6 (pie observation #3): scope test — multi-area tasks route to issues → implement-all, never to implement as one blob.
 -->
 
 # Pi Dev Mode
@@ -36,7 +37,8 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | A question needs external docs read | `research` (background) |
 | Formalize the work | `prd` -> `issues` |
 | Incoming issue needs routing | `triage-issue` |
-| One ticket to build | `implement` |
+| One ticket to build (names ONE area or module) | `implement` |
+| A task naming MULTIPLE areas or modules (checklist-shaped: "X + Y + Z", whole-area rebuild, porting a reference set) | not `implement`'s job: split first (`issues`) → `implement-all` (auto or parallel) |
 | Whole task graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
 | Something is broken or slow | `diagnose` (its perf branch passes `benchmark-checklist` before a number is claimed) |
 | Review a diff / PR / branch (single two-axis pass) | `code-review` |
@@ -48,6 +50,8 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Structural friction, shallow modules | `refact` |
 | Ship / land a green stack | `review` then the shipping playbook (ship lands P3/P4; pstack shipping 为底) |
 | Unfamiliar code area / whole repo | `code-map` / `repo-map` |
+
+**Scope test (before the fog test):** count the areas or modules the task names. More than one is not a ticket — it is a task graph missing its split. Routing a multi-area blob to `implement` buries the split, the tracker bootstrap, and the frontier; sort it into tickets first.
 
 **Fog test:** if the destination itself is undecided (more than a session's
 work, more unknowns than tasks), that is wayfinder-grade work — say so and

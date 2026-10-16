@@ -41,7 +41,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 | Define "good enough to ship" with numbers | `constraints` | CONSTRAINTS.md floor + enforced rows + diff watch |
 | Split the plan into work | `issues` | vertical slices, task graph, frontier |
 | Route incoming reports | `triage-issue` | label state machine, agent briefs |
-| Do one ticket now | `implement` | serial, tdd at the seams, AC three-labels, review, commit |
+| Do one ticket now (ONE area — its scope check refuses multi-area blobs to issues) | `implement` | serial, tdd at the seams, AC three-labels, review, commit |
 | Do the whole graph | `implement-all` | auto (single approval, serial) or parallel (integration branch + frontier + worktrees) |
 | Review a diff / branch / PR | `code-review` | Standards axis + Spec axis, parallel subagents |
 | Gate a merge: four lenses, one verdict | `review` | two-axis + comments + doubt + constraints, weighted dedup |

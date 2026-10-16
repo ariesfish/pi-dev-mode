@@ -17,6 +17,7 @@ description: >-
   evals harness (fires/stays-quiet case bank, graders, skill-impact ledger).
   Pi-native: candidates run as headless `pi -p` with --skill <tree> only;
   judges attach transcripts via @file; transcripts live under --session-dir.
+- 2026-10 P2.6.1: dialogue-kind candidates run --tools read (unbounded full-tool candidates dig instead of answering).
 -->
 
 # Eval
@@ -55,8 +56,13 @@ stay quiet where it must not.
    ```bash
    cd $(mktemp -d)
    pi -p --session-dir "$PWD/session" --no-extensions --no-skills \
-     --skill <repo>/skills "$(cat <case>/prompt.md 的正文)"
+     --tools read --skill <repo>/skills "$(cat <case>/prompt.md 的正文)"
    ```
+   Dialogue-kind cases run `--tools read`: the candidate can open skill files
+   (the chain evidence) but cannot wander the filesystem or start executing —
+   the run stays bounded. Validation record: full-tool dialogue candidates
+   dig the repo for minutes and never reach a reply (observed 2026-10-16,
+   >7 min, killed).
    `--no-extensions` keeps the mandate and repo-state notes out of the
    candidate's system prompt (they would hint the chain); `--no-skills`
    disables the user's global skills so the tree under test is all the

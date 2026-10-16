@@ -40,6 +40,12 @@ evals/
 ```bash
 cd $(mktemp -d)
 pi -p --session-dir "$PWD/session" --no-extensions --no-skills \
-  --skill <技能树路径> "<用例正文>"
+  --tools read --skill <技能树路径> "<用例正文>"
+# dialogue 类候选限 read 工具:能打开技能文件(链证据)但不会无限考古/动手,
+# 判分才有界。execution 类用例(待 fixture 机制)才放开全量工具。
 # transcript 落在 $PWD/session;判分者以 @file 附 transcript 与回复
 ```
+
+**用例环境分两档(2026-10-16 增补)**:
+- **触发判别类**(fires/stays-quiet 单技能):候选不带扩展(`--no-extensions`)——看纯 description 的自然命中;
+- **路由行为类**(多区域拆分等):候选带扩展(`-e <repo>/pi/index.ts`)——mandate/repo-state 是产品的一部分,路由判别必须在真实环境里测。

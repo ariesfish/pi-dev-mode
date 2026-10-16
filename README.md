@@ -60,7 +60,7 @@ pi-dev-mode/
 - [x] 技能矩阵:基座 升级包 + 新增收编;**2026-10 第二轮补齐 implement/implement-spec/code-review/research 四件工程缺口**(基座 11→15,见 docs/05 检讨)
 - [x] 实施路线图(docs/04)
 - [x] **P0 地基完成**:基座 15 件迁入同步(mattp@49dd158,docs/05)+ 前缀去除 + pi 扩展 vendor(@94f5ce9 條款见 NOTICE-pi-extension.md)+ package.json + mandate + pi-dev-mode 骨架。静态检查全绿(13 文件 bun transpile OK / models.json / 16 SKILL.md frontmatter)
-- [x] **P0 真机冒烟通过(2026-10-15,证据 docs/evidence/p0-smoke-2026-10-15.md)**:安装一致/工具组共存/隔离加载/事件注入全绿;**发现环境风险:cfgpu 中继剥离 system prompt(技能与 mandate 对 glm-5-3 不可见),stack 会话建议直连 provider**。待交互项:/loop 实战、后台 agent、ask_user UI
+- [x] **P0 真机冒烟通过(2026-10-15,证据 docs/evidence/p0-smoke-2026-10-15.md)**:安装一致/工具组共存/隔离加载/事件注入全绿;**发现并修复:pi 对 reasoning 模型发 developer 角色、中继不认则整体丢消息——models.json 加 `compat.supportsDeveloperRole: false` 即修(2026-10-16 wire 级定位,见 docs/evidence/developer-role-2026-10-16.md)**待交互项:/loop 实战、后台 agent、ask_user UI
 - [x] **P2.5 eval 门落地(2026-10)**:eval 技能(pstack 盲评 + addyosmani 用例库合成)+ evals/ 首批 5 用例 + skill-impact 拒案账本;retro 实质技能编辑改走 eval 门;check-skills.py 增 evals 结构与泄题 lint
 - [x] **P2 单点库完成(静态,2026-10)**:doubt(F)/retro(M 合成)/review(N 四镜头)/benchmark-checklist(C 一字不改)+ 评审 subagent ×2 + references 七清单收拢;真机验收(同一 diff 四镜头跑通、七问实测)待跑
 - [x] **P1 意图链完成(静态)**:七件基座升级(§0 矩阵:align 三标签播种/proto 互路、prd 三标签节、issues 任务图语义、diagnose RED-GREEN 提交序列+冻结环+perf 纪律、setup 三 tracker profile+一次性 offer、tdd 成本闸门+断言纪律、triage perf 分流与三标签 brief)+ 新增 spec/build/constraints/wayfinder/use-the-stack。静态验收:21 件 frontmatter/触发词/交叉引用/契约互通全绿;**真实场景端到端验收待用户环境跑**(场景脚本见 docs/04 P1 验收段)
