@@ -15,6 +15,7 @@ description: >-
   routes with the table below and stays out of the way on small tasks.
 - 2026-10 P1.2 (pie dogfood observation): routing row for lazy config bootstrap added.
 - 2026-10 P2: routing rows for review / doubt / benchmark-checklist / retro; P2 placeholders resolved.
+- 2026-10 P2.5: eval row added (skill-change promotion gate).
 -->
 
 # Pi Dev Mode
@@ -43,6 +44,7 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | A measured number is about to be claimed | `benchmark-checklist` before the number leaves the room |
 | Non-trivial decision mid-flight, high stakes | `doubt` (fresh adversarial reviewer, bounded loop) |
 | Session ending / before handoff | `retro` |
+| A skill/description change about to land | `eval` (trigger regression over evals/, or variant A/B) — retro routes its substantive edits here |
 | Structural friction, shallow modules | `refact` |
 | Ship / land a green stack | `review` then the shipping playbook (ship lands P3/P4; pstack shipping 为底) |
 | Unfamiliar code area / whole repo | `code-map` / `repo-map` |

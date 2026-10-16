@@ -27,7 +27,7 @@
 **验收(跑真实场景):** 挑一个真实小需求,现场走:`拷打方案`(align)问出术语落 CONTEXT.md → prd 出 PRD(验收带三类标注)→ 升级出 SPEC.md → issues 拆垂直切片(带依赖 + HITL/AFK)→ `implement-all` auto 单审批跑完,每任务一条 commit + decisions.tsv 留痕。证据存 `docs/evidence/p1/`。
 **破坏性验收:** 无 SPEC/PRD 直接 implement-all 必须拒绝;grilling 中断、CONTEXT.md 缺席时下游技能必须降级不报错;diagnose 建环后修复,commit 序列必须是"复现在前修复在后"。
 
-## P2 单点库:剩余收编与中立化(3-4 天,可与 P1 交错)——静态部分 2026-10 完成(P1.4 期间落地:doubt/retro/review/benchmark-checklist/agents×2/references×7+映射,真机四镜头与七问验收待跑)
+## P2 单点库:剩余收编与中立化(3-4 天,可与 P1 交错)——静态部分 2026-10 完成(P1.4 期间落地:doubt/retro/review/benchmark-checklist/agents×2/references×7+映射,真机四镜头与七问验收待跑;P2.5 增补:`eval` 技能 + evals/ 用例库 5 例 + 拒案账本,过 eval 触发回归一轮为佳)
 
 **做:** 按 03 矩阵完成剩余新增件(implement / implement-all(已吸收 build)/ code-review / research 已就位,不再从零写):`constraints` 若 P1 未完、`doubt` C、`retro` M(mattp 最新版为底)、review 管线 N(四镜头组装,镜头 1 直接挂 code-review;comment-sicko 与 thermo 以 R 登记,不依赖)、references/ 收拢(addyosmani 7 清单 + pi-tools + dev-workflow 最新版);
 frontmatter 统一(name+description 中立格式 + 双语触发词沿用 基座 风格扩展到新增件)。

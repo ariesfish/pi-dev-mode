@@ -20,6 +20,7 @@ setup
   -> benchmark-checklist  # vet a measured number before it is reported
   -> doubt            # in-flight adversarial cross-exam of a non-trivial decision
   -> retro            # session retrospective: findings routed to the highest enforcing level
+  -> eval             # promotion gate for skill changes (trigger regression / blind A/B)
   -> diagnose        # fix bugs/regressions with a feedback loop
   -> refact          # improve seams/locality after learning from code
 

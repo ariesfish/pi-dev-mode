@@ -16,6 +16,7 @@ description: >-
   check) and pstack correct absorbed (fix classes at the highest level that
   works; rule ↔ enforcement pairing). writing-for-agents dependency inlined as
   a compact style block instead of a skill reference.
+- 2026-10 P2.5: substantive skill edits route through the eval skill (trigger regression or variant A/B) before applying; rejected changes land in evals/skill-impact.md.
 -->
 
 # Retro
@@ -85,10 +86,13 @@ findings; a class counts once it has happened twice.
 
 5. **Apply with approval.** Present the full list; the user picks the subset
    and may redirect routings — skill edits affect every future agent. Trivial
-   edits (a line, a stale fact) apply directly after approval; substantive
-   ones land as proposed diffs to review. Record accepted rules in a table
-   pairing each rule with what enforces it — a rule with nothing enforcing it
-   is a repeat waiting to happen.
+   edits (a line, a stale fact) apply directly after approval; **substantive
+   edits (a description/trigger change, a changed protocol) route through the
+   `eval` skill first**: trigger changes rerun the case bank, protocol changes
+   run a variant A/B — only eval-passing edits apply, and rejected ones get a
+   `evals/skill-impact.md` ledger row so the next retro doesn't re-propose
+   them blind. Record accepted rules in a table pairing each rule with what
+   enforces it — a rule with nothing enforcing it is a repeat waiting to happen.
 
 6. **Reply:** findings in routing order, evidence inline, what was applied,
    what was declined, and the one change with the highest expected payback

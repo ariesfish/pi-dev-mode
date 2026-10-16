@@ -13,6 +13,7 @@ description: >-
   mandate or for humans browsing. The closed-loop map lives on in
   setup/references/workflow.md; this page is situation-first.
 - 2026-10 P2: rows and chain updated for review / doubt / benchmark-checklist / retro.
+- 2026-10 P2.5: eval row added.
 -->
 
 # Use the Stack
@@ -47,6 +48,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 | Cross-examine a decision in flight | `doubt` | fresh adversarial reviewer, 3-cycle bound |
 | Vet a measured number | `benchmark-checklist` | the seven questions, before reporting |
 | Retrospective a session | `retro` | findings routed to checks/types/docs/skill edits |
+| Gate a skill change before it ships | `eval` | trigger regression over evals/, or blinded variant A/B |
 | Something is broken or slow | `diagnose` | build a feedback loop first; RED-then-GREEN commits |
 | Structure feels wrong after the fact | `refact` | deepen modules, seams, locality |
 | The work is too big and foggy to plan | `wayfinder` | decision tickets on the tracker until the way is clear |

@@ -116,3 +116,10 @@ delegation:guard-the-context-window。
 | `benchmark-checklist` | pstack **C** 正文一字不改(diff 校验过);frontmatter 加中文触发词、去 disable-model-invocation |
 | agents/ | code-reviewer(addyosmani F,Composition 本地化)、security-auditor(同)——注册为 `pi-dev:*` subagent 类型 |
 | references/ | addyosmani 7 清单原文收拢 + 映射 README(原文 addyosmani 名→本栈名) |
+
+### P2.5 落地(2026-10):eval 技能 + 用例库
+
+- `eval`(N 合成):pstack Eval playbook(盲评纪律、transcript 验链、promote/reject 合成)+ addyosmani evals(fires/stays-quiet 用例库、graders、skill-impact 拒案账本);pi 原生化(候选=无扩展无全局技能的 headless `pi -p --skill <树>`;判分者以 @file 附 transcript)
+- `evals/`:README 格式 + skill-impact 账本 + 首批 5 用例(review:fires/stays-quiet 各一、benchmark-checklist:fires、tdd:成本闸门、issues:自举非墙)
+- retro 第 5 步升级:实质技能编辑必须过 eval 门才应用;拒绝入账本
+- check-skills.py 扩展:evals 结构校验 + 候选面泄题 lint(技能名/元词)

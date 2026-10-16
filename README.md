@@ -28,7 +28,7 @@ addyosmani  →升级包 生命周期与质量合同  SPEC CONSTRAINTS 三类验
 2. 显式技能直调:`/skill:spec` `/skill:implement-all`(auto / parallel 模式)`/skill:code-review` …(独立执行技能无生命周期命令层,直接用具名技能)
 3. 单点:`/skill:align`、`/skill:benchmark-checklist`、`/skill:constraints`……任何技能独立跑,靠工件在场咬合,不在场就降级
 
-**技能构成:P2 后 24 件** = 基座 15 + P1 新增 5(pi-dev-mode、spec、constraints、wayfinder、use-the-stack)+ P2 新增 4(**doubt、retro、review 四镜头管线、benchmark-checklist**)+ agents×2(code-reviewer/security-auditor)+ references×7。P3 待增:verify 双件 + control-web + ship(perf playbook)。**
+**技能构成:P2.5 后 25 件** = 基座 15 + P1 新增 5(pi-dev-mode、spec、constraints、wayfinder、use-the-stack)+ P2 新增 5(**doubt、retro、review 四镜头管线、benchmark-checklist、eval**)+ agents×2(code-reviewer/security-auditor)+ references×7 + evals/ 用例库 5 例。P3 待增:verify 双件 + control-web + ship(perf playbook)。**
 (散件说明:`~/.agents/skills/` 里留下的 `handoff` 等散件按引用归类,不重复收编。旧 dev-* 原件备份在 `~/.agents/dev-skills-backup-2026-10-15/`。)
 
 **仓库当前形态(P0 完成):**
@@ -61,6 +61,7 @@ pi-dev-mode/
 - [x] 实施路线图(docs/04)
 - [x] **P0 地基完成**:基座 15 件迁入同步(mattp@49dd158,docs/05)+ 前缀去除 + pi 扩展 vendor(@94f5ce9 條款见 NOTICE-pi-extension.md)+ package.json + mandate + pi-dev-mode 骨架。静态检查全绿(13 文件 bun transpile OK / models.json / 16 SKILL.md frontmatter)
 - [x] **P0 真机冒烟通过(2026-10-15,证据 docs/evidence/p0-smoke-2026-10-15.md)**:安装一致/工具组共存/隔离加载/事件注入全绿;**发现环境风险:cfgpu 中继剥离 system prompt(技能与 mandate 对 glm-5-3 不可见),stack 会话建议直连 provider**。待交互项:/loop 实战、后台 agent、ask_user UI
+- [x] **P2.5 eval 门落地(2026-10)**:eval 技能(pstack 盲评 + addyosmani 用例库合成)+ evals/ 首批 5 用例 + skill-impact 拒案账本;retro 实质技能编辑改走 eval 门;check-skills.py 增 evals 结构与泄题 lint
 - [x] **P2 单点库完成(静态,2026-10)**:doubt(F)/retro(M 合成)/review(N 四镜头)/benchmark-checklist(C 一字不改)+ 评审 subagent ×2 + references 七清单收拢;真机验收(同一 diff 四镜头跑通、七问实测)待跑
 - [x] **P1 意图链完成(静态)**:七件基座升级(§0 矩阵:align 三标签播种/proto 互路、prd 三标签节、issues 任务图语义、diagnose RED-GREEN 提交序列+冻结环+perf 纪律、setup 三 tracker profile+一次性 offer、tdd 成本闸门+断言纪律、triage perf 分流与三标签 brief)+ 新增 spec/build/constraints/wayfinder/use-the-stack。静态验收:21 件 frontmatter/触发词/交叉引用/契约互通全绿;**真实场景端到端验收待用户环境跑**(场景脚本见 docs/04 P1 验收段)
 

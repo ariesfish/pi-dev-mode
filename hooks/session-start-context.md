@@ -29,6 +29,7 @@ pi-dev-mode routes to the right skill from there. When the intent is already spe
 - `doubt` — in-flight adversarial cross-examination of a non-trivial decision
 - `benchmark-checklist` — vet a measured performance number before reporting it
 - `retro` — session retrospective routing findings to checks, types, docs, or skill edits
+- `eval` — the promotion gate for skill changes: trigger regression over the case bank, or blinded variant A/B
 - `diagnose` — feedback-loop-first debugging
 - `refact` — find deepening opportunities in seams and locality
 - `tdd` — the implementation kernel

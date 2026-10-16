@@ -27,7 +27,11 @@ KILLS = {
     "implement", "implement-all", "issues", "pi-dev-mode", "prd", "proto",
     "refact", "repo-map", "research", "retro", "review", "setup", "spec",
     "tdd", "triage-issue", "use-the-stack", "wayfinder",
+    "benchmark-checklist", "eval",
 }
+
+# Words a candidate-facing eval prompt must never carry: they leak the meta.
+META_WORDS = re.compile(r"\b(skill|skills|principle|principles|rubric|judge|grader|score|compare|experiment|pi-dev-mode)\b|SKILL\.md", re.I)
 
 
 def strip_changelog(text: str) -> str:
@@ -70,7 +74,37 @@ def main() -> int:
             if n in KILLS and n not in names:
                 failures.append(f"{rel}: dangling skill reference `{n}`")
 
-    print(f"checked {len(files)} files ({len(names)} skills + agents)")
+    # evals/: structure + leak lint (cases are candidate-facing)
+    evals_root = root / "evals"
+    cases = 0
+    if evals_root.is_dir():
+        for case_dir in sorted(p.parent for p in evals_root.glob("*/*/prompt.md")):
+            cases += 1
+            rel = case_dir.relative_to(root)
+            pm = case_dir / "prompt.md"
+            text = pm.read_text()
+            m = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.S)
+            if not m:
+                failures.append(f"{rel}/prompt.md: frontmatter not found")
+                continue
+            try:
+                fm = yaml.safe_load(m.group(1))
+            except yaml.YAMLError as e:
+                failures.append(f"{rel}/prompt.md: YAML parse error: {str(e).splitlines()[0]}")
+                continue
+            for key in ("description", "kind", "target", "expected_outcome"):
+                if key not in fm:
+                    failures.append(f"{rel}/prompt.md: frontmatter missing {key}")
+            graders = list(case_dir.glob("graders/*.md"))
+            if not graders:
+                failures.append(f"{rel}: no graders/*.md")
+            body = m.group(2)
+            if META_WORDS.search(body):
+                failures.append(f"{rel}/prompt.md: meta leakage (skill names / eval vocabulary) in candidate-visible body")
+            if any(k in body for k in KILLS):
+                failures.append(f"{rel}/prompt.md: skill name leaked in candidate-visible body")
+
+    print(f"checked {len(files)} files ({len(names)} skills + agents) + {cases} eval cases")
     if failures:
         for f in failures:
             print(f"FAIL {f}")
