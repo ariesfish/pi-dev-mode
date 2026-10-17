@@ -54,6 +54,7 @@ KILLS = {
     "implement", "implement-all", "issues", "pi-dev-mode", "prd", "proto",
     "refact", "repo-map", "research", "retro", "review", "setup", "spec",
     "tdd", "triage-issue", "use-the-stack", "wayfinder",
+    "create-verification-skill", "maintain-verification-skill",
     "benchmark-checklist", "eval",
 }
 
