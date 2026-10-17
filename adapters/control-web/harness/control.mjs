@@ -203,9 +203,10 @@ async function findNode(cdp, criteria) {
 	// 命中元素打上临时属性,再用 DOM.performSearch 稳定取得 backendNodeId
 	// (简化路径:evaluate 里直接给元素挂 data-pdm-hit,然后 querySelector 它)
 	const expr = `(() => {
+		document.querySelectorAll("[data-pdm-hit]").forEach((n) => n.removeAttribute("data-pdm-hit"));
 		const hit = (${FINDER.toString()})(${JSON.stringify(criteria)});
 		if (!hit) return null;
-		hit.el.setAttribute("data-pdm-hit", String(Date.now()));
+		hit.el.setAttribute("data-pdm-hit", "1");
 		return { via: hit.via, tag: hit.el.tagName, text: (hit.el.textContent||"").slice(0,60) };
 	})()`;
 	const res = await cdp.call("Runtime.evaluate", { expression: expr, returnByValue: true });

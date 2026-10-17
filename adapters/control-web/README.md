@@ -20,6 +20,8 @@
 
 ## 例外审批日志(冻结规则 #3)
 
+- 2026-10-18:修复 findNode 旧 `data-pdm-hit` 标签劫持后续步骤(boxExpr/read 取文档序首个标签,第二步起点击全落在前一步元素)→ 打新标签前先 `removeAttribute` 清理旧标签;对既有调用方行为不变(每步仍解析当前命中元素)。触发场景:verify-pie P3 自证(workspace 输入步骤点击落空)。批准人：ariesfish——2026-10-18 harness 维护方会话复核 diff 后批准（缺陷实锤：页面实测残留 5 个旧标签；修复面最小；调用方语义不变）。
+
 - 2026-10-18:观察不动手——cleanup 后 chrome_crashpad 可能重建
   `$userDataDir/Default` 个别文件(chrome 主进程已死、端口已关、无功能影响);
   helper 不改,残留由调用方 `rm -rf /tmp/verify-<runId>` 收尾。
