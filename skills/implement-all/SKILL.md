@@ -75,8 +75,18 @@ For every task, in either mode:
 - Run the regression suite and the build.
 - Commit **only the files that task touched** plus its task-status update —
   never `git add -A` — one commit per task, so any point is a clean rollback.
-- Append one row per decision to the trail (`.audit/<task-slug>.tsv`): id,
-  decision, reason, evidence pointer, verdict.
+- Append one row per decision to the trail (`.audit/<task-slug>.tsv`). Final format
+  (P3 定稿): columns `id, decision, reason, evidence, verdict, skip_test, show` —
+  cells single-line, evidence is a pointer (commit / file:line / artifact path),
+  never prose; verdict is a predicate state (`green` / `red` / `reverted` /
+  `open`); **skip_test** carries the reference when the `tdd` cost gate fell
+  back or a test path was honestly skipped (empty = nothing skipped — never a
+  freeform skip note elsewhere); **show** is where a human SEES the work
+  happened — a verify evidence dir, a walkthrough shot, a drive report, a
+  commit range (trail + diff is what lets the human come back and trust it).
+  Append-only; a wrong call gets a superseding row. Logs already written under
+  the pre-P3 5-column header stay as history — new logs start on the final
+  header.
 
 ## AUTO mode (serial autonomous)
 

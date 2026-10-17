@@ -108,6 +108,22 @@ CONSTRAINTS.md line it violates.
 4. End with: total findings per lens, the top finding overall, and what
    evidence would close it.
 
+## Independent verifier (high-stakes merges, or on request——独立裁决)
+
+For high-stakes merges (auth, migration, public API, data loss) — and whenever
+the user asks for 独立裁决 / independent verdict / 再来个裁判 — spawn one more
+reader **after** the four lens reports: a fresh readonly `agent` on a
+**different model** than this session (single-provider setups use the other
+tier — e.g. deepseek-flash under a v4-pro session; a multimodal verifier can
+view drive screenshots as evidence). It sees **the diff and the evidence
+pointers, never the lens outputs** — independence is the point. It adjudicates
+on its own reading — Critical/Required findings of its own — and **writes its
+verdict file itself** to `.audit/evidence/review-<slug>/verdict.json`:
+`{verdict: PASS|FAIL, blockers: [file:line + reason], checked: [what it
+covered], evidence: [paths]}`. Present its PASS/FAIL beside the aggregated
+verdict: a verifier FAIL — or disagreement with the lenses — reads as
+INCONCLUSIVE, named as such, with what would close it.
+
 ## Composition notes
 
 - Reviewers are readonly background agents spawned with the `agent` tool;

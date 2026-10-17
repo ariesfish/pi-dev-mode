@@ -43,7 +43,7 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Whole task graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
 | Something is broken or slow | `diagnose` (its perf branch passes `benchmark-checklist` before a number is claimed) |
 | Review a diff / PR / branch (single two-axis pass) | `code-review` |
-| Gate a merge / ship | `review` (four lenses in parallel readonly reviewers, one aggregated verdict) |
+| Gate a merge / ship | `review` (four lenses in parallel readonly reviewers, one aggregated verdict;高风险合并加独立裁决者——异模型 fresh agent 自写 `.audit/evidence/` verdict 文件) |
 | A measured number is about to be claimed | `benchmark-checklist` before the number leaves the room |
 | Non-trivial decision mid-flight, high stakes | `doubt` (fresh adversarial reviewer, bounded loop) |
 | Session ending / before handoff | `retro` |

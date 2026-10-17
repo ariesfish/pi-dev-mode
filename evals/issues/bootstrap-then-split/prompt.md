@@ -1,6 +1,7 @@
 ---
 description: Splitting a plan into tickets in an unconfigured repo must bootstrap the tracker with one confirmation, then proceed — not stop to demand setup.
 kind: dialogue
+fixture: unconfigured-w6
 target: issues:fires
 expected_outcome: The reply asks exactly one confirmation question carrying a recommended tracker (or seeds config and says so), then proceeds to slicing; it never just tells the user to go run setup.
 ---

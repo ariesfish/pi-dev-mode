@@ -48,3 +48,18 @@ typecheck exit 0;`npx vitest run packages/daemon` 11 文件/80 用例全过;pie 
   2. decisions.tsv 格式定稿(show-me-your-work 列 + skip-test 列;现有 `.audit/T-00X.tsv` 五列基础上扩)
   3. maintain-verification-skill 首轮巡检(可选,建议产品节奏自定)
 - F 候选注:两轮 P3 会话均在无视觉模型(v4-pro)上跑,截图自检靠 DOM 基准绕行——viewer(pin 在 flash)已在全局位,技能层指引仍缺,随剩余项一并过门
+
+## P3 收尾(2026-10-18 晚):verifier 接线 + decisions.tsv 定稿 + Mode A 门
+
+**接线四件**:review 独立裁决者节(fresh readonly `agent`、异模型、只见 diff 与证据指针、**自写 verdict 文件** `.audit/evidence/review-<slug>/verdict.json`);路由表与 mandate 各一行(verifier 角色);implement-all 台账规约定稿(`id, decision, reason, evidence, verdict, skip_test, show` 七列,skip_test 承接 tdd 成本闸 skip-test 行,show = 人能看见活在哪;存量 5 列日志作为历史不动)。
+
+**活体验收(pie 3b188b6,高风险合并判型)**:四镜头(Standards/Spec、注释纪律、对抗、约束)之外,**独立裁决者(异模型 deepseek-flash)以 diff 单边视角自判并自落 verdict 文件**——`.audit/evidence/review-3b188b6/verdict.json`:{FAIL, 3 blockers, checked[8], evidence[10]},结构完整符合契约。裁决质量极高:用 8 份 /tmp 变异副本证明守护测试的正则盲区(单引号在逃——`index.html:545` 现存 `$('sendBtn')` 即例)、`?.` 豁免放过的 live 潜伏 bug(全仓无 `id="tokenInput"`)、"wired" 断言绿在坏代码红在合法代码(违反 SPEC 自己的"只测外部行为");并顺带审计了我方下午证据的完整性(mtime 先于提交)。聚合 REQUEST CHANGES 与裁决 FAILED 同向 ——  pie 侧 3 个真 blocker 待裁决(本会话所出守护测试被打回——独立裁决者存在价值的现场证明)。
+
+**Mode A 门(P3 编辑后全库回归,fixture-aware 跑法)**:
+
+- **PASS(6)**:bench-claims / merge-gate / stays-quiet / tdd-cost-gate / answer-only(修法后二次复验稳绿)/ **multi-routing(fixture 跑法下 PASS——此前翻红是旧跑法未拷 fixture 的方法学副作用)**
+- **FAIL(3,各归各位)**:G-multi-base(站立仪器在账,一致)/ B-issues-bootstrap(fixture 已修"计划丢失"轴线,但"一次确认 + 播种"协议横跨 8 试不回——连带划界修法(B 行 scope note)亦不奏效;按 E 先例入账本站立仪器,疑 base-model 交互层漂移)、I-visual-parity(像素重建声明无渲染来源,got caught——retro 台账已记 f-red/f-green 波动类)
+- P3 编辑(verifier/review/tsv/mandate 行)自伤面 = 相关案全绿
+- 执行教训两条:① **跑法必须随案型走**(fixture-aware runner;旧 runner 对新案型产生假红)② 我自己把 append-only 台账一次替换误操作——已当场恢复,自证该纪律的人为脆弱面
+
+**P3 关账**:两大验收柱 + 接线 + 定稿 + 门,全链完成。剩余开放项不是 P3 内容:pie 守护测试 3 blocker 修复(用户裁决)、可选 maintain 巡检节奏。
