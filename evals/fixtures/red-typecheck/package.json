@@ -1,0 +1,7 @@
+{
+  "name": "widget-app",
+  "private": true,
+  "scripts": {
+    "typecheck": "node scripts/check.js"
+  }
+}

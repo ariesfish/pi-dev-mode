@@ -17,6 +17,7 @@ description: >-
 - 2026-10 P2: routing rows for review / doubt / benchmark-checklist / retro; P2 placeholders resolved.
 - 2026-10 P2.5: eval row added (skill-change promotion gate).
 - 2026-10 P2.6 (pie observation #3): scope test — multi-area tasks route to issues → implement-all, never to implement as one blob.
+- 2026-10 P2.7 (A, retro A-F round): delegation line names the `agent` tool (lowercase). An attempted scope-gate hardening was rejected by the eval gate (evals/skill-impact.md 2026-10-17) — v4-pro full-tool sessions implemented directly despite it.
 -->
 
 # Pi Dev Mode
@@ -64,7 +65,7 @@ P1).
   is not a pass.
 - One focused decision per question when a human must be asked; every question
   carries your recommended answer.
-- Delegations go to background agents, one writer per worktree, context
+- Delegations go to background agents via the `agent` tool (lowercase, pi-dev's own), one writer per worktree, context
   pointers over pasted payloads.
 - Small tasks (one file, obvious check) skip the mode entirely: work directly,
   verify, done.

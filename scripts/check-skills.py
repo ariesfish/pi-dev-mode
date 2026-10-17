@@ -20,7 +20,34 @@ import re
 import sys
 from pathlib import Path
 
-import yaml
+try:
+    import yaml
+except ImportError:  # local fallback: minimal parser for this repo's frontmatter subset
+    yaml = None
+
+    class _FM:
+        @staticmethod
+        def safe_load(text: str) -> dict:
+            out: dict = {}
+            lines = text.splitlines()
+            i = 0
+            while i < len(lines):
+                m = re.match(r"^([A-Za-z_][\w-]*):\s*(.*)$", lines[i])
+                if not m:
+                    i += 1
+                    continue
+                key, rest = m.group(1), m.group(2).strip()
+                if rest in (">", "|>", ">-", "|", "|-"):  # folded/literal block: collect indented lines
+                    block = []
+                    i += 1
+                    while i < len(lines) and (not lines[i].strip() or lines[i][:1] in (" ", "\t")):
+                        block.append(lines[i].strip())
+                        i += 1
+                    out[key] = " ".join(b for b in block if b)
+                    continue
+                out[key] = rest
+                i += 1
+            return out
 
 KILLS = {
     "align", "code-map", "code-review", "constraints", "diagnose", "doubt",
@@ -54,8 +81,11 @@ def main() -> int:
             failures.append(f"{rel}: frontmatter not found or unterminated")
             continue
         try:
-            fm = yaml.safe_load(m.group(1))
-        except yaml.YAMLError as e:
+            if yaml is not None:
+                fm = yaml.safe_load(m.group(1))
+            else:
+                fm = _FM.safe_load(m.group(1))
+        except Exception as e:
             first = str(e).splitlines()[0]
             failures.append(f"{rel}: YAML parse error: {first}")
             continue
@@ -73,9 +103,27 @@ def main() -> int:
             n = mm.group(1)
             if n in KILLS and n not in names:
                 failures.append(f"{rel}: dangling skill reference `{n}`")
+        # dispatch naming: a skill body that dispatches subagents must name the
+        # dispatch tool (a past run picked another package's `Agent` in a
+        # two-tool environment and lost all four reports — see review skill).
+        # Match dispatch phrases, not informational mentions of subagents
+        # ("subagent sessions live under...").
+        DISPATCH_VERBS = re.compile(r"\b(spawn\w*|launch\w*|fire\w*|delegat\w*|spin\s+up|kick\s+off)\b", re.I)
+        SUBAGENT = r"sub[- ]?agents?"
+        fm_body = strip_changelog(text[m.end():])
+        dispatches = (
+            f.parent.name != "agents"
+            and (re.search(r"\bbackground\s+agents?\b", fm_body, re.I)
+                 or re.search(DISPATCH_VERBS.pattern + r".{0,60}?" + SUBAGENT, fm_body, re.I))
+        )
+        if dispatches and "`agent`" not in fm_body:
+            failures.append(f"{rel}: dispatches subagents without naming the tool — add `agent` (lowercase, pi-dev's own)")
 
     # evals/: structure + leak lint (cases are candidate-facing)
     evals_root = root / "evals"
+    fx_root = evals_root / "fixtures"
+    fx_dirs = sorted(d for d in fx_root.iterdir() if d.is_dir()) if fx_root.is_dir() else []
+    referenced = set()
     cases = 0
     if evals_root.is_dir():
         for case_dir in sorted(p.parent for p in evals_root.glob("*/*/prompt.md")):
@@ -88,8 +136,11 @@ def main() -> int:
                 failures.append(f"{rel}/prompt.md: frontmatter not found")
                 continue
             try:
-                fm = yaml.safe_load(m.group(1))
-            except yaml.YAMLError as e:
+                if yaml is not None:
+                    fm = yaml.safe_load(m.group(1))
+                else:
+                    fm = _FM.safe_load(m.group(1))
+            except Exception as e:
                 failures.append(f"{rel}/prompt.md: YAML parse error: {str(e).splitlines()[0]}")
                 continue
             for key in ("description", "kind", "target", "expected_outcome"):
@@ -103,13 +154,25 @@ def main() -> int:
                 failures.append(f"{rel}/prompt.md: meta leakage (skill names / eval vocabulary) in candidate-visible body")
             if any(k in body for k in KILLS):
                 failures.append(f"{rel}/prompt.md: skill name leaked in candidate-visible body")
+            # fixture wiring: execution-kind cases must declare an existing fixture;
+            # any declared fixture must exist (dialogue cases may declare one too)
+            fx = fm.get("fixture")
+            if fm.get("kind") == "execution" and not fx:
+                failures.append(f"{rel}/prompt.md: execution-kind case must declare a fixture")
+            elif fx is not None and not (fx_root / str(fx)).is_dir():
+                failures.append(f"{rel}/prompt.md: fixture {fx!r} not found under evals/fixtures/")
+            elif fx is not None:
+                referenced.add(str(fx))
+    for d in fx_dirs:
+        if d.name not in referenced:
+            failures.append(f"evals/fixtures/{d.name}: unreferenced fixture dir (no case declares it)")
 
-    print(f"checked {len(files)} files ({len(names)} skills + agents) + {cases} eval cases")
+    print(f"checked {len(files)} files ({len(names)} skills + agents) + {cases} eval cases + {len(fx_dirs)} fixtures")
     if failures:
         for f in failures:
             print(f"FAIL {f}")
         return 1
-    print("OK: YAML frontmatter, names, triggers, changelogs, cross-references")
+    print("OK: YAML frontmatter, names, triggers, changelogs, cross-references, fixtures")
     return 0
 
 

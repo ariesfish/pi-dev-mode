@@ -21,9 +21,10 @@ evals/
 | 字段 | 说明 |
 |---|---|
 | description | 这个用例在测什么(仅判分/维护者可见口径) |
-| kind | `dialogue`(判助手回复与 transcript)/ `execution`(判真实执行产物,待 fixture 机制) |
+| kind | `dialogue`(判助手回复与 transcript)/ `execution`(判真实执行产物,fixture 机制) |
 | target | `<skill>:fires` 或 `<skill>:stays-quiet[,<别的不得触发的技能>]` |
 | expected_outcome | 一句话的期望终态(人话,判分对照) |
+| fixture | 可选(dialogue)/ 必需(execution):`evals/fixtures/<name>/` 的最小假项目名 |
 
 ## 添加用例
 
@@ -39,12 +40,24 @@ evals/
 
 ```bash
 cd $(mktemp -d)
+# dialogue 档:限 read 工具——能打开技能文件(链证据)但不会无限考古/动手,
+# 判分才有界;case 声明 fixture 时先把 fixture 拷进本目录供考察。
+cp -r <repo>/evals/fixtures/<name>/. .   # 仅当 prompt.md 声明了 fixture(内容拷入 cwd)
 pi -p --session-dir "$PWD/session" --no-extensions --no-skills \
   --tools read --skill <技能树路径> "<用例正文>"
-# dialogue 类候选限 read 工具:能打开技能文件(链证据)但不会无限考古/动手,
-# 判分才有界。execution 类用例(待 fixture 机制)才放开全量工具。
-# transcript 落在 $PWD/session;判分者以 @file 附 transcript 与回复
+# execution 档:全量工具,以 fixture 副本为 cwd(execution 用例必须声明 fixture),
+# 限时运行(全工具候选会挖仓库,900s 观察够用,300s 不够);路由行为类追加
+# -e <repo>/pi/index.ts——mandate/repo-state 是产品的一部分。
+# transcript 落在 --session-dir;判分者以 @file 附 transcript 与回复
 ```
+
+**fixture 机制(2026-10-17 增补)**:`evals/fixtures/<name>/` 是 case 通过
+`fixture:` frontmatter 引用的最小假项目。dialogue 档把 fixture 内容拷进空
+cwd(候选的 cwd 即项目根)供 read 考察;execution 档以 fixture 内容为 cwd、
+放开全量工具。fixture 内容会被候选看到,必须零元词。**fixture 的 README 必须
+点名确切文件路径**——read-only 候选列不了目录,只能照 README 找文件。
+`check-skills.py` 校验:execution 用例必须声明存在的 fixture,未被任何用例
+引用的 fixture 目录报错。
 
 **用例环境分两档(2026-10-16 增补)**:
 - **触发判别类**(fires/stays-quiet 单技能):候选不带扩展(`--no-extensions`)——看纯 description 的自然命中;

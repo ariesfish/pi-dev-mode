@@ -17,6 +17,8 @@ description: >-
   when routable) instead of Claude Code personas; the cross-model CLI piping
   section collapsed into pi-native reviewer routing (model param); loading
   constraints adapted to pi's agent depth cap.
+- 2026-10 P2.7 (A, retro A-F round): the reviewer spawn names the tool —
+  lowercase `agent`, never another package's `Agent`.
 -->
 
 # Doubt
@@ -76,7 +78,7 @@ your conclusions. Decompose anything a reviewer cannot hold in one read.
 
 ### 3. DOUBT — the reviewer
 
-Launch a readonly background agent. The prompt **must be adversarial**:
+Launch a readonly background agent with the `agent` tool (lowercase, pi-dev's own — not another package's `Agent`). The prompt **must be adversarial**:
 
 ```
 Adversarial review. Find what is wrong with this artifact.

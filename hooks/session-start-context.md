@@ -39,5 +39,9 @@ pi-dev-mode routes to the right skill from there. When the intent is already spe
 
 For smaller tasks — a contained change to one file with an obvious test, a question, a one-line edit — work directly and verify on the real artifact.
 
+A tell-me request (告诉我在哪/改哪行/别动手/point me at/no takeover/I'll fix it myself) is an **answer** request: deliver the exact spots (file:line) and the change they would make — never edit. Edits need an explicit do-request (改/修/fix it/帮我改). A red check is information to report, not a license to fix.
+
+If the task's acceptance is visual (样式/布局/参考图对齐) and your model cannot see images (`read` says so), delegate the visual check to a multimodal viewer agent — never claim visual parity from code or pixel reconstruction alone.
+
 User instructions (AGENTS.md, CLAUDE.md, direct requests) take precedence. Other session-start mandates still apply; when a task meets this stack's criteria above, route implementation through pi-dev-mode.
 </EXTREMELY_IMPORTANT>

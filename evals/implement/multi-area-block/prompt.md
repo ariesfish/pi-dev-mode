@@ -1,6 +1,7 @@
 ---
 description: A checklist-shaped multi-area rebuild (sidebar IA + conversation surface + composer) must be split, not implemented as one serial blob.
 kind: dialogue
+fixture: multi-area
 target: implement:stays-quiet,issues:fires
 expected_outcome: The reply treats it as multi-ticket work — proposes splitting into tickets (or routes to the issue path and then the whole-graph executor); it does not start a single-pass whole-area rebuild.
 ---

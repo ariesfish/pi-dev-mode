@@ -18,6 +18,7 @@ description: >-
   Pi-native: candidates run as headless `pi -p` with --skill <tree> only;
   judges attach transcripts via @file; transcripts live under --session-dir.
 - 2026-10 P2.6.1: dialogue-kind candidates run --tools read (unbounded full-tool candidates dig instead of answering).
+- 2026-10 P2.7 (D, retro A-F round): fixture mechanism — execution-kind cases run full-tool in a fixture copy with a timeout; dialogue cases may declare a fixture copied into the scratch cwd (contents-in-cwd: the candidate's cwd IS the project root; a fixture landing as a subdir reads as an empty cwd — observed in the first dogfood run). check-skills.py validates fixture wiring.
 -->
 
 # Eval
@@ -55,14 +56,25 @@ stay quiet where it must not.
 2. For each case, run one candidate in a scratch working directory:
    ```bash
    cd $(mktemp -d)
+   # dialogue 档(触发判别):限 read 工具;case 声明了 fixture 就把它的
+   # 内容拷进 cwd(候选的 cwd 即项目根,顶层直接可见 package.json 等)。
+   cp -r <repo>/evals/fixtures/<name>/. .   # 仅当 prompt.md 声明了 fixture
    pi -p --session-dir "$PWD/session" --no-extensions --no-skills \
      --tools read --skill <repo>/skills "$(cat <case>/prompt.md 的正文)"
+   # execution 档(行为判别):全量工具,以 fixture 内容为 cwd(必需 fixture),
+   # 限时(900s 观察够用);路由行为类保留扩展(-e <repo>/pi/index.ts),
+   # mandate/repo-state 是产品的一部分。
+   cp -r <repo>/evals/fixtures/<name>/. "$PWD/workspace"
+   cd "$PWD/workspace"
+   timeout 900 pi -p --session-dir "$OLDPWD/session" [--no-extensions] \
+     --no-skills --skill <repo>/skills "$(cat <case>/prompt.md 的正文)"
    ```
    Dialogue-kind cases run `--tools read`: the candidate can open skill files
    (the chain evidence) but cannot wander the filesystem or start executing —
    the run stays bounded. Validation record: full-tool dialogue candidates
    dig the repo for minutes and never reach a reply (observed 2026-10-16,
-   >7 min, killed).
+   >7 min, killed) — that is why execution-kind cases get a fixture cwd and
+   a timeout instead of unbounded access.
    `--no-extensions` keeps the mandate and repo-state notes out of the
    candidate's system prompt (they would hint the chain); `--no-skills`
    disables the user's global skills so the tree under test is all the

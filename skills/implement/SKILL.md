@@ -14,6 +14,7 @@ description: >-
   tdd→dev-tdd, code-review→dev-code-review; Chinese triggers added.
 - 2026-10 P1.1: absorbed the retired build skill's default-mode rigor (three-label AC reading, staged commit, evidence-honesty reporting); handoff note to implement-all added.
 - 2026-10 P2.6 (pie observation #3): scope check added — multi-area blobs refused to issues → implement-all.
+- 2026-10 P2.7 (F, retro A-F round): visual acceptance — visual criteria delegate to the `viewer` agent (multimodal); a text-only model must not self-assess pixel parity (P1 first shot did, and produced two reference deviations).
 -->
 
 # Implement
@@ -33,6 +34,10 @@ Read the ticket's acceptance criteria before starting. Three labels: `[check: <c
 Call the Skill tool with `tdd` where possible, at pre-agreed seams. The `tdd` cost gate applies: an expensive test path falls back to the closest executable check, recorded as `skip-test: <reason> | fallback: <check>` in the decision trail.
 
 Run typechecking regularly, single test files regularly, and the full test suite once at the end.
+
+## Visual acceptance
+
+If the ticket's criteria are visual — layout, styling, reference-image parity — never self-assess on a model that cannot see. `read` the reference image or a screenshot once: a "model does not support images" reply is the signal to delegate, not to fall back to code archaeology. Spawn the `viewer` agent (multimodal, pinned to a fast model) with the reference path and your captures, in the foreground so its report returns to this session. If your agent tool doesn't resolve a `viewer` type (pi-dev's `agent` knows only `general-purpose` and `pi-dev:*`), fall back: spawn `general-purpose` with the viewer brief, `model` on a multimodal fast model, `readonly: true` — or the `Agent` tool's `viewer` type where that package is present, foreground. Its report is your evidence — quote it in the ticket trail as `[evidence: viewer report]`, never paraphrase visual claims as your own.
 
 Once done, call the Skill tool with `code-review` to review the work.
 

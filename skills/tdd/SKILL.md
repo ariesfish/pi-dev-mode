@@ -14,6 +14,7 @@ description: >-
 <!-- pi-dev-mode changelog:
 - migrated from ~/.agents/skills/dev-tdd (2026-10); no upstream mattp@49dd158 delta applied this round.
 - 2026-10 P1 upgrade (03 matrix row): cost gate (expensive test paths fall back to the closest executable check with a recorded skip-test entry); behavior-assertion discipline added to the checklist.
+- 2026-10 P2.7 (B, retro A-F round): answer-only requests — tell-me/point-me/no-takeover requests get an evidence-carrying answer, never an edit (P2 routing r2 overreach: user said "告诉我改哪行" and the candidate edited two files).
 -->
 ## Philosophy
 
@@ -61,6 +62,10 @@ skip-test: <reason> | fallback: <the check you ran instead>
 A bad test — mock-heavy, brittle, testing imagined behavior, deleted a week later — is worse than no test. But "no test" must be a **recorded decision with a fallback check**, never a silent omission.
 
 The assertion discipline that keeps the remaining tests honest: a test that would still pass if every function it called returned `undefined` asserts nothing. If you find one, rewrite the assertion against the observable result, or delete the test.
+
+## Answer-only requests
+
+If the user asks where/what/why — 定位, 解释, 告诉我在哪行, sanity-check, point me at — or says don't touch it (别动手, no takeover, I'll fix it myself), the deliverable is an answer with evidence: exact file:line and the precise change they would make. Never edit. Edits need an explicit do-request (改, 修, fix it). "Just tell me" is a hard no-edit signal, not a soft one. If you catch yourself opening an editor after a tell-me request: stop, undo, answer. This rule outranks the red-green loop — a red typecheck is information to report, not a license to fix.
 
 ## Workflow
 

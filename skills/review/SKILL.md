@@ -17,6 +17,12 @@ description: >-
   shape; lens 4 executes constraints' diff-watch against CONSTRAINTS.md.
   Heavier passes (pstack:thermo-*) stay opt-in by direct invocation, not a
   dependency.
+- 2026-10 P2.7 (A, retro A-F round): the spawn instruction names the tool —
+  lowercase `agent` (pi-dev's own), never another package's `Agent` (P2
+  run-1 picked the wrong tool in a two-tool environment and lost all four
+  lens reports). check-skills.py enforces the naming.
+- 2026-10 P2.7 (F, retro A-F round): visual diffs get a `viewer` pass —
+  text-only lenses cannot approve visual parity.
 -->
 
 # Review
@@ -34,7 +40,7 @@ spawning anything.
 
 ## The four lenses (parallel readonly reviewers)
 
-Spawn all four as background agents in **one message**, each with the diff
+Spawn all four with this package's `agent` tool — the lowercase `agent` from the pi-dev extension, **not** another package's `Agent` (its reports land outside this session and are lost) — four calls in **one message**, each `run_in_background: true`, `readonly: true`, with the diff
 command + commit list, skill pointers instead of pasted payloads where a
 pointer reaches:
 
@@ -104,13 +110,17 @@ CONSTRAINTS.md line it violates.
 
 ## Composition notes
 
-- Reviewers are readonly background agents; launch all four in one message
-  (the parallel-calls rule rides the system prompt). Fresh context is the
-  point — never review your own implementation through lens 3 in-session;
-  that's what the spawn is for.
+- Reviewers are readonly background agents spawned with the `agent` tool;
+  launch all four in one message (the parallel-calls rule rides the system
+  prompt). Fresh context is the point — never review your own implementation
+  through lens 3 in-session; that's what the spawn is for.
 - High-stakes merges (auth, migration, public API): say so up front and offer
   `doubt`'s cross-model option for lens 3 — a second adversarial reviewer on
   a different model family.
 - This gate does not run the change; behavior verification belongs to the
   build/test stage and, later, the verification machinery. A verdict is about
   the diff's contents, never about "it must work".
+- A diff that changes rendering (styles, layout, screenshots): the text lenses
+  review the code; visual parity is the `viewer` agent's lane (multimodal)
+  against the reference image. A visual verdict from a text-only lens is
+  INCONCLUSIVE — say so instead of approving blind.
