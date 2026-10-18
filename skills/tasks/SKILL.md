@@ -1,22 +1,18 @@
 ---
 name: tasks
 description: >-
-  The tracker domain's one owner, both directions. Outbound: break a plan,
-  spec, or PRD into independently-grabbable tasks on the project tracker using
-  tracer-bullet vertical slices. Inbound: triage incoming bug reports and
-  feature requests through the label state machine into the same tracker. Use
-  when the user wants to break work down into tasks, convert a PRD into
-  implementation tickets, or when an incoming report needs filing and
-  labeling. Chinese triggers: 拆任务, 拆成 tasks, 拆工单, 把 PRD 拆成任务,
-  生成实现票, 垂直切片, vertical slice, tracer bullet, 入件, 来了个 bug
-  报告, 归置 issue, 分诊 issue, 整理 issue, 看 issue, 准备 agent brief,
-  标记 ready-for-agent, 需要补充信息, wontfix (renamed from issues + merged
-  triage-issue, 2026-10-18).
+  Break a plan, spec, or PRD into independently-grabbable tasks on the
+  project tracker using tracer-bullet vertical slices. Use when the user wants
+  to convert a plan into tasks, create implementation tickets, or break work
+  down as part of a developer workflow. Chinese triggers: 拆任务, 拆成 tasks,
+  拆工单, 把 PRD 拆成任务, 生成实现票, 垾直切片, vertical slice, tracer
+  bullet (renamed from issues, 2026-10-18).
 ---
 
 # Tasks
 
 <!-- pi-dev-mode changelog:
+  - 2026-10 P5.2b (B-solo rerun forensics): the no-signal bootstrap branch structurally produced a SECOND question beside the Step-4 bundle confirmation — folded into one.
 - migrated from ~/.agents/skills/dev-issues (mattp to-issues/to-tickets derived;
   upstream has since merged to-prd/to-issues into to-spec/to-tickets — keeping the
   PRD layer is an intentional pi-dev-mode divergence, see docs/02-fusion-architecture.md)
@@ -26,18 +22,18 @@ description: >-
 - 2026-10 P1.3 (user refinement): three-tier bootstrap — conclusive evidence → one confirmation; inconclusive or conflicting → ask_user with options labeled by the repo evidence found (or its absence).
 - 2026-10 P5.1 (standing instrument B retried, root cause): §'Quiz the user' asked four questions per turn — the skill itself commanded the interrogation. Rewritten to stated-defaults + one bundle question (one-question-per-turn is the stack's own model-the-domain discipline). [as issues]
 - 2026-10 P5.2: renamed issues → tasks (the GitHub idiom 'issue' means inbound
-  reports, which is exactly why the old trigger words collided) and MERGED
-  triage-issue in as the 入件 section — one owner for the tracker domain, both
-  directions. Trigger words redistributed: 拆任务 family → outbound slicing;
-  入件/归置/分诊 family → inbound triage. Bootstrap paragraph deduplicated to
-  this one copy. triage-issue's references moved to references-triage/.
+  reports, which is exactly why the old trigger words collided).
+- 2026-10 P5.2a (user correction): the merged-intake experiment reverted —
+  triage-issue stands as its own skill again; tasks stays outbound-slicing
+  only. Inbound trigger words (入件/归置/分诊/看 issue) handed back to
+  triage-issue's description.
 -->
 
-The tracker domain's one owner, both directions: **出件** — slice a plan, spec, or PRD into independently-grabbable tickets (vertical slices, tracer bullets) — and **入件** — triage incoming reports through the label state machine into the same tracker. This skill sits after `prd` or `align` and before `tdd` implementation.
+Break a plan into independently-grabbable tickets (vertical slices, tracer bullets). This skill sits after `prd` or `align` in the developer workflow and before `tdd` implementation; incoming reports route to `triage-issue`.
 
 The tracker and triage label vocabulary should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `tasks/plan.md` (→ Tasks files), `.scratch/` (→ local markdown), incumbent conventions under `docs/` — then:
 - **One conclusive signal** → ask exactly ONE confirmation question carrying your recommendation.
-- **No signal, or conflicting signals** → use `ask_user` and let the user choose: present each candidate as an option labeled with the evidence you found (or its absence — e.g. "`tasks/plan.md` exists → Tasks files", "no remote, no tracker files → Tasks files (recommended: zero service dependencies)"), recommend one, never invent a tracker the repo shows no evidence for.
+- **No signal, or conflicting signals** → this choice folds into the ONE bundle confirmation of Step 4, never a separate interrogation turn: `ask_user` with the tracker candidates as options, labeled with the evidence you found (or its absence — e.g. "no remote, no tracker files → Tasks files (recommended: zero service dependencies)"), recommended option first, never invent a tracker the repo shows no evidence for. Take the answer and move straight to slicing.
 Then seed `docs/agents/` from the setup skill's references and continue the work this skill was invoked for.
 
 ## 出件:Process(slicing)
@@ -62,7 +58,7 @@ Slices may be 'HITL' or 'AFK'. HITL slices require human interaction, such as an
 - Prefer many thin slices over few thick ones
 </vertical-slice-rules>
 
-### 4. Confirm the breakdown (stated defaults + onequestion)
+### 4. Confirm the breakdown (stated defaults + one question)
 
 Present the proposed breakdown as a numbered list. For each slice, show:
 
@@ -117,52 +113,3 @@ Or "None - can start immediately" if no blockers.
 
 Do NOT close or modify any parent ticket.
 
-## 入件分诊
-
-Move incoming reports on the tracker through a small state machine of triage roles — same tracker, same bootstrap above, this time applied to what arrives rather than what you slice.
-
-Every comment or ticket posted to the tracker during triage **must** start with this disclaimer:
-
-```
-> *This was generated by AI during triage.*
-```
-
-Reference docs: [references-triage/AGENT-BRIEF.md](references-triage/AGENT-BRIEF.md) (durable agent briefs) · [references-triage/OUT-OF-SCOPE.md](references-triage/OUT-OF-SCOPE.md) (the `.out-of-scope/` knowledge base).
-
-**Roles.** Two category: `bug` (something is broken), `enhancement` (new feature or improvement). Five state: `needs-triage` (maintainer must evaluate), `needs-info` (waiting on reporter), `ready-for-agent` (fully specified, ready for an AFK agent), `ready-for-human` (needs human implementation), `wontfix` (will not be actioned). Every triaged ticket carries exactly one of each. These are canonical names — the tracker's actual label strings may differ per `setup`'s mapping. If state roles conflict, flag it and ask the maintainer before anything else.
-
-**Transitions.** An unlabeled ticket goes to `needs-triage` first; from there to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer overrides at any time — flag unusual transitions and ask.
-
-**Triage a specific ticket:**
-
-1. **Gather context.** Read the full ticket (body, comments, labels, reporter, dates). Parse prior triage notes so resolved questions aren't re-asked. Explore the codebase using the domain glossary, respecting ADRs. Two checks: (a) **redundancy** — search for an existing implementation of the requested behavior by domain concept (not the request's wording) and report where you looked; found = an already-implemented `wontfix` (step 5). (b) **prior rejection** — read `.out-of-scope/*.md` and surface any prior rejection that resembles this ticket.
-2. **Recommend.** State your category + state recommendation with reasoning and a brief relevant codebase summary. Wait for direction.
-3. **Reproduce (bugs only).** Before any grilling: read the reporter's steps, trace the code, run tests or commands. Report what happened — successful repro with code path, failed repro, or insufficient detail (a strong `needs-info` signal). A confirmed repro makes a much stronger agent brief.
-4. **Align (if needed).** If the ticket needs fleshing out, run `align`.
-5. **Apply:**
-   - `ready-for-agent` — post an agent brief comment ([AGENT-BRIEF.md](references-triage/AGENT-BRIEF.md)). A performance report ("slower", "lags", "latency regression") gets a brief that names `diagnose` as the entry skill and requires a baseline measurement before any fix is proposed.
-   - `ready-for-human` — same structure, note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
-   - `needs-info` — post triage notes (template below).
-   - `wontfix` (bug) — polite explanation, then close.
-   - `wontfix` (enhancement) — write to `.out-of-scope/`, link from a comment, then close ([OUT-OF-SCOPE.md](references-triage/OUT-OF-SCOPE.md)).
-   - `needs-triage` — apply the role; optional comment on partial progress.
-
-**Quick override.** "Move #42 to ready-for-agent" — trust the maintainer, confirm what you're about to do (roles, comment, close), then act directly, no grilling. If jumping to `ready-for-agent` without a grilling session, ask whether they want an agent brief written.
-
-**Needs-info template:**
-
-```markdown
-## Triage Notes
-
-**What we've established so far:**
-- point 1
-- point 2
-
-**What we still need from you (@reporter):**
-- question 1
-- question 2
-```
-
-Questions must be specific and actionable, not "please provide more info".
-
-**Resuming.** If prior triage notes exist, read them, check whether the reporter answered outstanding questions, present an updated picture, and continue — never re-ask resolved questions.

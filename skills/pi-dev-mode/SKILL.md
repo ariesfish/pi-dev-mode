@@ -39,7 +39,7 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Fuzzy idea, no shared language yet | `align` (then `proto` if a question is best answered by building) |
 | A question needs external docs read | `research` (background) |
 | Formalize the work | `prd` -> `tasks` |
-| Incoming report needs filing/triage | `tasks`(入件) — one owner both directions |
+| Incoming bug report / feature request needs filing & labels | `triage-issue` (same tracker, inbound lane) |
 | One ticket to build (names ONE area or module) | `implement` |
 | A task naming MULTIPLE areas or modules (checklist-shaped: "X + Y + Z", whole-area rebuild, porting a reference set) | not `implement`'s job: split first (`tasks`) → `implement-all` (auto or parallel). **首轮回复 = 拆分表本身**(票名/范围/依赖/验收一句话);任何文件成品内容出现在拆分确认之前,就是 single-pass 直做的违约形状 |
 | Whole task graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
@@ -91,7 +91,7 @@ Named by need; each names its owning skill — follow the skill body, not this s
 **意图链 (intent chain)**
 1. **idea → 领域语言**: fuzzy ask → `align` (one question per turn, terms land in GLOSSARY). A question best answered by building detours to `proto`, then back.
 2. **立项**: `prd` (three-tier acceptance, check/evidence/judgment labels) → `spec` (assumptions + open questions named, approval gate before hand-off).
-3. **拆活**: `tasks` (tracer bullet, single-metric, HITL/AFK, dependency graph → one-ticket frontier; 入件归置同一技能) — multi-area blobs never reach `implement` whole.
+3. **拆活**: `tasks` (tracer bullet, single-metric, HITL/AFK, dependency graph → one-ticket frontier) — multi-area blobs never reach `implement` whole.
 
 **实现 (build)**
 4. **单票**: `implement` (tdd kernel inside, one test at a time, RED before GREEN).

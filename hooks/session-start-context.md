@@ -19,7 +19,8 @@ pi-dev-mode routes to the right skill from there. When the intent is already spe
 - `prd` — synthesize the conversation into a PRD
 - `spec` — upgrade conversation/PRD into the building contract (SPEC.md, three-label acceptance criteria)
 - `constraints` — the project's quality bar, with numbers (CONSTRAINTS.md)
-- `tasks` — the tracker's one owner: split a plan into vertical-slice tickets (task graph + frontier); 入件归置 incoming reports (label state machine, agent briefs)
+- `tasks` — split a plan into vertical-slice tickets (task graph + frontier)
+- `triage-issue` — route incoming bug reports / feature requests through triage labels into the same tracker
 - `implement` — one ticket, serial, TDD at the seams
 - `implement-all` — the whole task graph: auto (serial, single approval) or parallel (one implementer per frontier ticket, each in its own worktree)
 - `scout` — when the destination itself is foggy: decision tickets until the way is clear (探路/摸方向)

@@ -48,3 +48,10 @@ tasks/scout 更名批(tasks 吸收 triage-issue、wayfinder→scout、code-revie
 - **G/H 的真态是掷硬币**:该族近 10 跑约 5 绿 5 红。P5.1 的动作契约(首轮=拆分表)把它从站立仪器(近全红)抬到五五开,但没有稳住;候选是否主动打开 pi-dev-mode 技能体,是每次的行为分水岭(开则绿,不开则红)。
 - **撤回**:上文本档"九案全绿/G PASS"系单跑判据,结论过早。G/H 现态:**improved-but-unstable(方差主导,过率 ~50%),不 declaring cleared**。
 - 处置:该族案例保留在库里作**方差监控案**;判分若需稳定信号,应当以 n≥3 的过率计,而不是单跑;prose 层不再加码(P5.1 已到头),下一步的机制级治理(如发现层触发词重组)留待专门一轮。
+
+
+## 追记二(2026-10-18 深夜 P5.2a):triage-issue 吸收实验撤回(用户纠正)
+
+- 用户澄清:只要求 issues 改名 tasks(出件),triage-issue **不吸收**。撤回手术:triage-issue 原文整件恢复(含 references 两件),tasks 瘦身回出件 only,mandate/路由表/use-the-stack/workflow 引用同步还原;J 案移至 evals/triage-issue/,target 改 triage-issue:fires。
+- 验证:J 独立通道 **PASS**(T-2 票 needs-triage + 分诊注释,src 未动);B 复跑 FAIL 暴露 bootstrap「无信号→ask_user 选 tracker」与 §4 打包确认的**两问结构冲突**(非纯方差)——折叠修复(选项并入打包一问)后复跑 **PASS**(「票发到哪里?① tasks/ 文件(推荐——本仓无 .git、无远程…)」一问带证据带完整拆票)。
+- G/H 方差监控案继续在库;I 案 v4 规则(spawn by type)待下轮全库门复验。

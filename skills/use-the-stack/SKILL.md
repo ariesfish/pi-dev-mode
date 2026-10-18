@@ -40,7 +40,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 | Upgrade to the building contract | `spec` | SPEC.md (capability map when multi-module) |
 | Define "good enough to ship" with numbers | `constraints` | CONSTRAINTS.md floor + enforced rows + diff watch |
 | Split the plan into work | `tasks` | vertical slices, task graph, frontier |
-| Route incoming reports | `tasks`(入件) | label state machine, agent briefs |
+| Route incoming reports | `triage-issue` | label state machine, agent briefs |
 | Do one ticket now (ONE area — its scope check refuses multi-area blobs to issues) | `implement` | serial, tdd at the seams, AC three-labels, review, commit |
 | Do the whole graph | `implement-all` | auto (single approval, serial) or parallel (integration branch + frontier + worktrees) |
 | Review a diff / branch / PR | `code-review` | Standards axis + Spec axis, parallel subagents |

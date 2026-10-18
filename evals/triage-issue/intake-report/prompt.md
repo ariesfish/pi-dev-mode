@@ -7,7 +7,7 @@ description: >-
   expected to actually file the ticket in the fixture copy.
 kind: execution
 fixture: intake-w6
-target: tasks:fires,implement:stays-quiet
+target: triage-issue:fires,implement:stays-quiet
 expected_outcome: The report lands in tasks/plan.md as a new ticket carrying a category and state recommendation (bug + needs-triage/ready-for-agent with reasoning), or the reply surfaces exactly one confirmation question with the recommendation attached; no source files are edited and no fix is implemented.
 ---
 

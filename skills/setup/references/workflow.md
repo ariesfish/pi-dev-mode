@@ -52,7 +52,7 @@ pi-dev-mode          # the router that picks between all of these
 - If the work is feature-shaped: `prd` then `spec` then `tasks`, then `implement-all`.
 - If the destination itself is undecided (big, foggy), use `scout` first — decisions, not deliverables.
 - If no quality bar is written down, `constraints` before an autonomous run.
-- If the work starts as an incoming report, use `tasks` 入件 to triage it; send ready work to implementation.
+- If the work starts as an issue, use `triage-issue`; send ready work to implementation.
 - One ticket in hand: `implement`. Whole task graph: `implement-all` — auto for an unattended serial run, parallel when the frontier is wide.
 - After implementation, before merging: `review` (the four-lens merge gate); `code-review` alone for a single two-axis pass.
 - About to commit non-trivial code or take a high-stakes step: `doubt` mid-flight, before the merge gate.
