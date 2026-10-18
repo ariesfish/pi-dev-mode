@@ -38,10 +38,10 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Repo has no stack config, and the task needs it | don't detour: the dependent skill bootstraps in place (one confirmation); `setup` only for a deliberate full pass |
 | Fuzzy idea, no shared language yet | `align` (then `proto` if a question is best answered by building) |
 | A question needs external docs read | `research` (background) |
-| Formalize the work | `prd` -> `issues` |
-| Incoming issue needs routing | `triage-issue` |
+| Formalize the work | `prd` -> `tasks` |
+| Incoming report needs filing/triage | `tasks`(入件) — one owner both directions |
 | One ticket to build (names ONE area or module) | `implement` |
-| A task naming MULTIPLE areas or modules (checklist-shaped: "X + Y + Z", whole-area rebuild, porting a reference set) | not `implement`'s job: split first (`issues`) → `implement-all` (auto or parallel). **首轮回复 = 拆分表本身**(票名/范围/依赖/验收一句话);任何文件成品内容出现在拆分确认之前,就是 single-pass 直做的违约形状 |
+| A task naming MULTIPLE areas or modules (checklist-shaped: "X + Y + Z", whole-area rebuild, porting a reference set) | not `implement`'s job: split first (`tasks`) → `implement-all` (auto or parallel). **首轮回复 = 拆分表本身**(票名/范围/依赖/验收一句话);任何文件成品内容出现在拆分确认之前,就是 single-pass 直做的违约形状 |
 | Whole task graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
 | Something is broken or slow | `diagnose` (its perf branch passes `benchmark-checklist` before a number is claimed) |
 | Review a diff / PR / branch (single two-axis pass) | `code-review` |
@@ -58,8 +58,8 @@ Three questions, in order: **which stage, what shape, how much fog?**
 
 **Fog test:** if the destination itself is undecided (more than a session's
 work, more unknowns than tasks, "这个方向本身都不确定"), that is
-`wayfinder`-grade work — say so and route there: plan decisions as tickets
-first (plan-don't-do); wayfinder hands its settled decisions to `issues`.
+`scout`-grade work — say so and route there: chart decision tickets first
+(plan-don't-do); scout hands its settled decisions to `tasks`.
 
 ## While it runs
 
@@ -91,7 +91,7 @@ Named by need; each names its owning skill — follow the skill body, not this s
 **意图链 (intent chain)**
 1. **idea → 领域语言**: fuzzy ask → `align` (one question per turn, terms land in GLOSSARY). A question best answered by building detours to `proto`, then back.
 2. **立项**: `prd` (three-tier acceptance, check/evidence/judgment labels) → `spec` (assumptions + open questions named, approval gate before hand-off).
-3. **拆活**: `issues` (tracer bullet, single-metric, HITL/AFK, dependency graph → one-ticket frontier) — multi-area blobs never reach `implement` whole.
+3. **拆活**: `tasks` (tracer bullet, single-metric, HITL/AFK, dependency graph → one-ticket frontier; 入件归置同一技能) — multi-area blobs never reach `implement` whole.
 
 **实现 (build)**
 4. **单票**: `implement` (tdd kernel inside, one test at a time, RED before GREEN).
@@ -129,7 +129,7 @@ One line each — enough to steer when the owning skill is not loaded.
 
 过夜自主 = **`implement-all auto` + `/loop` 心跳 + decisions 台账**,三件各司其职:
 
-1. **白天**: `prd`→`spec`→`issues` 把活拆成带上限的工单(frontier 每轮 1-3 张,HITL 项全置后),人审批一次。
+1. **白天**: `prd`→`spec`→`tasks` 把活拆成带上限的工单(frontier 每轮 1-3 张,HITL 项全置后),人审批一次。
 2. **启动**: `implement-all auto` 自主跑票——单票一 commit + `.audit/T-XXX.tsv` 每决策一行(七列定稿:show 列给人看活、skip_test 列给诚实的跳过);停止条件照技能(测试不过/spec 缺口/需要人的决策 → 停下写在 replies 里,不合糊推进)。
 3. **心跳**: `/loop 30m 检查 frontier:还有就绪票就推进,有停止条件就停,全清就总结收账`——间隔自定;print 模式下用 `schedule_wakeup` 等价。
 4. **晨间审计**: decisions tsv 每行 before/after/evidence 指针齐全即审计通过;`review` 抽查高风险票;`retro` 收回路沉淀。

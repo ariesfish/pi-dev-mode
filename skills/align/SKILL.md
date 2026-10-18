@@ -24,7 +24,7 @@ Use this skill to align fuzzy architecture or product-design ideas with precise 
 
 ## Workflow role
 
-Use `align` before `prd`, `issues`, `tdd`, or `refact` when the plan has fuzzy domain language, unresolved trade-offs, or decisions that may deserve an ADR. Its output is aligned language and durable context, not implementation.
+Use `align` before `prd`, `tasks`, `tdd`, or `refact` when the plan has fuzzy domain language, unresolved trade-offs, or decisions that may deserve an ADR. Its output is aligned language and durable context, not implementation.
 
 When an interview surfaces a question that is best answered by building rather than asking ("does this state machine feel right?", "which layout?"), route that one question to `proto`, then resume the interview with the answer. A question a prototype can settle is not the human's to answer.
 

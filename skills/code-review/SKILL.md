@@ -6,12 +6,15 @@ description: >-
   coding standards?) and Spec (does the code match what the originating
   issue/spec asked for?). Runs both reviews in parallel sub-agents and reports
   them side by side. Use when the user wants to review a branch, a PR,
-  work-in-progress changes, or asks to "review since X". Chinese triggers:
-  代码评审, review 代码, 审查分支, 审查 diff, 审查这个 PR, review since,
-  standards 检查.
+  work-in-progress changes, or asks to "review since X". This is the QUICK
+  lane — a single two-axis pass, no gate ceremony; merging or shipping asks
+  for the `review` skill's four lenses instead. Chinese triggers: 代码评审,
+  review 代码, 审查分支, 审查 diff, 审查这个 PR, review since, standards
+  检查.
 ---
 
 <!-- pi-dev-mode changelog:
+  - 2026-10 P5.2 (user-refined lane split): description sharpens the boundary — code-review is the quick single-pass lane; the merge/ship GATE is the review skill (four lenses, lens 1 points back here).
 - migrated from mattp/skills/engineering/code-review @49dd158 (post-3da8c01:
   standards-file search, foreground parallel sub-agents, tracker-doc wording),
   localized: setup→dev-setup; Chinese triggers added.

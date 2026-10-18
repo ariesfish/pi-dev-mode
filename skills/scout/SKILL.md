@@ -1,13 +1,15 @@
 ---
-name: wayfinder
+name: scout
 description: >-
-  Plan a huge chunk of work (more than one agent session can hold) as a shared
-  map of decision tickets on the issue tracker, and resolve them one at a time
-  until the way to the destination is clear. Charting, not charging: the output
-  is decisions, not deliverables. Use when a loose idea is too big or too foggy
-  to plan directly, or when the destination itself is not yet decided.
-  Chinese triggers: 大工程规划, 找路, 决策地图, 这摊子太大, 方向都没定,
-  慢慢拆解决策, wayfinder.
+  Scout the way before the main work moves: when the destination itself is
+  undecided (more than one session can hold, foggier than a plan), chart a
+  shared map of decision tickets on the project tracker and resolve them one
+  at a time until the way clear. Charting, not charging — the output is
+  decisions, not deliverables. Use when a loose idea is too big or too foggy
+  to plan directly, or when the user asks to explore the direction first.
+  Chinese triggers: 探路, 摸方向, 方向不明, 方向都没定, 先探探路, 去向未定,
+  值得先探一下, 大工程规划, 这摊子太大, 找路, 决策地图, scout (renamed from
+  wayfinder, 2026-10-18).
 ---
 
 <!-- pi-dev-mode changelog:
@@ -15,17 +17,21 @@ description: >-
   wayfinder: labels never triage labels, no placeholder refs, research branches
   pushed but never PR'd). Localized: grilling+domain-modeling → align;
   prototype → proto; research → research; tracker config from setup.
++ renamed wayfinder → scout, 2026-10-18 (user-refined): the skill's essence
+  is exploration — when the goal is unclear, scout the direction before the
+  main force moves. Body, labels (wayfinder:map → scout:map), and Chinese
+  trigger family refreshed; decision-ticket semantics unchanged.
 -->
 
-# Wayfinder
+# Scout
 
-A loose idea has arrived, too big for one agent session, and wrapped in fog: the way from here to the **destination** isn't visible yet. Wayfinding is about finding that way. This skill charts the way as a **shared map** on the repo's issue tracker, then works its **decision tickets** one at a time until the route is clear.
+A loose idea has arrived, too big for one agent session, and wrapped in fog: the way from here to the **destination** isn't visible yet. Scouting is about finding that way. This skill charts the way as a **shared map** on the repo's issue tracker, then works its **decision tickets** one at a time until the route is clear.
 
 The destination varies per effort, and naming it is the first act of charting: a spec to hand off, a decision to lock before planning starts, or a change made in place. The map is domain-agnostic.
 
 ## Plan, don't do
 
-Wayfinder is **planning** by default: each ticket resolves a decision, and the map is done when the way is clear — nothing left to *decide* before someone goes and does the thing. The pull to just do the work is the signal you've reached the edge of the map and it is time to hand off. An effort can override this in its **Notes**, carrying execution into the map itself, but absent that: decisions, not deliverables.
+Scout is **planning** by default: each ticket resolves a decision, and the map is done when the way is clear — nothing left to *decide* before someone goes and does the thing. The pull to just do the work is the signal you've reached the edge of the map and it is time to hand off. An effort can override this in its **Notes**, carrying execution into the map itself, but absent that: decisions, not deliverables.
 
 ## Refer by name
 
@@ -33,7 +39,7 @@ Every map and ticket is an issue with a **name**: its title. In everything the h
 
 ## The map
 
-A single issue labelled `wayfinder:map`, the canonical artifact, an **index** not a store: decisions are gisted in one line each and live in their tickets. Where the map, tickets, blocking, and frontier queries live is tracker-specific — the tracker config comes from `setup` (default: local markdown). No tracker provided → tell the user to run `setup` first.
+A single issue labelled `scout:map`, the canonical artifact, an **index** not a store: decisions are gisted in one line each and live in their tickets. Where the map, tickets, blocking, and frontier queries live is tracker-specific — the tracker config comes from `setup` (default: local markdown). No tracker provided → tell the user to run `setup` first.
 
 Map body:
 
@@ -63,7 +69,7 @@ Each ticket is a **child issue** of the map, its body the question, sized to one
 [the decision or investigation this ticket resolves]
 ```
 
-Each carries a `wayfinder:<type>` label: `research`, `prototype`, `grilling`, `task`. **`wayfinder:` labels are the only labels a map and its tickets carry** — never a triage label like `ready-for-agent`: they are decisions, not implementation work.
+Each carries a `scout:<type>` label: `research`, `prototype`, `grilling`, `task`. **`scout:` labels are the only labels a map and its tickets carry** — never a triage label like `ready-for-agent`: they are decisions, not implementation work.
 
 A session **claims** a ticket by assigning itself **first**, before any work. Blocking uses the tracker's **native** dependency relationship (it renders the frontier in the tracker UI); only trackers without native blocking fall back to a body convention. The **frontier** is the open, unblocked, unclaimed children.
 
@@ -99,7 +105,7 @@ The map is deliberately incomplete. Beyond the live tickets: **Not yet specified
 
 1. Load the map (low-res; not every ticket body).
 2. Choose the ticket (user-named, else first frontier ticket). Claim it before any work.
-3. Resolve it as its `wayfinder:<type>` label names — read the **label**, not the body: the body never states the type. Zoom ticket bodies on demand; a `## Notes` block may name other skills; in doubt, `align`.
+3. Resolve it as its `scout:<type>` label names — read the **label**, not the body: the body never states the type. Zoom ticket bodies on demand; a `## Notes` block may name other skills; in doubt, `align`.
 4. Record: resolution comment, close, append the one-line gist to Decisions so far.
 5. Graduate newly specifiable fog into tickets (create, then wire); rule mis-scoped tickets out of scope; update tickets a decision invalidates.
 

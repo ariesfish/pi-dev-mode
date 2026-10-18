@@ -36,7 +36,7 @@ function repoStateNote(cwd: string): string | undefined {
     if (glossary && tracker) return undefined;
     const lines = ["This repo is not yet configured for the skills:"];
     if (!glossary) lines.push("- no domain glossary: GLOSSARY.md (align seeds it lazily)");
-    if (!tracker) lines.push("- no issue-tracker config: docs/agents/issue-tracker.md, tasks/plan.md, or .scratch/ (issues/prd/triage-issue bootstrap it on first use, one confirmation; or run the setup skill)");
+    if (!tracker) lines.push("- no issue-tracker config: docs/agents/issue-tracker.md, tasks/plan.md, or .scratch/ (tasks/prd bootstrap it on first use, one confirmation; or run the setup skill)");
     if (!has("CONSTRAINTS.md")) lines.push("- no CONSTRAINTS.md: define the quality bar before an autonomous run (constraints skill)");
     return lines.join("\n");
   } catch {

@@ -5,10 +5,10 @@ Invoke the `pi-dev-mode` skill and follow its instructions when a task meets any
 
 - it spans the lifecycle: feature-sized work needing prd -> issues -> implementation -> review
 - it touches more than one file, or changes a signature other files call
-- it names multiple areas or modules (a task graph missing its split): slice it first (`issues`), then `implement-all`
+- it names multiple areas or modules (a task graph missing its split): slice it first (`tasks`), then `implement-all`
 - it involves a design or architecture choice
 - it is a bug whose cause is not yet known, or a performance issue
-- it is large or foggy: more than one session's worth, or the destination is not yet visible (wayfinder-grade work)
+- it is large or foggy: more than one session's worth, or the destination is not yet visible (scout-grade work)
 - it should run unattended once approved, or spans a whole task graph, or needs a quality bar written down first (constraints)
 
 pi-dev-mode routes to the right skill from there. When the intent is already specific, enter the skill directly by name:
@@ -19,11 +19,10 @@ pi-dev-mode routes to the right skill from there. When the intent is already spe
 - `prd` — synthesize the conversation into a PRD
 - `spec` — upgrade conversation/PRD into the building contract (SPEC.md, three-label acceptance criteria)
 - `constraints` — the project's quality bar, with numbers (CONSTRAINTS.md)
-- `issues` — split a plan into vertical-slice tickets (task graph + frontier)
-- `triage-issue` — route incoming issues through triage labels
+- `tasks` — the tracker's one owner: split a plan into vertical-slice tickets (task graph + frontier); 入件归置 incoming reports (label state machine, agent briefs)
 - `implement` — one ticket, serial, TDD at the seams
 - `implement-all` — the whole task graph: auto (serial, single approval) or parallel (one implementer per frontier ticket, each in its own worktree)
-- `wayfinder` — when the destination itself is foggy: decision tickets until the way is clear
+- `scout` — when the destination itself is foggy: decision tickets until the way is clear (探路/摸方向)
 - `code-review` — two-axis review (Standards / Spec) of a diff since a fixed point
 - `review` — the four-lens merge gate (two-axis + comment discipline + adversarial doubt + constraints audit)
 - `doubt` — in-flight adversarial cross-examination of a non-trivial decision

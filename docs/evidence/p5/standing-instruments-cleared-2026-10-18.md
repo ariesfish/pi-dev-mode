@@ -38,3 +38,13 @@ E 第一次重跑"过"了但被否:**transcript 显示它翻进 pi-dev-mode 仓�
 - **绿验证(r05-v3)**:同一克隆环境同一 prompt,唯一变量是 mandate 行:终态回复 = 三 viewer 审计的像素级差异取证 + 拆分表 + 7 条待决项(各带推荐默认与理由)+ "STOP——需你确认",**零代码编辑**。会话原文引用了该行("per pi-dev-mode rules for headless runs, my final reply must be the deliverable")。
 - **诚实注记**:①机械代理判据(技能文件开启数)在两跑中均为零——本家族是 mandate 绑定而非技能体绑定,行为判据为准;②单次绿测;③v3 机缘复用了 v2 会话留下的像素规格(同机 session 世界可达)——加速了取证,但 v2 在同样的先验可达度下照样直做,行为增量归因于 mandate 行成立;纯净世界复测留待下次自然发生。
 - 状态:r05 家族(产品环境无头大仓多区)从"红(两树)"转"绿(单证)";G/E/H fixture 级同日绿(见上文)。
+
+
+## 修正案(2026-10-18 深夜,G/H 家族):单跑清账结论撤回,降级为方差异议案
+
+tasks/scout 更名批(tasks 吸收 triage-issue、wayfinder→scout、code-review/review 分道描述)后的 v4 全库门暴露:**G-multi-base 与 H-multi-routing 双双翻红**。法医 + 对照实验(v4 库红 ×2 → 立即复跑红 ×2 → 同文本 A/B:--skill 直指红 / .stack-skills 拷贝绿)后定谳:
+
+- **更名批无罪**:同批文本下 B×2(bootstrap 单问协议)、J(tasks 入件,新案)、K(scout 探路,新案)、A/C/D/E-tdd/F、G-copy 全绿;幽灵技能(候选读 `.stack-skills/verify-note-desktop/SKILL.md` 得 ENOENT)查为候选幻觉,fixture 仓清洁无污染。
+- **G/H 的真态是掷硬币**:该族近 10 跑约 5 绿 5 红。P5.1 的动作契约(首轮=拆分表)把它从站立仪器(近全红)抬到五五开,但没有稳住;候选是否主动打开 pi-dev-mode 技能体,是每次的行为分水岭(开则绿,不开则红)。
+- **撤回**:上文本档"九案全绿/G PASS"系单跑判据,结论过早。G/H 现态:**improved-but-unstable(方差主导,过率 ~50%),不 declaring cleared**。
+- 处置:该族案例保留在库里作**方差监控案**;判分若需稳定信号,应当以 n≥3 的过率计,而不是单跑;prose 层不再加码(P5.1 已到头),下一步的机制级治理(如发现层触发词重组)留待专门一轮。

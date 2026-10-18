@@ -21,7 +21,7 @@ description: >-
 
 This skill takes the current conversation context and codebase understanding and produces a PRD. Do NOT interview the user — synthesize what you already know.
 
-This skill sits after `align`, `code-map`, or `proto` in the developer workflow and before `issues`.
+This skill sits after `align`, `code-map`, or `proto` in the developer workflow and before `tasks`.
 
 The issue tracker and triage label vocabulary should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `tasks/plan.md` (→ Tasks files), `.scratch/` (→ local markdown), incumbent conventions under `docs/` — then:
 - **One conclusive signal** → ask exactly ONE confirmation question carrying your recommendation.

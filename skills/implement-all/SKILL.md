@@ -25,7 +25,7 @@ description: >-
 
 # Implement All
 
-Implement a whole plan: the tickets from `issues` (task graph), or a task list
+Implement a whole plan: the tickets from `tasks` (task graph), or a task list
 in `tasks/plan.md`. `implement` is one ticket, serial, in-hand; this skill
 takes the whole graph. Complement, not subordinate: `implement` after this
 README.
@@ -38,9 +38,9 @@ README.
      `spec` to upgrade it first.
    - If none exists: stop, tell the user to run `spec` first. Do not invent
      requirements.
-2. **A task list / task graph**: tracker issues sliced by `issues`, or
+2. **A task list / task graph**: tracker tickets sliced by `tasks`, or
    `tasks/plan.md` (with per-task checklists in `tasks/todo.md`). If absent,
-   invoke `issues` to generate one.
+   invoke `tasks` to generate one.
 3. **A clean baseline**: `git status --porcelain` shows nothing outside
    expected planning artifacts (SPEC.md, docs/SPEC.md, spec/*, tasks/*).
    Autonomous and parallel commits must not absorb unrelated local work, or
@@ -158,5 +158,5 @@ payloads.
 
 - One ticket in hand → `implement` (no plan machinery, no modes).
 - The plan is not sliced yet, or the destination itself is undecided →
-  `issues` / `wayfinder`.
+  `tasks` / `scout`.
 - Something is broken before the plan can run → `diagnose` first.

@@ -6,11 +6,13 @@ description: >-
   a constraints audit — as parallel readonly reviewers, then aggregate into
   one deduplicated verdict with severity labels. Use before merging a branch
   or PR, before shipping, or when the user says review this / 审查这个分支 /
-  把关. Chinese triggers: 评审管线, 四镜头, 合并前把关, 审一遍, 发布前审查,
-  review pipeline.
+  把关. For a quick two-axis look at a diff without the gate ceremony, the
+  `code-review` skill standalone is that lane. Chinese triggers: 评审管线,
+  四镜头, 合并前把关, 审一遍, 发布前审查, review pipeline.
 ---
 
 <!-- pi-dev-mode changelog:
+  - 2026-10 P5.2 (user-refined lane split): description names the lane boundary both ways — the review gate for merge/ship; `code-review` is the quick non-gate pass (and lens 1 already rides it).
 - 2026-10 P2, N (assembly): lens 1 rides the code-review skill's two-axis
   protocol; lens 2 inlines the comment-discipline core (pstack no-comments
   ideas, no comment-sicko dependency); lens 3 inlines doubt's adversarial

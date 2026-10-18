@@ -39,8 +39,8 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 | Formalize intent | `prd` | PRD on the tracker, three-label acceptance criteria |
 | Upgrade to the building contract | `spec` | SPEC.md (capability map when multi-module) |
 | Define "good enough to ship" with numbers | `constraints` | CONSTRAINTS.md floor + enforced rows + diff watch |
-| Split the plan into work | `issues` | vertical slices, task graph, frontier |
-| Route incoming reports | `triage-issue` | label state machine, agent briefs |
+| Split the plan into work | `tasks` | vertical slices, task graph, frontier |
+| Route incoming reports | `tasks`(入件) | label state machine, agent briefs |
 | Do one ticket now (ONE area — its scope check refuses multi-area blobs to issues) | `implement` | serial, tdd at the seams, AC three-labels, review, commit |
 | Do the whole graph | `implement-all` | auto (single approval, serial) or parallel (integration branch + frontier + worktrees) |
 | Review a diff / branch / PR | `code-review` | Standards axis + Spec axis, parallel subagents |
@@ -51,7 +51,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 | Gate a skill change before it ships | `eval` | trigger regression over evals/, or blinded variant A/B |
 | Something is broken or slow | `diagnose` | build a feedback loop first; RED-then-GREEN commits |
 | Structure feels wrong after the fact | `refact` | deepen modules, seams, locality |
-| The work is too big and foggy to plan | `wayfinder` | decision tickets on the tracker until the way is clear |
+| The work is too big and foggy to plan | `scout` | decision tickets on the tracker until the way is clear |
 | Route everything for me | `pi-dev-mode` | the router: stage × shape × fog |
 
 ## How they chain

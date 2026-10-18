@@ -119,7 +119,7 @@ to the ladder (give a procedure, or admit judgment).
 
 After approval, this stack takes over (this skill hands off, it does not plan or build):
 
-- `issues` — slices the spec into vertical tracer-bullet tickets (task breakdown is **issues'** canonical authority; if this spec ever disagrees with the issue graph, the graph wins and the spec gets updated).
+- `tasks` — slices the spec into vertical tracer-bullet tickets (task breakdown is **tasks'** canonical authority; if this spec ever disagrees with the ticket graph, the graph wins and the spec gets updated).
 - `implement` (one ticket) / `implement-all` (whole graph: auto serial single-approval, or parallel multi-agent) — execution.
 - `code-review` — the Standards-vs-Spec axis reads this spec back.
 
