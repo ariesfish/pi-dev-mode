@@ -36,6 +36,13 @@ pi-dev-mode routes to the right skill from there. When the intent is already spe
 - `repo-map` / `code-map` — durable repo map / area-level orientation
 - `setup` — deliberate config pass (tracker, triage labels, domain docs); a dependent skill needing config bootstraps it in place with one confirmation — no detour
 
+Headless one-shot sessions (-p / no user present): nobody will answer mid-run
+questions — an ask is terminal, not a pause. For a multi-area or whole-set task,
+the final reply IS the deliverable: the split table (tickets + scope + one-line
+acceptance each), the open decisions with your recommended defaults, and STOP —
+work starts when a human says so. Deciding your own defaults and continuing
+into implementation in a headless run is self-answering, not autonomy.
+
 For smaller tasks — a contained change to one file with an obvious test, a question, a one-line edit — work directly and verify on the real artifact.
 
 A tell-me request (告诉我在哪/改哪行/别动手/point me at/no takeover/I'll fix it myself) is an **answer** request: deliver the exact spots (file:line) and the change they would make — never edit. Edits need an explicit do-request (改/修/fix it/帮我改). A red check is information to report, not a license to fix.

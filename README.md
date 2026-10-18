@@ -69,5 +69,6 @@ pi-dev-mode/
 - [x] **P4 自主与路由成型完成(2026-10-18,evidence docs/evidence/p4/p4-autonomy-routing-2026-10-18.md)**:mode 正文(playbooks 10/principles 索引/回复契约/过夜手册)+ wayfinder 接雾级 + 生命周期命令 /spec /build /review /ship(pi/lifecycle.ts,非 vendored,NOTICE 登记,wire 证注册);双验收齐——双盲路由 9/10(r05 失守=站立仪器家族一致)+ overnight 压缩演练(5 票全清、22 行×7 列台账指针审计零缺、外来写入者如实挂账);盲测验教训入档:行为形盲测只在一次性克隆上跑
 - [x] **P5 账本与回路完成(2026-10-18,evidence docs/evidence/p5/p5-ledger-loop-2026-10-18.md)**:gates/gate.sh(零依赖七命令,D 类脚本门可重放/A 类裁决哈希入账,自证 8/8)+ 五技能 opt-in 条款 + observe 桩;验收双过——pie T-011 真 SPEC 全程开账本(修复前红→修复后绿→独立裁决 PASS→replay CLEAN→mine 出率)+ 关账本零副作用(Mode A 全库 6 PASS+3 已归因 FAIL,与 P3 终局逐案一致)。**P0→P5 全程真机闭合**
 - [x] **站立仪器清零(2026-10-18,evidence docs/evidence/p5/standing-instruments-cleared-2026-10-18.md)**:B(issues §4 审讯结构重构→单问)、G/E(多区路由行动作形状→拆分表先行)、I(视觉梯子倒序:渲染+像素diff 关门、viewer 仅后台)四案清账,Mode A 全库 9/9 PASS、E 反作弊门下正式过;eval 盲区(候选可达判分库)以按案技能拷贝+作弊判死结构性关闭
+- [x] **r05 家族(产品环境无头多区)清账(2026-10-18,evidence 同档追记)**:红绿 A/B——mandate 无头行(ask 即终态;多区终态回复=拆分表+待决点+默认,人确认才动工)前:问完自答直做;后:三 viewer 取证+拆分表+STOP 零编辑。机械代理判据(技能开启数)未翻绿,行为判据为准,单证+先验可达注记在档
 
 > 命名已定:**pi-dev-mode**(与 pi-agent 呼应,继承 XX-mode 命名传统)。mandate、mode 主体、matrix 三处统一使用。
