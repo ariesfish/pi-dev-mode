@@ -97,6 +97,12 @@ def main() -> int:
             failures.append(f"{rel}: name {fm['name']!r} != directory {f.parent.name!r}")
         if "Chinese triggers" not in re.sub(r"\s+", " ", fm["description"]):
             failures.append(f"{rel}: description carries no Chinese triggers")
+        # duplicate ## headings: P4 once landed two "## Reply contract"
+        # sections in one skill; nothing caught it. Proven on that history.
+        heads = re.findall(r"^## (.+)$", text, re.M)
+        dups = sorted({h for h in heads if heads.count(h) > 1})
+        if dups:
+            failures.append(f"{rel}: duplicate section heading(s): {dups}")
         if "pi-dev-mode changelog" not in text[: len(m.group(0)) + 400]:
             failures.append(f"{rel}: no changelog block after frontmatter")
         body = strip_changelog(text)

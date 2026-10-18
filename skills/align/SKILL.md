@@ -87,16 +87,6 @@ When a decision crystallises into something worth building, record it in the con
 
 `prd` and `spec` harvest these verbatim into their Acceptance criteria sections. Do not invent a `[check]` label for a criterion no machine can verify; label it `[judgment]` and say whose call it is.
 
-## Seeding acceptance criteria
-
-When a decision crystallises into something worth building, record it in the conversation as an acceptance-criteria candidate, labeled with exactly one of:
-
-- `[check: <command>]` — verifiable by running the command and reading its output or exit code.
-- `[evidence: <procedure>]` — verifiable by following the procedure and capturing the artifact (screenshot, ARIA snapshot, transcript).
-- `[judgment: <who and why only a human can decide>]` — everything a machine cannot verify.
-
-`prd` and `spec` harvest these verbatim into their Acceptance Criteria sections. Do not invent a `[check]` label for a criterion no machine can verify; label it `[judgment]` and say whose call it is.
-
 ## ADR threshold
 
 Offer an ADR only when all three are true:
