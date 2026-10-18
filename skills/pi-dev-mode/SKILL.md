@@ -18,6 +18,7 @@ description: >-
 - 2026-10 P2.5: eval row added (skill-change promotion gate).
 - 2026-10 P2.6 (pie observation #3): scope test — multi-area tasks route to issues → implement-all, never to implement as one blob.
 - 2026-10 P2.7 (A, retro A-F round): delegation line names the `agent` tool (lowercase). An attempted scope-gate hardening was rejected by the eval gate (evals/skill-impact.md 2026-10-17) — v4-pro full-tool sessions implemented directly despite it.
+  - 2026-10 P4/P5: full body (P4) + opt-in ledger line (P5: .sdlc/ presence is the switch, gates/README owns the format).
 -->
 
 # Pi Dev Mode
@@ -137,3 +138,7 @@ One line each — enough to steer when the owning skill is not loaded.
 2. **启动**: `implement-all auto` 自主跑票——单票一 commit + `.audit/T-XXX.tsv` 每决策一行(七列定稿:show 列给人看活、skip_test 列给诚实的跳过);停止条件照技能(测试不过/spec 缺口/需要人的决策 → 停下写在 replies 里,不合糊推进)。
 3. **心跳**: `/loop 30m 检查 frontier:还有就绪票就推进,有停止条件就停,全清就总结收账`——间隔自定;print 模式下用 `schedule_wakeup` 等价。
 4. **晨间审计**: decisions tsv 每行 before/after/evidence 指针齐全即审计通过;`review` 抽查高风险票;`retro` 收回路沉淀。
+
+## Ledger(可选,默认关)
+
+`.sdlc/` 目录在场 = 账本开启(D 类脚本门/A 类裁决门入账 + history 可重放;`retro` 挖首过率/翻转率,详见包内 `gates/README.md`)。**不在场一切照旧(P1-P4 行为)**——账本是叙述层,不是依赖。

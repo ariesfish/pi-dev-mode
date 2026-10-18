@@ -15,6 +15,7 @@ description: >-
 - 2026-10 P1.1: absorbed the retired build skill's default-mode rigor (three-label AC reading, staged commit, evidence-honesty reporting); handoff note to implement-all added.
 - 2026-10 P2.6 (pie observation #3): scope check added — multi-area blobs refused to issues → implement-all.
 - 2026-10 P2.7 (F, retro A-F round): visual acceptance — visual criteria delegate to the `viewer` agent (multimodal); a text-only model must not self-assess pixel parity (P1 first shot did, and produced two reference deviations).
+  - 2026-10 P5: opt-in ledger section (open/run tdd/close via gates/gate.sh; no .sdlc → unchanged).
 -->
 
 # Implement
@@ -44,5 +45,9 @@ Once done, call the Skill tool with `code-review` to review the work.
 Commit your work to the current branch, staging only the files this ticket touched — never `git add -A`.
 
 Report with evidence, not self-report: the failing-test output (or the skip-test line), suite and build results, the commit hash. "Inconclusive" is not a pass; flag it instead.
+
+## Ledger (opt-in)
+
+目标仓有 `.sdlc/`(账本开启;工具 = 技能包的 `../../gates/gate.sh`,repo 内运行):票开工先 `gate.sh open <票号> "<标题>"`(已开则沿用),每道过的 D 类门 `gate.sh run <票号> tdd -- <测试命令>` 入账(FAIL 也入账,首跑红是事实),收工 `gate.sh close <票号> --note "<一句话>"`。`.sdlc/` 不在场:一字不加,全套照旧。
 
 For a whole task graph, or an unattended run, use `implement-all` (auto: single approval, serial. parallel: one implementer per frontier ticket, each in its own worktree). This skill stays one ticket, in hand; its scope check refuses multi-area blobs back to `issues`.

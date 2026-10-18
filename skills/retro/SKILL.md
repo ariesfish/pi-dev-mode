@@ -17,6 +17,7 @@ description: >-
   works; rule ↔ enforcement pairing). writing-for-agents dependency inlined as
   a compact style block instead of a skill reference.
 - 2026-10 P2.5: substantive skill edits route through the eval skill (trigger regression or variant A/B) before applying; rejected changes land in evals/skill-impact.md.
+  - 2026-10 P5: opt-in ledger-rate mining (gate.sh mine → first-pass / flips / skip-test; encode as constraints or lint; no ledger → unchanged).
 -->
 
 # Retro
@@ -42,6 +43,11 @@ findings; a class counts once it has happened twice.
    - **Navigation** — the agent searched long for things a pointer would have
      named. Finding: a navigation pointer (GLOSSARY, REPO.md, a comment) or
      misplaced docs.
+   - **Ledger rates (opt-in)** — 目标仓有 `.sdlc/` 时,先跑技能包
+     `gates/gate.sh mine`:D 门首过率 + A 裁决翻转(分歧),连同
+     `.audit/*.tsv` 的 `skip_test` 率。三率出修复:编码为 constraints 行
+     (新门槛)或吞进既有 lint(correct 的最高层级修复),不改 prose。
+     无账本时只挖 tsv,照旧。
    - **Automated checks** — a mistake a check could have caught. Read the
      repo's own lint/typecheck/test commands and CI first: an existing check
      that sits unwired or broken is the finding. A repo with no guardrail at
