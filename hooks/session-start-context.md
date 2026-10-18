@@ -23,7 +23,6 @@ pi-dev-mode routes to the right skill from there. When the intent is already spe
 - `triage-issue` — route incoming issues through triage labels
 - `implement` — one ticket, serial, TDD at the seams
 - `implement-all` — the whole task graph: auto (serial, single approval) or parallel (one implementer per frontier ticket, each in its own worktree)
-- `implement-all` — the whole task graph (auto: single approval, serial; parallel: one implementer per frontier ticket in its own worktree)
 - `wayfinder` — when the destination itself is foggy: decision tickets until the way is clear
 - `code-review` — two-axis review (Standards / Spec) of a diff since a fixed point
 - `review` — the four-lens merge gate (two-axis + comment discipline + adversarial doubt + constraints audit)

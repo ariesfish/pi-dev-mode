@@ -19,6 +19,7 @@ description: >-
 - 2026-10 P1 upgrade (03 matrix row): Blocked-by named as the task-graph edges; frontier semantics and the implement-spec handshake documented.
 - 2026-10 P1.2 (pie dogfood observation): missing config bootstraps in place (one confirmation with a recommendation) instead of stopping to demand setup.
 - 2026-10 P1.3 (user refinement): three-tier bootstrap — conclusive evidence → one confirmation; inconclusive or conflicting → ask_user with options labeled by the repo evidence found (or its absence).
+  - 2026-10 P5.1 (standing instrument B retried, root cause): §4 'Quiz the user' asked four questions per turn — the skill itself commanded the interrogation. Rewritten to stated-defaults + one bundle question (one-question-per-turn is the stack's own model-the-domain discipline).
 -->
 
 Break a plan into independently-grabbable issues using vertical slices (tracer bullets).
@@ -61,14 +62,16 @@ Present the proposed breakdown as a numbered list. For each slice, show:
 - **Blocked by**: which other slices (if any) must complete first
 - **User stories covered**: which user stories this addresses (if the source material has them)
 
-Ask the user:
+State your defaults inline — granularity calls, sample-data format, anything
+you chose for the user — as one line each: decisions, not questions.
 
-- Does the granularity feel right? (too coarse / too fine)
-- Are the dependency relationships correct?
-- Should any slices be merged or split further?
-- Are the correct slices marked as HITL and AFK?
+Then ask **exactly one** question carrying the whole bundle:
 
-Iterate until the user approves the breakdown.
+> 拆成这 N 张可以直接开工吗?要调就点名票号说怎么调。
+
+Iterate only on objections the user raises (merge/split/retype the named
+slices); take the yes and publish. A stated default is never re-opened as a
+fresh question — one question per turn is the ceiling, not a quota to fill.
 
 ### 5. Publish the issues to the issue tracker
 

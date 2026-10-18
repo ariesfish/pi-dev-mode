@@ -16,6 +16,7 @@ description: >-
 - 2026-10 P2.6 (pie observation #3): scope check added — multi-area blobs refused to issues → implement-all.
 - 2026-10 P2.7 (F, retro A-F round): visual acceptance — visual criteria delegate to the `viewer` agent (multimodal); a text-only model must not self-assess pixel parity (P1 first shot did, and produced two reference deviations).
   - 2026-10 P5: opt-in ledger section (open/run tdd/close via gates/gate.sh; no .sdlc → unchanged).
+  - 2026-10 P5.1 (standing instrument I root cause, v3): sessions hung twice on FOREGROUND viewer spawns with config-archaeology model ids while the legal render+pixel-diff evidence was already in hand (run 2 built it correctly, then still blocked on the spawn). v3: render evidence closes the visual gate — viewer is optional background enhancement, only foreground (deepseek-flash pinned) when no headless render exists at all.
 -->
 
 # Implement
@@ -39,6 +40,8 @@ Run typechecking regularly, single test files regularly, and the full test suite
 ## Visual acceptance
 
 If the ticket's criteria are visual — layout, styling, reference-image parity — never self-assess on a model that cannot see. `read` the reference image or a screenshot once: a "model does not support images" reply is the signal to delegate, not to fall back to code archaeology. Spawn the `viewer` agent (multimodal, pinned to a fast model) with the reference path and your captures, in the foreground so its report returns to this session. If your agent tool doesn't resolve a `viewer` type (pi-dev's `agent` knows only `general-purpose` and `pi-dev:*`), fall back: spawn `general-purpose` with the viewer brief, `model` on a multimodal fast model, `readonly: true` — or the `Agent` tool's `viewer` type where that package is present, foreground. Its report is your evidence — quote it in the ticket trail as `[evidence: viewer report]`, never paraphrase visual claims as your own.
+
+Ladder, in order: (1) **render + pixel-diff first** when the artifact renders headless (chrome/screenshot, then `magick compare`/SSIM against the reference) — mechanical evidence, no model in the loop; (2) **viewer agent** only when no headless render exists — pinned to the stack's ONLY image-capable id `deepseek-flash` (a wrong guess like `sonnet` or a config-archaeology id can HANG the turn); (3) explicit CANNOT-VERIFY to the user. A spawn that errors or stalls gets one retry at most, then falls through — never wait on it. Acceptable evidence = a render+diff of the actual artifact, or a viewer report. Pixel archaeology — extracting colors from the reference and redrawing them — verifies your extraction, not the app; a circular reconstruction ("RMSE=0" against your own redraw) is a FAIL shape, not a pass.
 
 Once done, call the Skill tool with `code-review` to review the work.
 

@@ -19,6 +19,7 @@ description: >-
 - 2026-10 P2.6 (pie observation #3): scope test — multi-area tasks route to issues → implement-all, never to implement as one blob.
 - 2026-10 P2.7 (A, retro A-F round): delegation line names the `agent` tool (lowercase). An attempted scope-gate hardening was rejected by the eval gate (evals/skill-impact.md 2026-10-17) — v4-pro full-tool sessions implemented directly despite it.
   - 2026-10 P4/P5: full body (P4) + opt-in ledger line (P5: .sdlc/ presence is the switch, gates/README owns the format).
+  - 2026-10 P5.1 (standing instrument G axis): multi-area routing row gains the action shape — first reply = the split table itself; file contents before split confirmation is the breach shape. Also: P4's duplicate Reply-contract section merged into the original (single section now).
 -->
 
 # Pi Dev Mode
@@ -40,7 +41,7 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Formalize the work | `prd` -> `issues` |
 | Incoming issue needs routing | `triage-issue` |
 | One ticket to build (names ONE area or module) | `implement` |
-| A task naming MULTIPLE areas or modules (checklist-shaped: "X + Y + Z", whole-area rebuild, porting a reference set) | not `implement`'s job: split first (`issues`) → `implement-all` (auto or parallel) |
+| A task naming MULTIPLE areas or modules (checklist-shaped: "X + Y + Z", whole-area rebuild, porting a reference set) | not `implement`'s job: split first (`issues`) → `implement-all` (auto or parallel). **首轮回复 = 拆分表本身**(票名/范围/依赖/验收一句话);任何文件成品内容出现在拆分确认之前,就是 single-pass 直做的违约形状 |
 | Whole task graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
 | Something is broken or slow | `diagnose` (its perf branch passes `benchmark-checklist` before a number is claimed) |
 | Review a diff / PR / branch (single two-axis pass) | `code-review` |
@@ -77,9 +78,10 @@ Short declarative sentences. Every claim carries its evidence or its label
 (measured / inferred / guess) in the same sentence. Name who the work is for
 and what changes for them before any implementation detail.
 
-<!-- P4 will add: the principles index (12 selected), playbooks
-     (intent-chain / build / verify / ship cores), the autonomous-run section,
-     and the model-routing defaults. -->
+- 用用户的语言回答;每个论断同句携带证据或标签——`[check: …]` `[evidence: …]` `[judgment: …]`,或一个可打开的指针(commit/file:line/工件路径)。
+- 无证据就说"未验证",绝不编造貌似合理的引用;未覆盖的项如实列出,不静默跳过。
+- 结论先行,证据随行;不灌水(unslop):删除空洞的总结段、形容词堆叠和凑版面段落。
+- 证据工件不被 cleanup 删除;.audit/ 台账 append-only;决策点名理由,不点名修辞。
 
 
 ## Playbooks (10, 精选)
@@ -122,13 +124,6 @@ One line each — enough to steer when the owning skill is not loaded.
 - **test-behavior-not-implementation**: assert what the user sees; green on broken code is worse than no test.
 - (附)**explain-the-number**: every number ships with run count, range, limiter.
 - (附)**guard-the-context-window**: pointers over payloads; delegate digging to subagents.
-
-## Reply contract
-
-- 用用户的语言回答;每个论断同句携带证据或标签——`[check: …]` `[evidence: …]` `[judgment: …]`,或一个可打开的指针(commit/file:line/工件路径)。
-- 无证据就说"未验证",绝不编造貌似合理的引用;未覆盖的项如实列出,不静默跳过。
-- 结论先行,证据随行;不灌水(unslop):删除空洞的总结段、形容词堆叠和凑版面段落。
-- 证据工件不被 cleanup 删除;.audit/ 台账 append-only;决策点名理由,不点名修辞。
 
 ## Autonomous / overnight (组合手册)
 
