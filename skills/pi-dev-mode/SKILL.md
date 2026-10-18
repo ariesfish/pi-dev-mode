@@ -55,9 +55,9 @@ Three questions, in order: **which stage, what shape, how much fog?**
 **Scope test (before the fog test):** count the areas or modules the task names. More than one is not a ticket — it is a task graph missing its split. Routing a multi-area blob to `implement` buries the split, the tracker bootstrap, and the frontier; sort it into tickets first.
 
 **Fog test:** if the destination itself is undecided (more than a session's
-work, more unknowns than tasks), that is wayfinder-grade work — say so and
-plan decisions first instead of charging at implementation (wayfinder lands
-P1).
+work, more unknowns than tasks, "这个方向本身都不确定"), that is
+`wayfinder`-grade work — say so and route there: plan decisions as tickets
+first (plan-don't-do); wayfinder hands its settled decisions to `issues`.
 
 ## While it runs
 
@@ -79,3 +79,61 @@ and what changes for them before any implementation detail.
 <!-- P4 will add: the principles index (12 selected), playbooks
      (intent-chain / build / verify / ship cores), the autonomous-run section,
      and the model-routing defaults. -->
+
+
+## Playbooks (10, 精选)
+
+Named by need; each names its owning skill — follow the skill body, not this summary.
+
+**意图链 (intent chain)**
+1. **idea → 领域语言**: fuzzy ask → `align` (one question per turn, terms land in GLOSSARY). A question best answered by building detours to `proto`, then back.
+2. **立项**: `prd` (three-tier acceptance, check/evidence/judgment labels) → `spec` (assumptions + open questions named, approval gate before hand-off).
+3. **拆活**: `issues` (tracer bullet, single-metric, HITL/AFK, dependency graph → one-ticket frontier) — multi-area blobs never reach `implement` whole.
+
+**实现 (build)**
+4. **单票**: `implement` (tdd kernel inside, one test at a time, RED before GREEN).
+5. **任务图**: `implement-all` auto (single checkpoint, stop-conditions, one commit + tsv row per ticket, only the files that ticket touched).
+6. **重构**: `refact` (deepening over adding; module boundary first).
+
+**验证 (verify)**
+7. **发现坏**: `diagnose` — reproduce BEFORE fixing, evidence first (UI surfaces reproduce via the project's verify skill / control-web, never "must work"); commit order = repro before fix; perf symptoms pass `benchmark-checklist` before any number is claimed.
+8. **门**: `code-review` (two-axis single pass) / `review` (four lenses + aggregate; high-stakes adds the independent verifier verdict file); numbers leave the room only after `benchmark-checklist`.
+
+**发布 (ship)**
+9. **ship**: `review` gate first (APPROVE or informed accept), then land: one primary number (per benchmark 七问), release notes, post-ship verify pass, evidence archived (`.audit/evidence/`, survives cleanup).
+10. **回路**: `retro` at session end / before handoff; substantive skill edits route through `eval` (Mode A/B) — a rejected change lands in `evals/skill-impact.md`.
+
+## Principles index (12, 精选自 pstack 24)
+
+One line each — enough to steer when the owning skill is not loaded.
+
+- **laziness-protocol**: reach for the smallest lever that works; escalate only when it fails.
+- **foundational-thinking**: name the primitive before the tool around it.
+- **subtract-before-you-add**: remove, then simplify, then add.
+- **build-the-lever**: prefer checks/scripts that keep paying over one-off heroics.
+- **exhaust-the-design-space**: when the design is open, spawn the alternatives before choosing.
+- **model-the-domain**: names carry truth (GLOSSARY first; align/refact enforce).
+- **boundary-discipline**: know which side of each boundary a change lives on.
+- **type-system-discipline**: make the compiler enforce what prose claims.
+- **prove-it-works**: a generator/probe that never ran is a draft — run it.
+- **fix-root-causes**: no wrapping symptoms; repro before fix, cause before symptom.
+- **sequence-verifiable-units**: order work so each step is independently provable.
+- **test-behavior-not-implementation**: assert what the user sees; green on broken code is worse than no test.
+- (附)**explain-the-number**: every number ships with run count, range, limiter.
+- (附)**guard-the-context-window**: pointers over payloads; delegate digging to subagents.
+
+## Reply contract
+
+- 用用户的语言回答;每个论断同句携带证据或标签——`[check: …]` `[evidence: …]` `[judgment: …]`,或一个可打开的指针(commit/file:line/工件路径)。
+- 无证据就说"未验证",绝不编造貌似合理的引用;未覆盖的项如实列出,不静默跳过。
+- 结论先行,证据随行;不灌水(unslop):删除空洞的总结段、形容词堆叠和凑版面段落。
+- 证据工件不被 cleanup 删除;.audit/ 台账 append-only;决策点名理由,不点名修辞。
+
+## Autonomous / overnight (组合手册)
+
+过夜自主 = **`implement-all auto` + `/loop` 心跳 + decisions 台账**,三件各司其职:
+
+1. **白天**: `prd`→`spec`→`issues` 把活拆成带上限的工单(frontier 每轮 1-3 张,HITL 项全置后),人审批一次。
+2. **启动**: `implement-all auto` 自主跑票——单票一 commit + `.audit/T-XXX.tsv` 每决策一行(七列定稿:show 列给人看活、skip_test 列给诚实的跳过);停止条件照技能(测试不过/spec 缺口/需要人的决策 → 停下写在 replies 里,不合糊推进)。
+3. **心跳**: `/loop 30m 检查 frontier:还有就绪票就推进,有停止条件就停,全清就总结收账`——间隔自定;print 模式下用 `schedule_wakeup` 等价。
+4. **晨间审计**: decisions tsv 每行 before/after/evidence 指针齐全即审计通过;`review` 抽查高风险票;`retro` 收回路沉淀。

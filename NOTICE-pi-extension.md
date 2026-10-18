@@ -25,3 +25,8 @@ directory `plugins/pstack/pi/`, at commit `94f5ce9` (2026-10-14).
   spawn a background agent, `/loop`, `ask_user_question`) after any sync.
 - The `hookOff` / `pi models:` override-sheet semantics are upstream's: the
   sheet lives at `~/.pi/agent/pi-dev-models.md`.
+- OUR FILE, not vendored: `pi/lifecycle.ts` (P4, 2026-10-18) — lifecycle
+  commands /spec /build /review /ship registered as a separate extension
+  entry in package.json (pi.extensions). It owns no state and depends only on
+  `registerCommand` / `sendUserMessage` / `getCommands` public APIs. Upstream
+  sync does not touch it.

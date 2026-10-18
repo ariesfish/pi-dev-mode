@@ -22,7 +22,8 @@
       "./skills"
     ],
     "extensions": [
-      "./pi/index.ts"
+      "./pi/index.ts",
+      "./pi/lifecycle.ts"
     ]
   },
   "peerDependencies": {
