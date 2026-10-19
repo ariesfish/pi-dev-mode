@@ -35,9 +35,9 @@ description: >-
 
 Break a plan into independently-grabbable tickets (vertical slices, tracer bullets). This skill sits after `align` or `spec` in the developer workflow and before `tdd` implementation; incoming reports route to `triage-issue`.
 
-The tracker and triage label vocabulary should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `tasks/plan.md` (→ Tasks files), `.scratch/` (→ local markdown), incumbent conventions under `docs/` — then:
+The tracker and triage label vocabulary should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `.dev/plan.md` (→ local files), legacy `tasks/plan.md` / `.scratch/` (→ local files, old roof), incumbent conventions under `docs/` — then:
 - **One conclusive signal** → ask exactly ONE confirmation question carrying your recommendation.
-- **No signal, or conflicting signals** → this choice folds into the ONE bundle confirmation of Step 4, never a separate interrogation turn: `ask_user` with the tracker candidates as options, labeled with the evidence you found (or its absence — e.g. "no remote, no tracker files → Tasks files (recommended: zero service dependencies)"), recommended option first, never invent a tracker the repo shows no evidence for. Take the answer and move straight to slicing.
+- **No signal, or conflicting signals** → this choice folds into the ONE bundle confirmation of Step 4, never a separate interrogation turn: `ask_user` with the tracker candidates as options, labeled with the evidence you found (or its absence — e.g. "no remote, no tracker files → local files under `.dev/` (recommended: zero service dependencies, per-developer gitignored)"), recommended option first, never invent a tracker the repo shows no evidence for. Take the answer and move straight to slicing.
 Then seed `docs/agents/` from the setup skill's references and continue the work this skill was invoked for.
 
 ## 出件:Process(slicing)

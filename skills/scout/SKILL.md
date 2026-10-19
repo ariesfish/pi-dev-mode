@@ -39,7 +39,7 @@ Every map and ticket is an issue with a **name**: its title. In everything the h
 
 ## The map
 
-A single issue labelled `scout:map`, the canonical artifact, an **index** not a store: decisions are gisted in one line each and live in their tickets. Where the map, tickets, blocking, and frontier queries live is tracker-specific — the tracker config comes from `setup` (default: local markdown). No tracker provided → tell the user to run `setup` first.
+A single issue labelled `scout:map`, the canonical artifact, an **index** not a store: decisions are gisted in one line each and live in their tickets. Where the map, tickets, blocking, and frontier queries live is tracker-specific — the tracker config comes from `setup` (default: local files under `.dev/`). No tracker provided → tell the user to run `setup` first.
 
 Map body:
 
