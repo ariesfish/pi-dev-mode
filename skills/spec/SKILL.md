@@ -23,7 +23,7 @@ description: >-
   journey list, requirement triggers migrate into this skill's description.
   Template slimmed to decision-only: Tech Stack / Commands / Project
   Structure / Code Style / Testing Strategy dropped — repo-level facts live
-  once in CONSTRAINTS.md and AGENTS.md, and the model reads the real repo,
+  once in docs/CONSTRAINTS.md and AGENTS.md, and the model reads the real repo,
   which never goes stale the way a spec snapshot does. Boundaries narrowed to
   this-feature Ask First triggers. Landing is single and slug-mandatory:
   .dev/spec/<slug>.md as per-developer process memory, gitignored — parallel
@@ -133,7 +133,7 @@ admit judgment.
 [This feature's escalation triggers: decisions that must come back to the
 human mid-build — schema changes, new dependencies, config or architecture
 calls. Repo-wide always/never rules do not live here; they live once in
-CONSTRAINTS.md and AGENTS.md, not restated per spec.]
+docs/CONSTRAINTS.md and AGENTS.md, not restated per spec.]
 
 ## Open Questions + Assumptions
 [Anything unresolved that needs human input; the assumptions this spec is

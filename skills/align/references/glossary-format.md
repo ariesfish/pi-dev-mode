@@ -1,4 +1,4 @@
-# Glossary Format (GLOSSARY.md)
+# Glossary Format (docs/GLOSSARY.md)
 
 ## Structure
 
@@ -38,7 +38,7 @@ _Avoid_: Client, buyer, account
 
 ## Rules
 
-- **Treat `GLOSSARY.md` as a glossary and nothing else.** Do not use it as a spec, scratch pad, or repository for implementation decisions.
+- **Treat `docs/GLOSSARY.md` as a glossary and nothing else.** Do not use it as a spec, scratch pad, or repository for implementation decisions.
 - **Exclude implementation details completely.** Only include terms and relationships meaningful to domain experts.
 - **Be opinionated.** When multiple words exist for the same concept, pick the best one and list the others as aliases to avoid.
 - **Flag conflicts explicitly.** If a term is used ambiguously, call it out in "Flagged ambiguities" with a clear resolution.
@@ -50,9 +50,9 @@ _Avoid_: Client, buyer, account
 
 ## Single vs multi-context repos
 
-**Single context (most repos):** One `GLOSSARY.md` at the repo root.
+**Single context (most repos):** One `docs/GLOSSARY.md`. A legacy root `GLOSSARY.md` is the same file under the old roof — read as found, moving is the owner's call.
 
-**Multiple contexts:** A `GLOSSARY-MAP.md` at the repo root lists the contexts, where they live, and how they relate to each other:
+**Multiple contexts:** A `docs/GLOSSARY-MAP.md` lists the contexts, where they live, and how they relate to each other:
 
 ```md
 # Context Map
@@ -72,9 +72,9 @@ _Avoid_: Client, buyer, account
 
 The skill infers which structure applies:
 
-- If `GLOSSARY-MAP.md` exists, read it to find contexts
-- If only a root `GLOSSARY.md` exists, single context
-- If neither exists, create a root `GLOSSARY.md` lazily when the first term is resolved
+- If `docs/GLOSSARY-MAP.md` exists, read it to find contexts
+- If only a `GLOSSARY.md` (docs/ or legacy root) exists, single context
+- If neither exists, create `docs/GLOSSARY.md` lazily when the first term is resolved
 
 When multiple contexts exist, infer which one the current topic relates to. If unclear, ask.
 

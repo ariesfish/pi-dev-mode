@@ -15,7 +15,8 @@ description: >-
 - 2026-10 P2: rows and chain updated for review / doubt / benchmark-checklist / retro.
 - 2026-10 P2.5: eval row added.
 - 2026-10 P6: prd retired (intent chain folded into spec); stale `issues`/
-  `wayfinder` names refreshed to `tasks`/`scout`; spec row points at .dev/spec/.
+  `wayfinder` names refreshed to `tasks`/`scout`; spec row points at .dev/spec/;
+  GLOSSARY/CONSTRAINTS/REPO rows re-pointed under docs/.
 -->
 
 # Use the Stack
@@ -33,13 +34,13 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 | Situation | Skill | One line |
 |---|---|---|
 | Set this repo up for the stack | `setup` | tracker, triage labels, domain-doc layout |
-| Understand the whole repo once | `repo-map` | durable REPO.md navigation map |
+| Understand the whole repo once | `repo-map` | durable docs/REPO.md navigation map |
 | Understand one area before changing it | `code-map` | area map, callers, impact, next step |
 | A question needs docs/APIs read | `research` | background agent, primary sources, cited file |
-| Sharpen a fuzzy idea; agree on words | `align` | one question at a time; GLOSSARY.md + ADRs written inline |
+| Sharpen a fuzzy idea; agree on words | `align` | one question at a time; docs/GLOSSARY.md + ADRs written inline |
 | Unsure the state machine / layout is right | `proto` | throwaway artifact answers the question |
 | Formalize intent into the building contract | `spec` | six decision sections, three-label acceptance, .dev/spec/<slug>.md |
-| Define "good enough to ship" with numbers | `constraints` | CONSTRAINTS.md floor + enforced rows + diff watch |
+| Define "good enough to ship" with numbers | `constraints` | docs/CONSTRAINTS.md floor + enforced rows + diff watch |
 | Split the plan into work | `tasks` | vertical slices, task graph, frontier |
 | Route incoming reports | `triage-issue` | label state machine, agent briefs |
 | Do one ticket now (ONE area — its scope check refuses multi-area blobs to issues) | `implement` | serial, tdd at the seams, AC three-labels, review, commit |
@@ -58,8 +59,8 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 ## How they chain
 
 - **Intent chain**: align → (proto) → spec → tasks → implement-family.
-- **Knowledge base (always-on)**: GLOSSARY.md + docs/adr/ from `align`/`refact`; every skill reads them and speaks the project's language.
-- **Quality contract**: CONSTRAINTS.md from `constraints`; `code-review` watches the diff against it; `implement-all` treats rows as gates.
+- **Knowledge base (always-on)**: docs/GLOSSARY.md + docs/adr/ from `align`/`refact`; every skill reads them and speaks the project's language.
+- **Quality contract**: docs/CONSTRAINTS.md from `constraints`; `code-review` watches the diff against it; `implement-all` treats rows as gates.
 - **Verification**: every build ends on the real artifact; `diagnose` freezes proven repro loops for the verification machinery (landing P3).
 
 ## Where things live

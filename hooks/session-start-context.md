@@ -13,11 +13,11 @@ Invoke the `pi-dev-mode` skill and follow its instructions when a task meets any
 
 pi-dev-mode routes to the right skill from there. When the intent is already specific, enter the skill directly by name:
 
-- `align` — sharpen language and decisions; write GLOSSARY.md and ADRs as they crystallise
+- `align` — sharpen language and decisions; write docs/GLOSSARY.md and ADRs under docs/adr/ as they crystallise
 - `research` — delegate primary-source investigation to a background agent
 - `proto` — throwaway prototype to answer a design question
 - `spec` — synthesize the conversation into the building contract (.dev/spec/, six decision sections, three-label acceptance criteria)
-- `constraints` — the project's quality bar, with numbers (CONSTRAINTS.md)
+- `constraints` — the project's quality bar, with numbers (docs/CONSTRAINTS.md)
 - `tasks` — split a plan into vertical-slice tickets (task graph + frontier)
 - `triage-issue` — route incoming bug reports / feature requests through triage labels into the same tracker
 - `implement` — one ticket, serial, TDD at the seams

@@ -65,7 +65,7 @@ Present a numbered list of deepening opportunities. For each candidate:
 - **Solution** — plain English description of what would change
 - **Benefits** — explained in terms of locality and leverage, and also in how tests would improve
 
-**Use GLOSSARY.md vocabulary for the domain, and [references/LANGUAGE.md](references/LANGUAGE.md) vocabulary for the architecture.** If `GLOSSARY.md` defines "Order," talk about "the Order intake module" — not "the FooBarHandler," and not "the Order service."
+**Use docs/GLOSSARY.md vocabulary for the domain, and [references/LANGUAGE.md](references/LANGUAGE.md) vocabulary for the architecture.** If `docs/GLOSSARY.md` defines "Order," talk about "the Order intake module" — not "the FooBarHandler," and not "the Order service."
 
 **ADR conflicts**: if a candidate contradicts an existing ADR, only surface it when the friction is real enough to warrant revisiting the ADR. Mark it clearly (e.g. _"contradicts ADR-0007 — but worth reopening because…"_). Don't list every theoretical refactor an ADR forbids.
 
@@ -77,7 +77,7 @@ Once the user picks a candidate, drop into a grilling conversation. Walk the des
 
 Side effects happen inline as decisions crystallize:
 
-- **Naming a deepened module after a concept not in `GLOSSARY.md`?** Add the term to `GLOSSARY.md` — same discipline as `align` (see [references/GLOSSARY-FORMAT.md](references/GLOSSARY-FORMAT.md)). Create the file lazily if it doesn't exist. (Legacy repos: `CONTEXT.md` is the same file.)
-- **Sharpening a fuzzy term during the conversation?** Update `GLOSSARY.md` right there.
+- **Naming a deepened module after a concept not in `GLOSSARY.md`?** Add the term to `docs/GLOSSARY.md` — same discipline as `align` (see [references/GLOSSARY-FORMAT.md](references/GLOSSARY-FORMAT.md)). Create the file lazily if it doesn't exist. (Legacy repos: `CONTEXT.md` is the same file.)
+- **Sharpening a fuzzy term during the conversation?** Update `docs/GLOSSARY.md` right there.
 - **User rejects the candidate with a load-bearing reason?** Offer an ADR, framed as: _"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"_ Only offer when the reason would actually be needed by a future explorer to avoid re-suggesting the same thing — skip ephemeral reasons ("not worth it right now") and self-evident ones. See [references/ADR-FORMAT.md](references/ADR-FORMAT.md).
 - **Want to explore alternative interfaces for the deepened module?** See [references/INTERFACE-DESIGN.md](references/INTERFACE-DESIGN.md).

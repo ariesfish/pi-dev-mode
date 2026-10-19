@@ -54,7 +54,7 @@ Check the current repo before proposing changes:
 - `git remote -v` and `.git/config` for the issue tracker host.
 - Root `CLAUDE.md` and `AGENTS.md` for existing agent instructions.
 - Existing `## Agent skills` sections.
-- Root `GLOSSARY.md` and `GLOSSARY-MAP.md` (legacy: `CONTEXT.md`/`CONTEXT-MAP.md` from before the rename).
+- `docs/GLOSSARY.md` and `docs/GLOSSARY-MAP.md` (legacy: root copies, or `CONTEXT.md`/`CONTEXT-MAP.md` from before the rename).
 - `docs/adr/` and `src/*/docs/adr/`.
 - Existing `docs/agents/` files.
 - `.dev/plan.md` for the local-files tracker; legacy `tasks/plan.md` or
@@ -102,10 +102,10 @@ Explain that architecture, diagnosis, and TDD skills read domain context and ADR
 
 Use `references/domain.md` as the seed. Default to:
 
-- **Single-context** when the repo has root `GLOSSARY.md`, or has `CONTEXT.md` from before the rename and no `GLOSSARY-MAP.md`.
-- **Multi-context** when root `GLOSSARY-MAP.md` (or legacy `CONTEXT-MAP.md`) exists and points to per-context `GLOSSARY.md` files.
+- **Single-context** when the repo has `docs/GLOSSARY.md` (or a legacy root `GLOSSARY.md`/`CONTEXT.md`) and no glossary map.
+- **Multi-context** when `docs/GLOSSARY-MAP.md` (or a legacy map) exists and points to per-context `GLOSSARY.md` files.
 
-The seed names `GLOSSARY.md`/`GLOSSARY-MAP.md` as the convention. When the repo already uses `CONTEXT.md`/`CONTEXT-MAP.md`, record that layout in `docs/agents/domain.md` instead: it is the same convention under the old names, and renaming is the repo owner's call, not this skill's.
+The seed names `docs/GLOSSARY.md`/`docs/GLOSSARY-MAP.md` as the convention. When the repo already uses `CONTEXT.md`/`CONTEXT-MAP.md`, record that layout in `docs/agents/domain.md` instead: it is the same convention under the old names, and renaming is the repo owner's call, not this skill's.
 
 ### 6. Confirm the draft
 
@@ -155,7 +155,7 @@ Report the changed files and mention that later edits can be made directly in `d
 
 After reporting, offer at most once each, and take "no" permanently for this repo:
 
-- If no `CONSTRAINTS.md` exists at the root: offer to run the `constraints` skill to establish the quality bar with numbers.
+- If no `docs/CONSTRAINTS.md` exists: offer to run the `constraints` skill to establish the quality bar with numbers.
 - If no project verification skill exists (`.pi/skills/verify-*/` or an equivalent): offer to generate one with `create-verification-skill` when the stack ships it, so agents can prove changes on the real app.
 
 A declined offer is recorded like any other assumption, not re-asked on the next setup run.

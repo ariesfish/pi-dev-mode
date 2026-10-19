@@ -41,7 +41,7 @@ findings; a class counts once it has happened twice.
 2. **Hunt candidates in these categories:**
 
    - **Navigation** — the agent searched long for things a pointer would have
-     named. Finding: a navigation pointer (GLOSSARY, REPO.md, a comment) or
+     named. Finding: a navigation pointer (GLOSSARY, docs/REPO.md, a comment) or
      misplaced docs.
    - **Ledger rates (opt-in)** — 目标仓有 `.dev/sdlc/` 时,先跑技能包
      `gates/gate.sh mine`:D 门首过率 + A 裁决翻转(分歧),连同
@@ -57,7 +57,7 @@ findings; a class counts once it has happened twice.
      import shape, file location) gets a deterministic check — custom lint
      rule, pre-commit hook, or CI job, whichever the repo's guardrail makes
      cheapest. Reserve `CODING_STANDARDS.md`/constraint prose for genuine
-     judgment calls. If CONSTRAINTS.md is absent, propose the `constraints`
+     judgment calls. If docs/CONSTRAINTS.md is absent, propose the `constraints`
      skill instead of a prose list.
    - **Steering files** — instructions in AGENTS.md/CLAUDE.md that didn't
      change behavior (no-ops), or that belong in checks/standards.

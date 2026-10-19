@@ -31,13 +31,29 @@ const PARALLEL_CALLS =
 function repoStateNote(cwd: string): string | undefined {
   try {
     const has = (...paths: string[]) => paths.some((p) => existsSync(join(cwd, p)));
-    const glossary = has("GLOSSARY.md", "CONTEXT.md", "GLOSSARY-MAP.md");
-    const tracker = has("docs/agents/issue-tracker.md", "tasks/plan.md", ".scratch");
+    const glossary = has(
+      "docs/GLOSSARY.md",
+      "docs/GLOSSARY-MAP.md",
+      "GLOSSARY.md",
+      "CONTEXT.md",
+      "GLOSSARY-MAP.md",
+    );
+    const tracker = has(
+      "docs/agents/issue-tracker.md",
+      ".dev/plan.md",
+      "tasks/plan.md",
+      ".scratch",
+    );
     if (glossary && tracker) return undefined;
     const lines = ["This repo is not yet configured for the skills:"];
-    if (!glossary) lines.push("- no domain glossary: GLOSSARY.md (align seeds it lazily)");
-    if (!tracker) lines.push("- no issue-tracker config: docs/agents/issue-tracker.md, tasks/plan.md, or .scratch/ (tasks/prd/triage-issue bootstrap it on first use, one confirmation; or run the setup skill)");
-    if (!has("CONSTRAINTS.md")) lines.push("- no CONSTRAINTS.md: define the quality bar before an autonomous run (constraints skill)");
+    if (!glossary)
+      lines.push("- no domain glossary: docs/GLOSSARY.md (align seeds it lazily)");
+    if (!tracker)
+      lines.push(
+        "- no issue-tracker config: docs/agents/issue-tracker.md or a local `.dev/plan.md` tracker (tasks/triage-issue bootstrap it on first use, one confirmation; or run the setup skill)",
+      );
+    if (!has("docs/CONSTRAINTS.md", "CONSTRAINTS.md"))
+      lines.push("- no docs/CONSTRAINTS.md: define the quality bar before an autonomous run (constraints skill)");
     return lines.join("\n");
   } catch {
     return undefined;

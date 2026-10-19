@@ -7,10 +7,10 @@ setup
   -> repo-map        # optional durable repo-wide onboarding map
   -> code-map        # orient in unfamiliar task-specific code
   -> research        # delegate primary-source investigation to a background agent
-  -> align           # align language, decisions, GLOSSARY.md, ADRs
+  -> align           # align language, decisions, docs/GLOSSARY.md, ADRs
   -> proto           # answer unclear design/UI/logic questions
   -> spec            # synthesize the conversation + decisions into the contract
-  -> constraints     # define "good enough to ship" with numbers (CONSTRAINTS.md)
+  -> constraints     # define "good enough to ship" with numbers (docs/CONSTRAINTS.md)
   -> issues          # split the plan into vertical slices (task graph)
   -> triage-issue    # route incoming issues through labels and agent briefs
   -> implement       # one ticket, serial, TDD at the seams
@@ -34,7 +34,7 @@ pi-dev-mode          # the router that picks between all of these
 - `docs/agents/issue-tracker.md` — how skills read and publish issues.
 - `docs/agents/triage-labels.md` — canonical triage roles mapped to repo labels/statuses.
 - `docs/agents/domain.md` — where domain docs live and how to consume them.
-- `GLOSSARY.md` — glossary only; no implementation details. (Legacy name: `CONTEXT.md`)
+- `docs/GLOSSARY.md` — glossary only; no implementation details. (Legacy: root copy; pre-rename `CONTEXT.md`)
 - `docs/adr/*.md` — hard-to-reverse, surprising trade-off decisions.
 - Spec (.dev/spec/) — the feature contract: objective, decisions, out of scope, three-label acceptance. Per-developer process memory, gitignored.
 - Issues — independently grabbable vertical slices.

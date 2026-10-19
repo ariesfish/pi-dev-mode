@@ -16,7 +16,7 @@ description: >-
 - 2026-10 P2, N (assembly): lens 1 rides the code-review skill's two-axis
   protocol; lens 2 inlines the comment-discipline core (pstack no-comments
   ideas, no comment-sicko dependency); lens 3 inlines doubt's adversarial
-  shape; lens 4 executes constraints' diff-watch against CONSTRAINTS.md.
+  shape; lens 4 executes constraints' diff-watch against docs/CONSTRAINTS.md.
   Heavier passes (pstack:thermo-*) stay opt-in by direct invocation, not a
   dependency.
 - 2026-10 P2.7 (A, retro A-F round): the spawn instruction names the tool —
@@ -85,12 +85,12 @@ find any. Under 400 words.
 
 ### Lens 4 — Constraints audit
 
-Read `CONSTRAINTS.md` at the root (absent → report "no constraints contract;
+Read `docs/CONSTRAINTS.md` (legacy root `CONSTRAINTS.md` counts) (absent → report "no constraints contract;
 propose the constraints skill" and audit only the universal floor: new
 suppression comments, skipped/deleted tests, unexplained stubs, secrets).
 Audit the diff against it: weakened thresholds, removed checks, new
 suppressions without an Exceptions row — each finding cites the exact
-CONSTRAINTS.md line it violates.
+docs/CONSTRAINTS.md line it violates.
 
 ## Aggregate
 

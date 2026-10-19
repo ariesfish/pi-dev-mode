@@ -2,7 +2,7 @@
 name: constraints
 description: >-
   Establish the project's quality bar as a written contract with numbers —
-  CONSTRAINTS.md — and stop agents quietly lowering it. Interviews which
+  docs/CONSTRAINTS.md — and stop agents quietly lowering it. Interviews which
   dimensions matter (with defaults for every question), installs what each
   dimension needs, defines a non-negotiable floor, and watches diffs for a
   weakened bar. Use when no quality bar is written down, when the user says
@@ -26,7 +26,7 @@ An agent writes more in an afternoon than you will read that week, so the judgem
 
 ## When NOT to use
 
-- CONSTRAINTS.md exists and the user is not changing it: read it and follow it.
+- docs/CONSTRAINTS.md exists and the user is not changing it: read it and follow it.
 - One-off scripts, spikes, throwaway prototypes.
 - Non-interactive contexts (CI, autonomous loops): apply the Floor below, note it, flag the rest for a human.
 
@@ -45,7 +45,7 @@ One question at a time; every question has a default, so "I don't know" still pr
 
 Stop at four. A twelve-question intake produces a config nobody understands.
 
-## Step 3: Write CONSTRAINTS.md
+## Step 3: Write docs/CONSTRAINTS.md
 
 Repo root, machine-readable:
 
@@ -85,7 +85,7 @@ number and no command is an aspiration, not a constraint.
 | W1 | `no-explicit-any` | `src/legacy/**` | Rewrite tracked in ENG-441 | @who | 2026-11-01 |
 ```
 
-Then add one line to `AGENTS.md`/`CLAUDE.md`: `Read CONSTRAINTS.md before writing code. Do not weaken it to make a change pass.`
+Then add one line to `AGENTS.md`/`CLAUDE.md`: `Read docs/CONSTRAINTS.md before writing code. Do not weaken it to make a change pass.`
 
 ## Step 4: Install what each dimension needs
 

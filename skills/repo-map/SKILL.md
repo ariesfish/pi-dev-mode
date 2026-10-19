@@ -1,12 +1,12 @@
 ---
 name: repo-map
 description: >-
-  Create a concise repository navigation map in REPO.md for fast onboarding and
+  Create a concise repository navigation map in docs/REPO.md for fast onboarding and
   future agent work. Use for first-time repo orientation, durable repo maps,
   identifying where to start for common changes, important boundaries, entry
   points, verification commands, and paths to ignore. Do not use for narrow
   task-scoped code exploration; use code-map instead. Chinese triggers:
-  分析仓库, 梳理仓库, 生成 REPO.md, 仓库导航, 项目地图, 快速了解项目, 新仓库上手.
+  分析仓库, 梳理仓库, 生成 REPO.md, 生成 docs/REPO.md, 仓库导航, 项目地图, 快速了解项目, 新仓库上手.
 ---
 
 # Repo Map
@@ -16,7 +16,7 @@ description: >-
 - 2026-10-15 synced to mattp@49dd158 (d80fa0f): GLOSSARY.md naming adopted (legacy CONTEXT.md noted).
 -->
 
-Create or update `REPO.md` as a **navigation map**, not a repository encyclopedia.
+Create or update `docs/REPO.md` (legacy root `REPO.md` reads as found; moving is the owner's call) as a **navigation map**, not a repository encyclopedia.
 
 The goal is to help a human or future agent enter the repo quickly: what this repo is, how to run the main loop, where to start for common changes, which boundaries matter, and what to ignore.
 
@@ -27,7 +27,7 @@ Use `repo-map` when the user wants repo-wide onboarding or a durable map. Use `c
 - **Navigation over coverage.** Prefer “start here” guidance over exhaustive directory descriptions.
 - **Decision density over detail.** Include facts that change what the next agent reads, runs, edits, or avoids.
 - **Concrete over generic.** Name real files, commands, modules, entry points, and conventions from the repo.
-- **Short by default.** A useful `REPO.md` should be skimmable. Omit low-signal inventories.
+- **Short by default.** A useful `docs/REPO.md` should be skimmable. Omit low-signal inventories.
 - **State uncertainty.** Distinguish confirmed facts from inference. Do not invent architecture.
 
 ## Workflow
@@ -97,7 +97,7 @@ Good flows:
 
 Do not trace every feature.
 
-### 6. Write or update `REPO.md`
+### 6. Write or update `docs/REPO.md`
 
 Use this structure unless the repo needs a small adjustment:
 
@@ -147,12 +147,12 @@ Avoid:
 - Explaining every config file.
 - Mermaid diagrams that restate prose.
 - Copying README content without adding navigation value.
-- Treating `REPO.md` as a full architecture spec.
+- Treating `docs/REPO.md` as a full architecture spec.
 - Writing implementation plans for unrelated future work.
 
 ## Final check
 
-Before finishing, ensure `REPO.md` answers:
+Before finishing, ensure `docs/REPO.md` answers:
 
 1. What is this repo?
 2. How do I run and verify it?
