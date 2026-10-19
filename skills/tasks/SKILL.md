@@ -1,11 +1,11 @@
 ---
 name: tasks
 description: >-
-  Break a plan, spec, or PRD into independently-grabbable tasks on the
-  project tracker using tracer-bullet vertical slices. Use when the user wants
-  to convert a plan into tasks, create implementation tickets, or break work
+  Break a spec or plan into independently-grabbable tasks on the project
+  tracker using tracer-bullet vertical slices. Use when the user wants to
+  convert a plan into tasks, create implementation tickets, or break work
   down as part of a developer workflow. Chinese triggers: 拆任务, 拆成 tasks,
-  拆工单, 把 PRD 拆成任务, 生成实现票, 垾直切片, vertical slice, tracer
+  拆工单, 把 spec 拆成任务, 生成实现票, 垾直切片, vertical slice, tracer
   bullet (renamed from issues, 2026-10-18).
 ---
 
@@ -14,8 +14,12 @@ description: >-
 <!-- pi-dev-mode changelog:
   - 2026-10 P5.2b (B-solo rerun forensics): the no-signal bootstrap branch structurally produced a SECOND question beside the Step-4 bundle confirmation — folded into one.
 - migrated from ~/.agents/skills/dev-issues (mattp to-issues/to-tickets derived;
-  upstream has since merged to-prd/to-issues into to-spec/to-tickets — keeping the
-  PRD layer is an intentional pi-dev-mode divergence, see docs/02-fusion-architecture.md)
+  upstream has since merged to-prd/to-issues into to-spec/to-tickets — the
+  PRD layer is retired as of P6 (user-approved, upstream-aligned), see
+  docs/02-fusion-architecture.md)
+- 2026-10 P6: prd retired — this skill's input is now spec or plan only;
+  "keeping the PRD layer" divergence ends. Legacy root `tasks/plan.md` and
+  `.scratch/` layouts read as before; new repos land under `.dev/`.
 - 2026-10-15 synced to mattp@49dd158 (cffab50): attach slices as sub-issues of the parent.
 - 2026-10 P1 upgrade (03 matrix row): Blocked-by named as the task-graph edges; frontier semantics and the implement-spec handshake documented.
 - 2026-10 P1.2 (pie dogfood observation): missing config bootstraps in place (one confirmation with a recommendation) instead of stopping to demand setup.
@@ -29,7 +33,7 @@ description: >-
   triage-issue's description.
 -->
 
-Break a plan into independently-grabbable tickets (vertical slices, tracer bullets). This skill sits after `prd` or `align` in the developer workflow and before `tdd` implementation; incoming reports route to `triage-issue`.
+Break a plan into independently-grabbable tickets (vertical slices, tracer bullets). This skill sits after `align` or `spec` in the developer workflow and before `tdd` implementation; incoming reports route to `triage-issue`.
 
 The tracker and triage label vocabulary should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `tasks/plan.md` (→ Tasks files), `.scratch/` (→ local markdown), incumbent conventions under `docs/` — then:
 - **One conclusive signal** → ask exactly ONE confirmation question carrying your recommendation.
@@ -82,7 +86,7 @@ fresh question — one question per turn is the ceiling, not a quota to fill.
 
 For each approved slice, publish a new ticket to the tracker. Use the body template below. These tickets are considered ready for AFK agents, so publish them with the correct triage label unless instructed otherwise.
 
-Publish tickets in dependency order (blockers first) so you can reference real ticket identifiers in the "Blocked by" field. When the source material (plan, PRD, or spec) lives as a tracker ticket, attach each published slice as a sub-issue of it (GitHub sub-issues), so the parent reference is structural rather than prose.
+Publish tickets in dependency order (blockers first) so you can reference real ticket identifiers in the "Blocked by" field. When the source material (spec or plan) lives as a tracker ticket, attach each published slice as a sub-issue of it (GitHub sub-issues), so the parent reference is structural rather than prose.
 
 The "Blocked by" field is the task graph's edges. The **frontier** — slices with no unfinished blockers — is exactly what `implement-all` (parallel mode) works, one implementer per frontier ticket in its own worktree. Draft the graph while you slice (Step 4), not after publishing: a ticket published without its edges is momentarily a false frontier entry. Where the tracker supports native dependencies, wire those too, so the frontier renders in the tracker's own UI.
 

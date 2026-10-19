@@ -1,7 +1,7 @@
 ---
 name: implement
 description: >-
-  Implement a piece of work based on a PRD, spec, or set of tickets. Fetches
+  Implement a piece of work based on a spec or ticket. Fetches the ticket by
   the ticket by reference, implements at pre-agreed seams with TDD, typechecks
   and tests as it goes, reviews the result, and commits. Use when the user
   wants to implement a ticket, start work on an issue, or says "do this one".
@@ -26,7 +26,7 @@ description: >-
 
 Count the areas or modules the task names. **More than one is not one ticket.** A checklist-shaped ask ("do X + Y + Z", a whole-area rebuild, porting a reference implementation wholesale) is a task graph missing its split: refuse the blob, route to `tasks` to slice it, and let `implement-all` (auto or parallel, per frontier width) execute. Implementing a multi-area blob as a single serial pass buries the split, the tracker bootstrap, and every per-ticket verification.
 
-Implement the work described by the user in the PRD, spec, or tickets.
+Implement the work described by the user in the spec or tickets.
 
 If the user passes a ticket reference, fetch it from the issue tracker and state its title before starting. If the reference is ambiguous, ask.
 

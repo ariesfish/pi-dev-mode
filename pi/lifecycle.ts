@@ -19,9 +19,9 @@ interface LifecycleCommand {
 const COMMANDS: LifecycleCommand[] = [
   {
     name: "spec",
-    description: "Start spec-driven development — PRD/SPEC before code (/spec <ask>)",
+    description: "Start spec-driven development — SPEC before code (/spec <ask>)",
     skill: "spec",
-    frame: (args) => `请把这个需求升级成 SPEC:先按 prd/spec 技能核对三类验收标注是否齐,缺就补,然后产出/更新 SPEC.md 等待审批。需求:${args || "(延续当前上下文)"}`,
+    frame: (args) => `请把这个需求按 spec 技能产出六节决策合同:三类验收标注齐全,写入 .dev/spec/<slug>.md,等待审批。需求:${args || "(延续当前上下文)"}`,
   },
   {
     name: "build",
@@ -30,7 +30,7 @@ const COMMANDS: LifecycleCommand[] = [
     frame: (args) =>
       args.includes("--auto")
         ? `implement-all auto 启动:${args.replace("--auto", "").trim() || "按 tracker 里就绪的工单开工"}——单审批后自主跑完,每票一 commit + decisions tsv 留痕,停止条件照技能。`
-        : `按 implement/implement-all 技能实现:${args || "当前 tracker 里就绪的工单"}。单区单票走 implement;多区/多票走 implement-all。若没有 SPEC/PRD 与工单,先按技能拒绝并指引 spec/tasks 路径。`,
+        : `按 implement/implement-all 技能实现:${args || "当前 tracker 里就绪的工单"}。单区单票走 implement;多区/多票走 implement-all。若没有 SPEC 与工单,先按技能拒绝并指引 spec/tasks 路径。`,
   },
   {
     name: "review",

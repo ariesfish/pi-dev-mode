@@ -9,8 +9,7 @@ setup
   -> research        # delegate primary-source investigation to a background agent
   -> align           # align language, decisions, GLOSSARY.md, ADRs
   -> proto           # answer unclear design/UI/logic questions
-  -> prd             # synthesize intent into a PRD
-  -> spec            # upgrade the PRD/conversation into the building contract
+  -> spec            # synthesize the conversation + decisions into the contract
   -> constraints     # define "good enough to ship" with numbers (CONSTRAINTS.md)
   -> issues          # split the plan into vertical slices (task graph)
   -> triage-issue    # route incoming issues through labels and agent briefs
@@ -37,7 +36,7 @@ pi-dev-mode          # the router that picks between all of these
 - `docs/agents/domain.md` — where domain docs live and how to consume them.
 - `GLOSSARY.md` — glossary only; no implementation details. (Legacy name: `CONTEXT.md`)
 - `docs/adr/*.md` — hard-to-reverse, surprising trade-off decisions.
-- PRD — product intent, implementation decisions, testing decisions, out-of-scope.
+- Spec (.dev/spec/) — the feature contract: objective, decisions, out of scope, three-label acceptance. Per-developer process memory, gitignored.
 - Issues — independently grabbable vertical slices.
 - Tests/code — source of truth for behavior and implementation.
 
@@ -47,9 +46,9 @@ pi-dev-mode          # the router that picks between all of these
 - If the repo is unfamiliar and needs durable onboarding context, use `repo-map`.
 - If you do not understand the task-specific code area, use `code-map` before planning or editing.
 - If a question needs external docs/APIs read, delegate it to `research` and keep working.
-- If language or trade-offs are fuzzy, use `align` before writing PRDs/issues.
-- If the best design is unknown, use `proto` before committing to a PRD or issue breakdown.
-- If the work is feature-shaped: `prd` then `spec` then `tasks`, then `implement-all`.
+- If language or trade-offs are fuzzy, use `align` before writing specs.
+- If the best design is unknown, use `proto` before committing to a spec or task breakdown.
+- If the work is feature-shaped: `spec` then `tasks`, then `implement-all`.
 - If the destination itself is undecided (big, foggy), use `scout` first — decisions, not deliverables.
 - If no quality bar is written down, `constraints` before an autonomous run.
 - If the work starts as an issue, use `triage-issue`; send ready work to implementation.

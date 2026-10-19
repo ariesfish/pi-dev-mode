@@ -24,7 +24,7 @@ Use this skill to align fuzzy architecture or product-design ideas with precise 
 
 ## Workflow role
 
-Use `align` before `prd`, `tasks`, `tdd`, or `refact` when the plan has fuzzy domain language, unresolved trade-offs, or decisions that may deserve an ADR. Its output is aligned language and durable context, not implementation.
+Use `align` before `spec`, `tasks`, `tdd`, or `refact` when the plan has fuzzy domain language, unresolved trade-offs, or decisions that may deserve an ADR. Its output is aligned language and durable context, not implementation.
 
 When an interview surfaces a question that is best answered by building rather than asking ("does this state machine feel right?", "which layout?"), route that one question to `proto`, then resume the interview with the answer. A question a prototype can settle is not the human's to answer.
 
@@ -85,7 +85,7 @@ When a decision crystallises into something worth building, record it in the con
 - `[evidence: <procedure>]` — verifiable by following the procedure and capturing the artifact (screenshot, ARIA snapshot, transcript).
 - `[judgment: <who and why only a human can decide>]` — everything a machine cannot verify.
 
-`prd` and `spec` harvest these verbatim into their Acceptance criteria sections. Do not invent a `[check]` label for a criterion no machine can verify; label it `[judgment]` and say whose call it is.
+`spec` harvests these verbatim into its Acceptance criteria section. Do not invent a `[check]` label for a criterion no machine can verify; label it `[judgment]` and say whose call it is.
 
 ## ADR threshold
 

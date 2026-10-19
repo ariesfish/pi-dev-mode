@@ -1,7 +1,7 @@
 ---
 name: implement-all
 description: >-
-  Implement an entire PRD/spec/task-graph, not one ticket. Two modes: "auto"
+  Implement an entire spec/task-graph, not one ticket. Two modes: "auto"
   (serial autonomous — single approval, then every task test-first and
   committed, stops at risk or ambiguity) and "parallel" (multi-agent
   orchestration — integration branch, frontier of ready tickets, background
@@ -21,6 +21,7 @@ description: >-
   the two doors duplicated ~80% and "build" collided with the npm-build verb
   inside its own protocol.
   - 2026-10 P5: auto mode step 6 — opt-in per-ticket ledger (open/…/close; blocker tickets stay open). No .sdlc → unchanged.
+  - 2026-10 P6: prd retired — spec is the only upstream contract.
 -->
 
 # Implement All
@@ -33,11 +34,8 @@ README.
 ## What implement-all needs before it starts
 
 1. **A spec**, at a known path: `SPEC.md` at the root, `docs/SPEC.md`, or a
-   file under `spec/`. A README or an arbitrary doc is not a spec.
-   - A PRD (tracker issue from `prd`) alone is not enough: propose running
-     `spec` to upgrade it first.
-   - If none exists: stop, tell the user to run `spec` first. Do not invent
-     requirements.
+   file under `spec/`. A README or an arbitrary doc is not a spec. If none
+   exists: stop, tell the user to run `spec` first. Do not invent requirements.
 2. **A task list / task graph**: tracker tickets sliced by `tasks`, or
    `tasks/plan.md` (with per-task checklists in `tasks/todo.md`). If absent,
    invoke `tasks` to generate one.

@@ -14,6 +14,8 @@ description: >-
   setup/references/workflow.md; this page is situation-first.
 - 2026-10 P2: rows and chain updated for review / doubt / benchmark-checklist / retro.
 - 2026-10 P2.5: eval row added.
+- 2026-10 P6: prd retired (intent chain folded into spec); stale `issues`/
+  `wayfinder` names refreshed to `tasks`/`scout`; spec row points at .dev/spec/.
 -->
 
 # Use the Stack
@@ -21,9 +23,9 @@ description: >-
 Situation → skill. When in doubt, say what you want in plain words and let `pi-dev-mode` route; this page is for picking directly.
 
 ```text
-setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto ─→ prd ─→ spec ─→
- constraints ─→ issues ─→ triage-issue ─→ implement / implement-all ─→ review ─… doubt / benchmark-checklist / retro 横切其间
- code-review ─→ diagnose ─→ refact … wayfinder above it all
+setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto ─→ spec ─→
+ constraints ─→ tasks ─→ triage-issue ─→ implement / implement-all ─→ review ─… doubt / benchmark-checklist / retro 横切其间
+ code-review ─→ diagnose ─→ refact … scout above it all
 ```
 
 ## "I want to…"
@@ -36,8 +38,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 | A question needs docs/APIs read | `research` | background agent, primary sources, cited file |
 | Sharpen a fuzzy idea; agree on words | `align` | one question at a time; GLOSSARY.md + ADRs written inline |
 | Unsure the state machine / layout is right | `proto` | throwaway artifact answers the question |
-| Formalize intent | `prd` | PRD on the tracker, three-label acceptance criteria |
-| Upgrade to the building contract | `spec` | SPEC.md (capability map when multi-module) |
+| Formalize intent into the building contract | `spec` | six decision sections, three-label acceptance, .dev/spec/<slug>.md |
 | Define "good enough to ship" with numbers | `constraints` | CONSTRAINTS.md floor + enforced rows + diff watch |
 | Split the plan into work | `tasks` | vertical slices, task graph, frontier |
 | Route incoming reports | `triage-issue` | label state machine, agent briefs |
@@ -56,7 +57,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 
 ## How they chain
 
-- **Intent chain**: align → (proto) → prd → spec → issues → implement-family or build.
+- **Intent chain**: align → (proto) → spec → tasks → implement-family.
 - **Knowledge base (always-on)**: GLOSSARY.md + docs/adr/ from `align`/`refact`; every skill reads them and speaks the project's language.
 - **Quality contract**: CONSTRAINTS.md from `constraints`; `code-review` watches the diff against it; `implement-all` treats rows as gates.
 - **Verification**: every build ends on the real artifact; `diagnose` freezes proven repro loops for the verification machinery (landing P3).
