@@ -36,7 +36,7 @@ flowchart TB
     end
     subgraph L3["L3 工件契约层 融合心脏"]
         A1["GLOSSARY 上下文 ADR"]
-        A2["PRD 到 SPEC 到 tickets"]
+        A2["SPEC 到 tickets"]
         A3["CONSTRAINTS"]
         A4["verify 技能与 feature map"]
         A5["evidence 与 decisions"]
@@ -76,17 +76,17 @@ flowchart TB
 
 | 工件 | canonical 来源 | 谁写 | 谁读 |
 |---|---|---|---|
-| `GLOSSARY.md`(+`GLOSSARY-MAP.md` 多上下文)、`CONTEXT.md`、`docs/adr/` | mattp domain-modeling | grilling/domain-modeling/improve-codebase-architecture | 全部技能(domain 语言即压缩) |
-| `PRD`(挂 tracker)→ `SPEC.md` | mattp to-prd + addyosmani spec-driven | to-prd / spec-driven | planning、implement-all auto、triage |
+| `docs/GLOSSARY.md`(+`docs/GLOSSARY-MAP.md` 多上下文;legacy 根文件/`CONTEXT.md` 照读)、`docs/adr/` | mattp domain-modeling | grilling/domain-modeling/improve-codebase-architecture | 全部技能(domain 语言即压缩) |
+| `SPEC.md` 六节决策制(`.dev/spec/<slug>.md`) | mattp to-spec(上游已并 to-prd)+ addyosmani spec-driven(P6 瘦身) | spec | planning、implement-all auto、triage |
 | SPEC 的**验收标准三类标注**:`[check: cmd] / [evidence: 规程] / [judgment: 谁]` | 我方设计稿 §6.1 | spec-driven 写入 | gate.sh(D 类门)、verify(A 类门)、review(人审点) |
-| tickets / `tasks/plan.md` + `tasks/todo.md` | mattp to-tickets(格式)+ addyosmani planning(依赖图) | to-tickets / planning | implement-all、triage |
-| `CONSTRAINTS.md` | addyosmani constraint-driven | constraint-driven(访谈) | code-review(读门槛)、gate.sh(机械化检查)、implement-all(floor 兜底) |
+| tickets / `.dev/plan.md` + `.dev/todo.md`(全文票 `.dev/tickets/`) | mattp to-tickets(格式)+ addyosmani planning(依赖图) | tasks / planning | implement-all、triage |
+| `docs/CONSTRAINTS.md` | addyosmani constraint-driven | constraint-driven(访谈) | code-review(读门槛)、gate.sh(机械化检查)、implement-all(floor 兜底) |
 | `.pi/skills/verify-<app>/`(五段+feature map) | pstack create-verification-skill(路径 Pi 化) | create-verification-skill | bug-fix、build、review、ship、maintain-verification-skill |
 | `evidence/`(截图/ARIA/trace/基准输出) | pstack 证据标准 | verify 适配器 | review/ship(独立裁决引用) |
-| `decisions.tsv` | pstack show-me-your-work | 自主循环每迭代 | retro、morning audit |
-| `.sdlc/items/<id>/state.json`(**opt-in**) | 我方设计稿 | gate.sh | 跨会话接手、指标收割 |
+| `.dev/audit/<task>.tsv` 决策台账 | pstack show-me-your-work | 自主循环每迭代 | retro、morning audit |
+| `.dev/sdlc/items/<id>/state.json`(**opt-in**) | 我方设计稿 | gate.sh | 跨会话接手、指标收割 |
 
-**图的落点**:PRD→SPEC→tickets 是意图纵深;GLOSSARY/ADR 是知识横切(每个环节都读);CONSTRAINTS 是质量的"公差表"(spec 定对错,constraints 定"够不够好");verify+evidence 是证明责任;decisions 是审计线。
+**图的落点**:SPEC→tickets 是意图纵深;GLOSSARY/ADR 是知识横切(每个环节都读);CONSTRAINTS 是质量的"公差表"(spec 定对错,constraints 定"够不够好");verify+evidence 是证明责任;decisions 是审计线。
 
 ## 3. 入口设计:两条路,一个大 mode
 
@@ -114,9 +114,9 @@ flowchart TB
 |---|---|
 | "我想做 X 但没想清楚" / 空泛想法 | idea-refine(并入 grilling 侧 references)→ 没有领域语言先 **align** |
 | 没想清 + 说不出术语 | **align**(拷打方案,一次一问,边问边落 CONTEXT/ADR) |
-| 想清楚了要正式立项 | **prd**(PRD 挂 tracker;同步打三类验收标注)→ **spec**(PRD → SPEC.md 升级模板) |
+| 想清楚了要正式立项 | **spec**(对话 → 六节决策合同,`.dev/spec/`,三类验收标注) |
 | "这个仓库质量没标准" / agent 老压低质量 | **constraints**(CONSTRAINTS.md) |
-| 有 SPEC/PRD 要拆活 | **issues**(tracer-bullet + HITL/AFK + 依赖图升级) |
+| 有 SPEC 要拆活 | **tasks**(tracer-bullet + HITL/AFK + 依赖图升级) |
 | 大雾(会话装不下、"这个方向都不确定") | **wayfinder**(决策票地图,plan-don't-do) |
 | "先做两个原型对比 / 我不确定这个状态机对不对" | **proto**(logic/UI 双分支) |
 | 看不懂某块代码 / 改哪里 | **code-map**(区域级)/ **repo-map**(仓库级 REPO.md) |

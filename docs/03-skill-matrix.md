@@ -18,7 +18,7 @@
 | `repo-map` | REPO.md 导航地图五原则(navigation over coverage 等) | (a) 加"验证命令"节(与 verify 技能的 Launch/Doctor 互链);(b) addyosmani context-engineering 的"按步装载、不灌全文" |
 | `diagnose` | 反馈环优先哲学("环即技能,其余机械")+ 10 种环构造法 + HITL 模板脚本 | (a) pstack 纪律:复现在前、修复在后的 commit 序列(sequence-verifiable-units);(a) **环冻结纪律:验证通过的复现环 = create-verification-skill 的 feature map 原料**(全部融合里最大的咬合点);(c) 性能症状先过 benchmark-checklist 再下结论 |
 | `issues` | tracer-bullet 纵向切片 + HITL/AFK 分类 + vertical-slice-rules 硬块 | (b) addyosmani planning 的依赖图(canonical,以引用并入,切片条目加"依赖"字段);(b) mattp implement-spec 的 frontier 拓扑 + 后台 implementer + context pointers 稀交通信 |
-| `prd` | deep module 提取确认("哪些模块要测试")+ PRD 模板 | (a) 验收标准节加**三类验收标注** —— PRD 与 SPEC 同构,后续可无缝升级为 SPEC 与 gate 化 |
+| `prd` | deep module 提取确认("哪些模块要测试")+ PRD 模板 | (a) 验收标准节加**三类验收标注**;**2026-10 P6 裁撤**——与 mattp 上游对齐(to-prd 已并入 to-spec),职责吸收进 `spec`(见 P6 落地节) |
 | `proto` | logic/UI 双分支 + 六条规则 + "问题决定形状" | (a) pstack prototype playbook 的经验分叉裁决观:能用原型定夺的不问人;(c) 与 align 互路由 |
 | `refact` | deep-module glossary(Module/Interface/Depth/Seam/Adapter/Leverage/Locality)+ deletion test | (a) 每个重构机会按 sequence-verifiable-units 排序交付(一次一机会一验证);(c) 重构输出走 review 镜头 4(CONSTRAINTS diff) |
 | `setup` | docs/agents 三件套(issue-tracker/triage-labels/domain)+ ask-user 决策驱动 + dev-workflow.md 闭环地图 | (a) tracker 预置 profile 从两个扩到三个:local-markdown / GitHub / **addyosmani-tasks 文件式**(tasks/plan.md + todo.md);(a) 引导 CONSTRAINTS.md 初始化;(a) pstack setup 的 offer 模式:检测 verify 技能缺席 → 一次性提议 create-verification-skill,不纠缠 |
@@ -130,3 +130,11 @@ delegation:guard-the-context-window。
 - 修复:pi-dev-mode 路由表加 Scope test 行 + implement 技能加 scope check(多区域拒收 → issues → implement-all)+ mandate 一行 + use-the-stack 标注。
 - **eval 门:PASS**(evals/implement/multi-area-block,Mode A,deepseek,扩展在场):候选把任务定性为"出 SPEC → 按票改三块"并拒绝单 pass 实现;对照组(无 mandate)则回答"逐个区域改"。期间固化两条配方:dialogue 类候选限 `--tools read`(全量工具会无限考古);路由类用例必须带扩展(mandate 是产品的一部分)。
 - 运行期发现(记录):同名工具冲突时 pi 报错拒载第二份(ours vs ours 双份实测);pi-subagents 注册名不冲突,共存无恙。
+
+### P6 落地(2026-10-18):工件布局统一 + prd 裁撤(用户拍板)
+
+- **prd 裁撤**:mattp 上游早已把 to-prd 并入 to-spec,pi-dev-mode 此前有意保留的 PRD 分歧(docs/02)结束。职责吸收:Out of Scope 回归 spec 模板;user-story 覆盖折进验收标准(journey 列表,每旅程至少一条三标签);需求触发词迁移到 spec 的描述。
+- **spec 六节决策制**:Tech Stack/Commands/Project Structure/Code Style/Testing Strategy 从模板删除——仓库级事实一次成型于 docs/CONSTRAINTS.md 与 AGENTS.md,模型读真仓库(照片会过期,仓库不会);Boundaries 收窄为本特性 Ask First 触发器;保留假设面板、审批硬停轮、living-document。
+- **`.dev/` 过程记忆统一**(gitignore `/^.dev/`,单一根):spec/<slug>.md(slug 必填,多模块 <initiative>/map.md+SPEC-<id>.md)、plan.md、todo.md、tickets/T-XXX.md、research/<slug>.md、sdlc/、audit/。本地 tracker 双轨(.scratch/ 与根 tasks/)合一为 setup references/issue-tracker-dev.md;legacy 屋顶照读。
+- **docs/ 持久资产归位**:GLOSSARY(+MAP)/CONSTRAINTS/REPO 从根迁入 docs/,与 adr/ 同层;legacy 根文件照读,搬迁归 owner。
+- **验收**:check-skills 26 技能全绿(prd/issues/wayfinder 留 KILLS 绊线);模型回放触发回归未在本轮执行——standing instruments(B/bootstrap、G/拆分表、E/multi-area)需在新路径下复跑。

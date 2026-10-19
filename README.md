@@ -5,6 +5,7 @@
 
 ```
 基座(15件) →基座 宿主      align code/diagnose issues implement* prd proto refact repo research review setup tdd triage
+                          (基座名单为迁入快照:P6 裁撤 prd;issues→tasks、wayfinder→scout 已改名)
 pstack      →升级包 验证的心脏    证据标准 独立裁决 数字纪律 verify 生成器 反馈环冻结复用
 mattp       →血统确认          grilling domain 哲学 tracker 管道 + 工程件第二轮补齐已在 基座 落地
 addyosmani  →升级包 生命周期与质量合同  SPEC CONSTRAINTS 三类验收标注 停止条件(已并入 implement-all auto)
@@ -28,8 +29,17 @@ addyosmani  →升级包 生命周期与质量合同  SPEC CONSTRAINTS 三类验
 2. 显式技能直调:`/skill:spec` `/skill:implement-all`(auto / parallel 模式)`/skill:code-review` …(独立执行技能无生命周期命令层,直接用具名技能)
 3. 单点:`/skill:align`、`/skill:benchmark-checklist`、`/skill:constraints`……任何技能独立跑,靠工件在场咬合,不在场就降级
 
-**技能构成:P2.5 后 25 件** = 基座 15 + P1 新增 5(pi-dev-mode、spec、constraints、wayfinder、use-the-stack)+ P2 新增 5(**doubt、retro、review 四镜头管线、benchmark-checklist、eval**)+ agents×2(code-reviewer/security-auditor)+ references×7 + evals/ 用例库 5 例。P3 待增:verify 双件 + control-web + ship(perf playbook)。**
+**技能构成:P6 后 26 件** = 基座 14 在任(P6 裁撤 prd,与 mattp 上游 to-prd 并入 to-spec 对齐;issues→tasks、wayfinder→scout 经 P5.2 改名)+ 新增 12:spec/constraints/use-the-stack/pi-dev-mode(P1)、doubt/retro/code-review/benchmark-checklist/eval(P2 系)、create/maintain-verification-skill(P3)+ agents×2(code-reviewer/security-auditor)+ references + evals/ 用例库(11 例)。
 (散件说明:`~/.agents/skills/` 里留下的 `handoff` 等散件按引用归类,不重复收编。旧 dev-* 原件备份在 `~/.agents/dev-skills-backup-2026-10-15/`。)
+
+**工件布局(P6 统一,2026-10-18 用户拍板):**
+```
+.dev/     过程记忆,gitignore /(^.dev/),单一根——spec/<slug>.md(slug 必填;多模块 <initiative>/map.md+SPEC-<id>.md)
+          plan.md + todo.md + tickets/T-XXX.md(本地 tracker,唯一本地方案)+ research/<slug>.md + sdlc/(账本)+ audit/(决策 tsv + evidence/)
+docs/     持久资产,进 git——adr/(唯一过程沉淀通道)+ GLOSSARY.md(+MAP)+ CONSTRAINTS.md + REPO.md + agents/(栈配置)
+根目录     只留 AGENTS.md/CLAUDE.md(硬约定),指针行指向 docs/
+```
+spec 是六节决策制合同(Objective/Implementation Decisions/Out of Scope/Acceptance Criteria/Ask First/Open Questions+Assumptions)——只收人拍板的决策,仓库级事实(命令/风格/结构)一次成型于 docs/CONSTRAINTS.md 与 AGENTS.md,设计留给实现。
 
 **仓库当前形态(P0 完成):**
 ```
@@ -39,7 +49,7 @@ pi-dev-mode/
   hooks/session-start-context.md   路由 mandate(pi-dev 进场条件)
   references/           pi-host.md 宿主映射 v0
   models.json           家族别名解析表(anthropic/openai/openai-codex)
-  skills/               16 件(15 基座 + pi-dev-mode 骨架)
+  skills/               26 件(基座 14 + 新增 12)
   adapters/control-web/ (P3)browser-harness fork
   gates/(opt-in)        (P5)
   docs/                 五份文档 + 证据目录

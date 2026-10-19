@@ -5,7 +5,7 @@
 ## 门的两类(docs/04 P5;源设计稿 `../sdlc-unified-design.md` 已不在盘,以此节与 docs/01 §10 为准)
 
 - **D 类(脚本门)**:可判定命令直接判定——tdd 绿、check 类验收标准、CONSTRAINTS 门槛。每跑一次入一行 history(argv+dir+exit 可重放)。
-- **A 类(裁决门)**:独立裁决 verdict 文件(P3 的 `.audit/evidence/review-<sha>/verdict.json` 形态)——入账只记 sha256 + 解析出的 verdict;重放 = 复核哈希。
+- **A 类(裁决门)**:独立裁决 verdict 文件(`.dev/audit/evidence/review-<sha>/verdict.json` 形态)——入账只记 sha256 + 解析出的 verdict;重放 = 复核哈希。
 
 ## CLI
 
@@ -30,10 +30,10 @@ gates/gate.sh mine          # retro 三率之两率:D 门首过率 + A 裁决翻
 skip_test 率标准挖法(不手搓,retro 直接用):
 
 ```
-awk -F'\t' 'NR>1 && $1!="id" && $6!="" && $6!="N/A" {n++} END{print "skip:", n, "/", NR-1}' .audit/T-*.tsv
+awk -F'\t' 'NR>1 && $1!="id" && $6!="" && $6!="N/A" {n++} END{print "skip:", n, "/", NR-1}' .dev/audit/T-*.tsv
 ```
 
-`gate.sh mine` 出 D 门首过率 + 裁决翻转(分歧);skip-test 率在 `.audit/*.tsv` 的 `skip_test` 列(七列定稿),retro 技能合并三率,编码为 constraints 行或吞进 lint(correct 的最高层级修复)。
+`gate.sh mine` 出 D 门首过率 + 裁决翻转(分歧);skip-test 率在 `.dev/audit/*.tsv` 的 `skip_test` 列(七列定稿),retro 技能合并三率,编码为 constraints 行或吞进 lint(correct 的最高层级修复)。
 
 ## observe 桩(P5 item 4,立桩不实现)
 
