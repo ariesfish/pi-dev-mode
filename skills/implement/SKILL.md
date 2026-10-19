@@ -5,8 +5,7 @@ description: >-
   the ticket by reference, implements at pre-agreed seams with TDD, typechecks
   and tests as it goes, reviews the result, and commits. Use when the user
   wants to implement a ticket, start work on an issue, or says "do this one".
-  Chinese triggers: 实现这张票, 实现 issue, 开工, 干活, 按票实现, 实现 spec,
-  做这个任务, implement this.
+  Chinese triggers: 实现这张票, 实现 issue, 开工, 按票实现, 做这个任务.
 ---
 
 # Implement
@@ -47,6 +46,11 @@ Report with evidence, not self-report: the failing-test output (or the skip-test
 
 ## Ledger (opt-in)
 
-目标仓有 `.dev/lifecycle/`(账本开启;工具 = 技能包的 `../../gates/gate.sh`,repo 内运行):票开工先 `gate.sh open <票号> "<标题>"`(已开则沿用),每道过的 D 类门 `gate.sh run <票号> tdd -- <测试命令>` 入账(FAIL 也入账,首跑红是事实),收工 `gate.sh close <票号> --note "<一句话>"`。`.dev/lifecycle/` 不在场:一字不加,全套照旧。
+When the target repo carries `.dev/lifecycle/` (ledger on; tool = this
+package's `../../gates/gate.sh`, run from the repo): open the ticket with
+`gate.sh open <id> "<title>"` (reuse if already open), record every passed
+D-class gate with `gate.sh run <id> tdd -- <test command>` (FAILs recorded
+too — a first-pass red is a fact), and close with `gate.sh close <id> --note
+"<one line>"`. Without `.dev/lifecycle/`: add nothing, full unchanged behavior.
 
 For a whole task graph, or an unattended run, use `implement-all` (auto: single approval, serial. parallel: one implementer per frontier ticket, each in its own worktree). This skill stays one ticket, in hand; its scope check refuses multi-area blobs back to `tasks`.

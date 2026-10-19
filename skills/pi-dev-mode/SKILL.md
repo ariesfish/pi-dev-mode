@@ -6,7 +6,7 @@ description: >-
   work ships. Use at the start of a task, when a job spans spec/tasks/
   implementation/review, or for standing requests like "get this PR green",
   "ship the stack", "I'm going to bed, finish it". Chinese triggers: 走流程,
-  用 pi-dev, 全流程做这个, 帮我安排这个活, 该用哪个技能, 大干一场.
+  用 pi-dev, 该用哪个技能, 大干一场.
 ---
 
 # Pi Dev Mode
@@ -28,23 +28,23 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Formalize the work | `spec` -> `tasks` |
 | Incoming bug report / feature request needs filing & labels | `triage-issue` (same tracker, inbound lane) |
 | One ticket to build (names ONE area or module) | `implement` |
-| A task naming MULTIPLE areas or modules (checklist-shaped: "X + Y + Z", whole-area rebuild, porting a reference set) | not `implement`'s job: split first (`tasks`) → `implement-all` (auto or parallel). **首轮回复 = 拆分表本身**(票名/范围/依赖/验收一句话);任何文件成品内容出现在拆分确认之前,就是 single-pass 直做的违约形状 |
+| A task naming MULTIPLE areas or modules (checklist-shaped: "X + Y + Z", whole-area rebuild, porting a reference set) | not `implement`'s job: split first (`tasks`) → `implement-all` (auto or parallel). **First reply = the split table itself** (ticket name / scope / deps / one-line acceptance for each); any file deliverable appearing before the split is confirmed is the breach shape — a single-pass build |
 | Whole task graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
 | Something is broken or slow | `diagnose` (its perf branch passes `benchmark-checklist` before a number is claimed) |
 | Review a diff / PR / branch (single two-axis pass) | `code-review` |
-| Gate a merge / ship | `review` (four lenses in parallel readonly reviewers, one aggregated verdict;高风险合并加独立裁决者——异模型 fresh agent 自写 `.dev/audit/evidence/` verdict 文件) |
+| Gate a merge / ship | `review` (four lenses in parallel readonly reviewers, one aggregated verdict; high-stakes merges add an independent adjudicator — a fresh agent on a different model writes its own verdict file under `.dev/audit/evidence/`) |
 | A measured number is about to be claimed | `benchmark-checklist` before the number leaves the room |
 | Non-trivial decision mid-flight, high stakes | `doubt` (fresh adversarial reviewer, bounded loop) |
 | Session ending / before handoff | `retro` |
 | A skill/description change about to land | `eval` (trigger regression over evals/, or variant A/B) — retro routes its substantive edits here |
 | Structural friction, shallow modules | `refact` |
-| Ship / land a green stack | `review` then the shipping playbook (ship lands P3/P4; pstack shipping 为底) |
+| Ship / land a green stack | `review` then the shipping playbook (pstack's shipping playbook underneath) |
 | Unfamiliar code area / whole repo | `code-map` / `repo-map` |
 
 **Scope test (before the fog test):** count the areas or modules the task names. More than one is not a ticket — it is a task graph missing its split. Routing a multi-area blob to `implement` buries the split, the tracker bootstrap, and the frontier; sort it into tickets first.
 
 **Fog test:** if the destination itself is undecided (more than a session's
-work, more unknowns than tasks, "这个方向本身都不确定"), that is
+work, more unknowns than tasks, "which direction is still undecided"), that is
 `scout`-grade work — say so and route there: chart decision tickets first
 (plan-don't-do); scout hands its settled decisions to `tasks`.
 
@@ -54,8 +54,8 @@ work, more unknowns than tasks, "这个方向本身都不确定"), that is
   is not a pass.
 - One focused decision per question when a human must be asked; every question
   carries your recommended answer.
-- Delegations go to background agents via the `agent` tool (lowercase, pi-dev's own), one writer per worktree, context
-  pointers over pasted payloads.
+- Delegations go to background agents via the `agent` tool (lowercase, pi-dev's
+  own), one writer per worktree, context pointers over pasted payloads.
 - Small tasks (one file, obvious check) skip the mode entirely: work directly,
   verify, done.
 
@@ -65,34 +65,34 @@ Short declarative sentences. Every claim carries its evidence or its label
 (measured / inferred / guess) in the same sentence. Name who the work is for
 and what changes for them before any implementation detail.
 
-- 用用户的语言回答;每个论断同句携带证据或标签——`[check: …]` `[evidence: …]` `[judgment: …]`,或一个可打开的指针(commit/file:line/工件路径)。
-- 无证据就说"未验证",绝不编造貌似合理的引用;未覆盖的项如实列出,不静默跳过。
-- 结论先行,证据随行;不灌水(unslop):删除空洞的总结段、形容词堆叠和凑版面段落。
-- 证据工件不被 cleanup 删除;.dev/audit/ 台账 append-only;决策点名理由,不点名修辞。
+- Answer in the user's language; every claim carries, in the same sentence, its evidence or label — `[check: …]` / `[evidence: …]` / `[judgment: …]`, or an openable pointer (commit / file:line / artifact path).
+- With no evidence, say "unverified" — never fabricate a plausible-looking citation; list uncovered items honestly, never skip them silently.
+- Conclusion first, evidence alongside; no slop — delete empty summary paragraphs, stacked adjectives, and filler sections.
+- Evidence artifacts survive cleanup; the `.dev/audit/` trail is append-only; name reasons for decisions, not rhetoric.
 
-## Playbooks (10, 精选)
+## Playbooks (10)
 
 Named by need; each names its owning skill — follow the skill body, not this summary.
 
-**意图链 (intent chain)**
-1. **idea → 领域语言**: fuzzy ask → `align` (one question per turn, terms land in GLOSSARY). A question best answered by building detours to `proto`, then back.
-2. **立项**: `spec` (six decision sections, three-label acceptance, assumptions named, approval gate before hand-off).
-3. **拆活**: `tasks` (tracer bullet, single-metric, HITL/AFK, dependency graph → one-ticket frontier) — multi-area blobs never reach `implement` whole.
+**Intent chain**
+1. **idea → shared language**: fuzzy ask → `align` (one question per turn, terms land in GLOSSARY). A question best answered by building detours to `proto`, then back.
+2. **Formalize**: `spec` (six decision sections, three-label acceptance, assumptions named, approval gate before hand-off).
+3. **Slice**: `tasks` (tracer bullet, single-metric, HITL/AFK, dependency graph → one-ticket frontier) — multi-area blobs never reach `implement` whole.
 
-**实现 (build)**
-4. **单票**: `implement` (tdd kernel inside, one test at a time, RED before GREEN).
-5. **任务图**: `implement-all` auto (single checkpoint, stop-conditions, one commit + tsv row per ticket, only the files that ticket touched).
-6. **重构**: `refact` (deepening over adding; module boundary first).
+**Build**
+4. **One ticket**: `implement` (tdd kernel inside, one test at a time, RED before GREEN).
+5. **Whole graph**: `implement-all` auto (single checkpoint, stop-conditions, one commit + tsv row per ticket, only the files that ticket touched).
+6. **Refactor**: `refact` (deepening over adding; module boundary first).
 
-**验证 (verify)**
-7. **发现坏**: `diagnose` — reproduce BEFORE fixing, evidence first (UI surfaces reproduce via the project's verify skill / control-web, never "must work"); commit order = repro before fix; perf symptoms pass `benchmark-checklist` before any number is claimed.
-8. **门**: `code-review` (two-axis single pass) / `review` (four lenses + aggregate; high-stakes adds the independent verifier verdict file); numbers leave the room only after `benchmark-checklist`.
+**Verify**
+7. **Find what's broken**: `diagnose` — reproduce BEFORE fixing, evidence first (UI surfaces reproduce via the project's verify skill / control-web, never "must work"); commit order = repro before fix; perf symptoms pass `benchmark-checklist` before any number is claimed.
+8. **The gate**: `code-review` (two-axis single pass) / `review` (four lenses + aggregate; high-stakes adds the independent verifier verdict file); numbers leave the room only after `benchmark-checklist`.
 
-**发布 (ship)**
-9. **ship**: `review` gate first (APPROVE or informed accept), then land: one primary number (per benchmark 七问), release notes, post-ship verify pass, evidence archived (`.dev/audit/evidence/`, survives cleanup).
-10. **回路**: `retro` at session end / before handoff; substantive skill edits route through `eval` (Mode A/B) — a rejected change lands in `evals/skill-impact.md`.
+**Ship**
+9. **Ship**: `review` gate first (APPROVE or informed accept), then land: one primary number (per the benchmark seven questions), release notes, post-ship verify pass, evidence archived (`.dev/audit/evidence/`, survives cleanup).
+10. **The loop**: `retro` at session end / before handoff; substantive skill edits route through `eval` (Mode A/B) — a rejected change lands in `evals/skill-impact.md`.
 
-## Principles index (12, 精选自 pstack 24)
+## Principles index (12, from pstack's 24)
 
 One line each — enough to steer when the owning skill is not loaded.
 
@@ -108,18 +108,18 @@ One line each — enough to steer when the owning skill is not loaded.
 - **fix-root-causes**: no wrapping symptoms; repro before fix, cause before symptom.
 - **sequence-verifiable-units**: order work so each step is independently provable.
 - **test-behavior-not-implementation**: assert what the user sees; green on broken code is worse than no test.
-- (附)**explain-the-number**: every number ships with run count, range, limiter.
-- (附)**guard-the-context-window**: pointers over payloads; delegate digging to subagents.
+- (addendum) **explain-the-number**: every number ships with run count, range, limiter.
+- (addendum) **guard-the-context-window**: pointers over payloads; delegate digging to subagents.
 
-## Autonomous / overnight (组合手册)
+## Autonomous / overnight (combo playbook)
 
-过夜自主 = **`implement-all auto` + `/loop` 心跳 + decisions 台账**,三件各司其职:
+Overnight autonomy = **`implement-all auto` + `/loop` heartbeat + decisions tsv**, each with its own job:
 
-1. **白天**: `spec`→`tasks` 把活拆成带上限的工单(frontier 每轮 1-3 张,HITL 项全置后),人审批一次。
-2. **启动**: `implement-all auto` 自主跑票——单票一 commit + `.dev/audit/T-XXX.tsv` 每决策一行(七列定稿:show 列给人看活、skip_test 列给诚实的跳过);停止条件照技能(测试不过/spec 缺口/需要人的决策 → 停下写在 replies 里,不合糊推进)。
-3. **心跳**: `/loop 30m 检查 frontier:还有就绪票就推进,有停止条件就停,全清就总结收账`——间隔自定;print 模式下用 `schedule_wakeup` 等价。
-4. **晨间审计**: decisions tsv 每行 before/after/evidence 指针齐全即审计通过;`review` 抽查高风险票;`retro` 收回路沉淀。
+1. **Daytime**: `spec` → `tasks` slices the work into bounded tickets (1-3 frontier tickets per round, HITL items pushed last); the human approves once.
+2. **Launch**: `implement-all auto` works the tickets — one commit per ticket + one row per decision in `.dev/audit/T-XXX.tsv` (seven columns, final: the show column shows the human the work, the skip_test column records honest skips); stop conditions per that skill (failing test / spec gap / a human decision needed → stop and write it in the replies, never push through vaguely).
+3. **Heartbeat**: `/loop 30m check the frontier: advance ready tickets, stop on stop-conditions, wrap up and settle accounts when clear` — interval as you like; in print mode, `schedule_wakeup` is the equivalent.
+4. **Morning audit**: the decisions tsv passes audit when every row carries before/after/evidence pointers; `review` spot-checks high-risk tickets; `retro` closes the loop.
 
-## Ledger(可选,默认关)
+## Ledger (optional, off by default)
 
-`.dev/lifecycle/` 目录在场 = 账本开启(D 类脚本门/A 类裁决门入账 + history 可重放;`retro` 挖首过率/翻转率,详见包内 `gates/README.md`)。**不在场一切照旧(P1-P4 行为)**——账本是叙述层,不是依赖。
+A `.dev/lifecycle/` directory present = ledger on (D-class script gates / A-class verdict gates recorded + replayable history; `retro` mines first-pass rate / flip count — see the package's `gates/README.md`). **Absent: everything as before (P1-P4 behavior)** — the ledger is a narration layer, never a dependency.

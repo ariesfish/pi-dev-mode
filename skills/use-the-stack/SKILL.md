@@ -4,8 +4,7 @@ description: >-
   One-page discovery map for this stack: which skill for which situation, how
   they chain into a lifecycle, and where the mode, mandate, and host mapping
   live. Use when unsure which skill fits, when exploring the stack, or when
-  introducing it to a new session or teammate. Chinese triggers: 用哪个技能,
-  这个栈怎么用, 技能地图, 有什么技能, 怎么开始, use the stack.
+  introducing it to a new session or teammate. Chinese triggers: 用哪个技能, 这个栈怎么用, 技能地图.
 ---
 
 # Use the Stack
@@ -14,7 +13,7 @@ Situation → skill. When in doubt, say what you want in plain words and let `pi
 
 ```text
 setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto ─→ spec ─→
- constraints ─→ tasks ─→ triage-issue ─→ implement / implement-all ─→ review ─… doubt / benchmark-checklist / retro 横切其间
+ constraints ─→ tasks ─→ triage-issue ─→ implement / implement-all ─→ review ─… doubt / benchmark-checklist / retro cut across
  code-review ─→ diagnose ─→ refact … scout above it all
 ```
 

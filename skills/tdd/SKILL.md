@@ -5,8 +5,7 @@ description: >-
   red-green-refactor loop and vertical tracer-bullet slices. Use when the user
   wants TDD, test-first development, integration-style behavior tests,
   public-interface tests, regression tests, or mentions red-green-refactor.
-  Chinese triggers: TDD, 测试先行, 红绿重构, 写测试, 回归测试, 行为测试,
-  public interface test, 先写测试, 测试驱动开发.
+  Chinese triggers: 测试先行, 红绿重构, 先写测试, 回归测试, 测试驱动开发.
 ---
 
 # TDD
@@ -60,7 +59,7 @@ The assertion discipline that keeps the remaining tests honest: a test that woul
 
 ## Answer-only requests
 
-If the user asks where/what/why — 定位, 解释, 告诉我在哪行, sanity-check, point me at — or says don't touch it (别动手, no takeover, I'll fix it myself), the deliverable is an answer with evidence: exact file:line and the precise change they would make. Never edit. Edits need an explicit do-request (改, 修, fix it). "Just tell me" is a hard no-edit signal, not a soft one. If you catch yourself opening an editor after a tell-me request: stop, undo, answer. This rule outranks the red-green loop — a red typecheck is information to report, not a license to fix.
+If the user asks where/what/why — locate, explain, point at the line, sanity-check — or says don't touch it (no takeover, I'll fix it myself), the deliverable is an answer with evidence: exact file:line and the precise change they would make. Never edit. Edits need an explicit do-request. "Just tell me" is a hard no-edit signal, not a soft one. If you catch yourself opening an editor after a tell-me request: stop, undo, answer. This rule outranks the red-green loop — a red typecheck is information to report, not a license to fix.
 
 ## Workflow
 

@@ -1,6 +1,6 @@
 ---
 name: benchmark-checklist
-description: "Vet a perf measurement (limiter, tuning, limits, errors, repeatability, relevance, and whether the work happened) before you report or act on it. Use when you run a benchmark or report a speedup or regression you measured. Chinese triggers: 审查性能数据, 基准核查, 这个性能数字可信吗, 提速验证, 跑分审查, benchmark 七问."
+description: "Vet a perf measurement (limiter, tuning, limits, errors, repeatability, relevance, and whether the work happened) before you report or act on it. Use when you run a benchmark or report a speedup or regression you measured. Chinese triggers: 审查性能数据, 基准核查, 这个性能数字可信吗, benchmark 七问."
 ---
 
 # Benchmark checklist

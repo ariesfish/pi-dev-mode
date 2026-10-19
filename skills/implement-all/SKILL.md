@@ -7,8 +7,7 @@ description: >-
   orchestration — integration branch, frontier of ready tickets, background
   implementer subagents each in its own worktree, merger subagents). Use when
   the plan is already sliced into tickets and the whole thing should get done.
-  Chinese triggers: 实现全部, 整图实现, 并行实现, 把这些票都做了,
-  一口气实现, 自主跑完, 全部做完, implement all.
+  Chinese triggers: 实现全部, 并行实现, 把这些票都做了, 一口气实现, 自主跑完.
 ---
 
 # Implement All
@@ -47,7 +46,7 @@ set that can be worked right now.
   frontier is wider than a ticket or two of genuinely independent work.
 
 If unsure, say both numbers aloud ("frontier is 4 wide, 2 deep") and pick
-parallel when width > depth. The user's word ("并行" / "parallel") always
+parallel when width > depth. The user's explicit word for parallelism always
 decides.
 
 ## Per-task loop (both modes)
@@ -64,7 +63,7 @@ For every task, in either mode:
 - Commit **only the files that task touched** plus its task-status update —
   never `git add -A` — one commit per task, so any point is a clean rollback.
 - Append one row per decision to the trail (`.dev/audit/<task-slug>.tsv`). Final format
-  (P3 定稿): columns `id, decision, reason, evidence, verdict, skip_test, show` —
+  (final since P3): columns `id, decision, reason, evidence, verdict, skip_test, show` —
   cells single-line, evidence is a pointer (commit / file:line / artifact path),
   never prose; verdict is a predicate state (`green` / `red` / `reverted` /
   `open`); **skip_test** carries the reference when the `tdd` cost gate fell
@@ -98,10 +97,11 @@ For every task, in either mode:
 5. **Summarize with evidence, not self-report**: failing-test output for at
    least one RED per task (or its skip-test line), suite and build results,
    commit hashes. "Inconclusive" is not a pass; flag it instead.
-6. **Ledger (opt-in)**: 目标仓有 `.dev/lifecycle/` 时,每票 `gates/gate.sh open` 开票,
-   票内 D 类门按 `implement` 的 ledger 条款 run 入账(tdd/check),票收工
-   `close --note`;遇 blocker 的票停在 open 状态不 close,人裁决后重跑。
-   `.dev/lifecycle/` 不在场:无账本步骤,照旧。
+6. **Ledger (opt-in)**: when the target repo carries `.dev/lifecycle/`, open
+   each ticket with `gates/gate.sh open`; passed D-class gates ride
+   `implement`'s ledger clause (tdd/check); a landed ticket closes with
+   `close --note`. Blocker tickets stay open for the human verdict, then
+   rerun. Without `.dev/lifecycle/`: no ledger steps, unchanged.
 
 ## PARALLEL mode (multi-agent orchestration)
 

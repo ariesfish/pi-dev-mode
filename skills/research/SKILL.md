@@ -4,8 +4,7 @@ description: >-
   Investigate a question against high-trust primary sources and capture the
   findings as a Markdown file inside the feature's own .dev/<slug>/ directory. Use when the user wants a topic
   researched, docs or API facts gathered, or reading legwork delegated to a
-  background agent. Chinese triggers: 调查一下, 查资料, 研究一下, 调研,
-  API 调研, 背景调查, primary sources, 帮我查.
+  background agent. Chinese triggers: 调研, 查资料, 帮我查, API 调研.
 ---
 
 # Research

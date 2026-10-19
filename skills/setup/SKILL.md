@@ -7,9 +7,7 @@ description: >-
   or when those skills lack context about the issue tracker, triage labels, or
   domain documentation layout. Creates or updates an Agent skills block in
   AGENTS.md or CLAUDE.md and writes docs/agents/issue-tracker.md,
-  docs/agents/triage-labels.md, and docs/agents/domain.md. Chinese triggers:
-  初始化 dev skills, 配置 agent, 配置 issue tracker, 配置 triage labels,
-  配置领域文档, 初始化仓库工作流, 设置开发工作流.
+  docs/agents/triage-labels.md, and docs/agents/domain.md. Chinese triggers: 初始化 dev skills, 配置 agent, 配置 issue tracker, 配置领域文档.
 ---
 
 # Setup

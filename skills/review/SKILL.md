@@ -7,8 +7,7 @@ description: >-
   one deduplicated verdict with severity labels. Use before merging a branch
   or PR, before shipping, or when the user says review this / 审查这个分支 /
   把关. For a quick two-axis look at a diff without the gate ceremony, the
-  `code-review` skill standalone is that lane. Chinese triggers: 评审管线,
-  四镜头, 合并前把关, 审一遍, 发布前审查, review pipeline.
+  `code-review` skill standalone is that lane. Chinese triggers: 合并前把关, 发布前审查, 评审管线.
 ---
 
 # Review
@@ -94,10 +93,10 @@ docs/CONSTRAINTS.md line it violates.
 4. End with: total findings per lens, the top finding overall, and what
    evidence would close it.
 
-## Independent verifier (high-stakes merges, or on request——独立裁决)
+## Independent verifier (high-stakes merges, or on request)
 
 For high-stakes merges (auth, migration, public API, data loss) — and whenever
-the user asks for 独立裁决 / independent verdict / 再来个裁判 — spawn one more
+the user asks for an independent verdict or a second judge — spawn one more
 reader **after** the four lens reports: a fresh readonly `agent` on a
 **different model** than this session (single-provider setups use the other
 tier — e.g. deepseek-flash under a v4-pro session; a multimodal verifier can
@@ -110,9 +109,11 @@ covered], evidence: [paths]}`. Present its PASS/FAIL beside the aggregated
 verdict: a verifier FAIL — or disagreement with the lenses — reads as
 INCONCLUSIVE, named as such, with what would close it.
 
-账本入场(目标仓有 `.dev/lifecycle/`):verdict 文件自写落盘后,`gates/gate.sh verdict
-<票号> --from <verdict.json> --note "<一句话>"` 入账(A 类门,记 sha256 与
-verdict);无 `.dev/lifecycle/` 照旧,verdict 文件本身仍是必交的。
+Ledger (when the target repo carries `.dev/lifecycle/`): after the verdict
+file lands, record it with `gates/gate.sh verdict <id> --from
+<verdict.json> --note "<one line>"` (A-class gate, sha256 + verdict
+recorded). Without it: unchanged — the verdict file itself is still
+mandatory.
 
 ## Composition notes
 

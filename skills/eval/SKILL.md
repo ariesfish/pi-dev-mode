@@ -6,9 +6,7 @@ description: >-
   regression (rerun the fires/stays-quiet case bank against the edited tree)
   and variant A/B (baseline vs candidate on one task, judge sees anonymized
   outputs only). Use after retro proposes a skill change, before applying it,
-  or when a skill's triggering misbehaves in practice. Chinese triggers:
-  评一下技能改动, 技能评估, 盲评, 这个改动值得上吗, 触发回归,
-  上线前评测, eval.
+  or when a skill's triggering misbehaves in practice. Chinese triggers: 技能评估, 盲评, 触发回归, 这个改动值得上吗.
 ---
 
 # Eval
@@ -46,18 +44,20 @@ stay quiet where it must not.
 2. For each case, run one candidate in a scratch working directory:
    ```bash
    cd $(mktemp -d)
-   # dialogue 档(触发判别):限 read 工具;case 声明了 fixture 就把它的
-   # 内容拷进 cwd(候选的 cwd 即项目根,顶层直接可见 package.json 等)。
-   cp -r <repo>/evals/fixtures/<name>/. .   # 仅当 prompt.md 声明了 fixture
+   # Dialogue lane (trigger adjudication): tools restricted to read; if the
+   # case declares a fixture, copy its contents into cwd (the candidate's cwd
+   # IS the project root — package.json etc. directly visible at the top).
+   cp -r <repo>/evals/fixtures/<name>/. .   # only when prompt.md declares a fixture
    pi -p --session-dir "$PWD/session" --no-extensions --no-skills \
-     --tools read --skill <repo>/skills "$(cat <case>/prompt.md 的正文)"
-   # execution 档(行为判别):全量工具,以 fixture 内容为 cwd(必需 fixture),
-   # 限时(900s 观察够用);路由行为类保留扩展(-e <repo>/pi/index.ts),
-   # mandate/repo-state 是产品的一部分。
+     --tools read --skill <repo>/skills "$(cat <case>/prompt.md body)"
+   # Execution lane (behavior adjudication): full tools, fixture contents as
+   # cwd (fixture required), time-limited (900s is enough to observe);
+   # routing-behavior cases keep the extension loaded (-e <repo>/pi/index.ts) —
+   # mandate/repo-state are part of the product.
    cp -r <repo>/evals/fixtures/<name>/. "$PWD/workspace"
    cd "$PWD/workspace"
    timeout 900 pi -p --session-dir "$OLDPWD/session" [--no-extensions] \
-     --no-skills --skill <repo>/skills "$(cat <case>/prompt.md 的正文)"
+     --no-skills --skill <repo>/skills "$(cat <case>/prompt.md body)"
    ```
    Dialogue-kind cases run `--tools read`: the candidate can open skill files
    (the chain evidence) but cannot wander the filesystem or start executing —

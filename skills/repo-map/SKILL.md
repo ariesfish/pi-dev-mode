@@ -5,8 +5,7 @@ description: >-
   future agent work. Use for first-time repo orientation, durable repo maps,
   identifying where to start for common changes, important boundaries, entry
   points, verification commands, and paths to ignore. Do not use for narrow
-  task-scoped code exploration; use code-map instead. Chinese triggers:
-  分析仓库, 梳理仓库, 生成 REPO.md, 生成 docs/REPO.md, 仓库导航, 项目地图, 快速了解项目, 新仓库上手.
+  task-scoped code exploration; use code-map instead. Chinese triggers: 分析仓库, 生成 REPO.md, 仓库导航, 项目地图, 新仓库上手.md, 生成 docs/REPO.md, 仓库导航, 项目地图, 快速了解项目, 新仓库上手.
 ---
 
 # Repo Map

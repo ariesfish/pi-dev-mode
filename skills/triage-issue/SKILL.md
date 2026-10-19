@@ -4,8 +4,8 @@ description: >-
   Triage issues through a state machine driven by triage roles. Use when the
   user wants to create an issue, triage issues, review incoming bugs or feature
   requests, prepare issues for an AFK agent, or manage issue workflow. Chinese
-  triggers: triage issue, 分诊 issue, 整理 issue, 看 issue, 创建 issue,
-  标记 ready-for-agent, 需要补充信息, wontfix, 准备 agent brief.
+  triggers: 分诊 issue, 整理 issue, 看 issue, 创建 issue, 标记
+  ready-for-agent.
 ---
 
 # Triage Issue

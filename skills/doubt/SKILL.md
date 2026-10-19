@@ -7,8 +7,7 @@ description: >-
   findings, loop bounded. Use before committing non-trivial code, before
   high-stakes or irreversible steps (auth, migrations, public APIs, deploys),
   or whenever a confident output is cheaper to verify now than debug later.
-  Chinese triggers: 拷问, 我不放心, 再审一遍, 对抗审查, 挑战这个决策,
-  找茬, 二意见, second opinion, doubt it.
+  Chinese triggers: 拷问, 我不放心, 对抗审查, 找茬, 挑战这个决策.
 ---
 
 # Doubt

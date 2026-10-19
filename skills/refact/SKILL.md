@@ -6,8 +6,7 @@ description: >-
   code more testable and AI-navigable. Use when the user wants to improve
   architecture, review refactor candidates, consolidate tightly-coupled modules,
   design better interfaces, or explore codebase structure before refactoring.
-  Chinese triggers: 重构, 改架构, 架构优化, 模块边界, seam, deep module,
-  提高可测试性, 代码结构不好, 整理架构, 找重构机会.
+  Chinese triggers: 重构, 改架构, 模块边界, seam, 提高可测试性.
 ---
 
 # Refact

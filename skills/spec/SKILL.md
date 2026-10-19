@@ -7,8 +7,7 @@ description: >-
   ask-first triggers, open questions. Lives at .dev/<slug>/spec.md as per-developer
   process memory (gitignored); recurses per capability module with a map when
   the work spans modules. Use at the start of feature-sized work, or when a
-  build needs an authoritative contract. Chinese triggers: 写 SPEC, 生成规格,
-  定规格, 规格文档, 立项, spec first, 需求文档, 整理需求.
+  build needs an authoritative contract. Chinese triggers: 写 SPEC, 定规格, 规格文档, 立项, 需求文档.
 ---
 
 # Spec

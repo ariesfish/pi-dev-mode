@@ -5,8 +5,7 @@ description: >-
   implementation. Routes between logic prototypes for state machines, business
   rules, and data models, or UI prototypes with radically different variants.
   Use when the user wants to prototype, sanity-check logic, mock up UI, explore
-  design options, or compare variants. Chinese triggers: 做原型, 快速验证,
-  试几个方案, UI 原型, 状态机原型, 让我玩一下, mock 一版, 探索设计.
+  design options, or compare variants. Chinese triggers: 做原型, UI 原型, 状态机原型, 试几个方案.
 ---
 
 # Proto

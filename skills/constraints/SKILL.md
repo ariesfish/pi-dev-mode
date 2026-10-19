@@ -7,8 +7,7 @@ description: >-
   dimension needs, defines a non-negotiable floor, and watches diffs for a
   weakened bar. Use when no quality bar is written down, when the user says
   "set up constraints" or "stop the agent shipping junk", or before running
-  an autonomous loop. Chinese triggers: 建质量门槛, 定约束, 质量合同,
-  设置约束, 别让 AI 偷偷降标准, CONSTRAINTS.
+  an autonomous loop. Chinese triggers: 建质量门槛, 定约束, 质量合同, 别偷偷降标准.
 ---
 
 # Constraints

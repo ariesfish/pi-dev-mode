@@ -6,8 +6,7 @@ description: >-
   inline as decisions crystallise. Use when the user wants to clarify domain
   language, stress-test a developer plan against the project's language and
   documented decisions, or decide whether a design choice deserves an ADR.
-  Chinese triggers: 拷打方案, 澄清需求, 追问我, 统一术语, 领域建模, 设计决策, 架构决策, 写 ADR,
-  更新 GLOSSARY, 沉淀上下文.
+  Chinese triggers: 拷打方案, 澄清需求, 统一术语, 领域建模, 写 ADR.
 ---
 
 # Align

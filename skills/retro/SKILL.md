@@ -5,8 +5,7 @@ description: >-
   improvement candidates, then route each to the highest level that enforces it
   (architecture > types/lint > tests > docs/skill edits) and propose concrete
   changes. Use at the end of a session, before handoff, or when the user asks
-  what to improve. Chinese triggers: 复盘, 复盘一下, 总结这轮, 沉淀经验,
-  改进流程, what went wrong, retro.
+  what to improve. Chinese triggers: 复盘, 总结这轮, 沉淀经验.
 ---
 
 # Retro
@@ -32,11 +31,13 @@ findings; a class counts once it has happened twice.
    - **Navigation** — the agent searched long for things a pointer would have
      named. Finding: a navigation pointer (GLOSSARY, docs/REPO.md, a comment) or
      misplaced docs.
-   - **Ledger rates (opt-in)** — 目标仓有 `.dev/lifecycle/` 时,先跑技能包
-     `gates/gate.sh mine`:D 门首过率 + A 裁决翻转(分歧),连同
-     `.dev/audit/*.tsv` 的 `skip_test` 率。三率出修复:编码为 constraints 行
-     (新门槛)或吞进既有 lint(correct 的最高层级修复),不改 prose。
-     无账本时只挖 tsv,照旧。
+   - **Ledger rates (opt-in)** — when the target repo carries
+     `.dev/lifecycle/`, first run this package's `gates/gate.sh mine`: the
+     D-gate first-pass rate plus the A-verdict flip count, together with the
+     `skip_test` rate from `.dev/audit/*.tsv`. Route the three rates into
+     fixes: encode as constraints rows (new gates) or fold into existing lint
+     (correct's highest enforcement tier) — never prose edits alone. Without a
+     ledger, mine the tsv only, unchanged.
    - **Automated checks** — a mistake a check could have caught. Read the
      repo's own lint/typecheck/test commands and CI first: an existing check
      that sits unwired or broken is the finding. A repo with no guardrail at

@@ -4,9 +4,7 @@ description: >-
   Break a spec or plan into independently-grabbable tasks on the project
   tracker using tracer-bullet vertical slices. Use when the user wants to
   convert a plan into tasks, create implementation tickets, or break work
-  down as part of a developer workflow. Chinese triggers: 拆任务, 拆成 tasks,
-  拆工单, 把 spec 拆成任务, 生成实现票, 垾直切片, vertical slice, tracer
-  bullet.
+  down as part of a developer workflow. Chinese triggers: 拆任务, 拆工单, 拆成 tasks, 垂直切片, 把 spec 拆成任务.
 ---
 
 # Tasks
@@ -18,7 +16,7 @@ The tracker and triage label vocabulary should have been provided by `setup`. If
 - **No signal, or conflicting signals** → this choice folds into the ONE bundle confirmation of Step 4, never a separate interrogation turn: `ask_user` with the tracker candidates as options, labeled with the evidence you found (or its absence — e.g. "no remote, no tracker files → local files under `.dev/` (recommended: zero service dependencies, per-developer gitignored)"), recommended option first, never invent a tracker the repo shows no evidence for. Take the answer and move straight to slicing.
 Then seed `docs/agents/` from the setup skill's references and continue the work this skill was invoked for.
 
-## 出件:Process(slicing)
+## Process (slicing)
 
 ### 1. Gather context
 
@@ -54,7 +52,8 @@ you chose for the user — as one line each: decisions, not questions.
 
 Then ask **exactly one** question carrying the whole bundle:
 
-> 拆成这 N 张可以直接开工吗?要调就点名票号说怎么调。
+> Can we start work on these N slices as-is? To adjust, name the ticket id
+and say what to change.
 
 Iterate only on objections the user raises (merge/split/retype the named
 slices); take the yes and publish. A stated default is never re-opened as a
