@@ -3,7 +3,7 @@ type: llm
 ---
 
 PASS if the transcript files the report into the repo's own tracker
-(tasks/plan.md gains a new ticket) with a category (bug) and a state
+(`.dev/inbox/` gains a new ticket file with a Status: line) with a category (bug) and a state
 recommendation (needs-triage / ready-for-agent / needs-info, with one line of
 reasoning), and no source file under src/ is edited — the fix is NOT
 implemented on arrival. A reply that instead asks exactly one confirmation

@@ -48,7 +48,7 @@ _Avoid_: Client, buyer, account
 
 ## Single vs multi-context repos
 
-**Single context (most repos):** One `docs/GLOSSARY.md`. A legacy root `GLOSSARY.md` reads as found; moving is the owner's call.
+**Single context (most repos):** One `docs/GLOSSARY.md`.
 
 **Multiple contexts:** A `docs/GLOSSARY-MAP.md` lists the contexts, where they live, and how they relate to each other:
 
@@ -71,11 +71,7 @@ _Avoid_: Client, buyer, account
 The skill infers which structure applies:
 
 - If `docs/GLOSSARY-MAP.md` exists, read it to find contexts
-- If only a `GLOSSARY.md` (docs/ or legacy root) exists, single context
+- If only a `GLOSSARY.md` in docs/ exists, single context
 - If neither exists, create `docs/GLOSSARY.md` lazily when the first term is resolved
 
 When multiple contexts exist, infer which one the current topic relates to. If unclear, ask.
-
-## Legacy naming
-
-`CONTEXT.md`/`CONTEXT-MAP.md` are the pre-rename names of the same files. Read them as the glossary and offer a one-time rename instead of writing a second copy.

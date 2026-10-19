@@ -86,7 +86,7 @@ find any. Under 400 words.
 
 ### Lens 4 — Constraints audit
 
-Read `docs/CONSTRAINTS.md` (legacy root `CONSTRAINTS.md` counts) (absent → report "no constraints contract;
+Read `docs/CONSTRAINTS.md` (absent → report "no constraints contract;
 propose the constraints skill" and audit only the universal floor: new
 suppression comments, skipped/deleted tests, unexplained stubs, secrets).
 Audit the diff against it: weakened thresholds, removed checks, new

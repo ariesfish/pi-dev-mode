@@ -17,9 +17,9 @@ edits.
 │   ├── spec.md                # 特性合同(单模块;多模块: map.md + SPEC-<id>.md)
 │   ├── plan.md                # 本需求的切片图:索引 + 阻塞边 + Closed 行
 │   ├── todo.md                # 本需求的检查单 + triage 状态标记
+│   ├── research.md            # 调研笔记(多份则 research/<topic>.md)
 │   └── tickets/T-XXX.md       # 全文票(plan 行装不下时才建,可选)
 ├── inbox/                     # 未归属需求的入件(归属定了就过继进特性目录)
-├── research/<slug>.md         # 调研笔记(需求成型前常已存在,留全局)
 ├── lifecycle/                 # gates 账本(机器,跨需求,仅 opt-in 时存在)
 └── audit/                     # 决策台账 tsv + 证据(跨需求)
 ```
@@ -98,15 +98,6 @@ feature is in flight.
 - Ship-time cleanup: once a feature lands and its truth is in the code,
   commits, and ADRs, **delete or archive the whole `.dev/<slug>/` directory** —
   that is the point of feature-first: cleanup is one `rm`, not section
-  surgery. `research/`, `lifecycle/`, `audit/` stay.
+  surgery. `lifecycle/`, `audit/` stay.
 - If the repo later migrates to GitHub issues, `setup` rewrites this file into
   the new tracker doc; the dev dirs stay until their owner clears them.
-
-## Legacy layouts
-
-Repos carrying root `tasks/plan.md` + `tasks/todo.md` (global files) use the
-same conventions under the old roof: read them as the tracker exactly as
-written above. `.scratch/<feature-slug>/` was already feature-first — its
-directories migrate 1:1 into `.dev/` (PRD.md is superseded by spec.md;
-issues/NN-*.md join tickets/). Migrating is the repo owner's call, not a
-skill's.

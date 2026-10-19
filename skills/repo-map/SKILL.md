@@ -16,7 +16,7 @@ description: >-
 - 2026-10-15 synced to mattp@49dd158 (d80fa0f): GLOSSARY.md naming adopted (legacy CONTEXT.md noted).
 -->
 
-Create or update `docs/REPO.md` (legacy root `REPO.md` reads as found; moving is the owner's call) as a **navigation map**, not a repository encyclopedia.
+Create or update `docs/REPO.md` as a **navigation map**, not a repository encyclopedia.
 
 The goal is to help a human or future agent enter the repo quickly: what this repo is, how to run the main loop, where to start for common changes, which boundaries matter, and what to ignore.
 
@@ -40,7 +40,7 @@ Read only enough to map the main shape:
 - Manifests and tool configs: `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `pom.xml`, lockfiles, task runners, CI configs.
 - Top-level directories.
 - Main source, test, script, docs, and infra paths.
-- Existing `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `GLOSSARY-MAP.md` (legacy: `CONTEXT.md`), and `docs/adr/` when present.
+- Existing `AGENTS.md`, `CLAUDE.md`, `docs/GLOSSARY.md`, `docs/GLOSSARY-MAP.md`, and `docs/adr/` when present.
 
 Ignore generated, vendored, build, cache, and dependency directories unless the repo treats one as source.
 

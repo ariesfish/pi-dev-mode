@@ -4,8 +4,7 @@
 **大 mode 一键进场,单点技能独立爆破,工件契约是心脏。**
 
 ```
-基座(15件) →基座 宿主      align code/diagnose issues implement* prd proto refact repo research review setup tdd triage
-                          (基座名单为迁入快照:P6 裁撤 prd;issues→tasks、wayfinder→scout 已改名)
+基座(15件) →基座 宿主      align code/diagnose implement* proto refact repo research setup tdd triage
 pstack      →升级包 验证的心脏    证据标准 独立裁决 数字纪律 verify 生成器 反馈环冻结复用
 mattp       →血统确认          grilling domain 哲学 tracker 管道 + 工程件第二轮补齐已在 基座 落地
 addyosmani  →升级包 生命周期与质量合同  SPEC CONSTRAINTS 三类验收标注 停止条件(已并入 implement-all auto)
@@ -35,8 +34,8 @@ addyosmani  →升级包 生命周期与质量合同  SPEC CONSTRAINTS 三类验
 **工件布局(P6 统一,2026-10-18 用户拍板):**
 ```
 .dev/     过程记忆,gitignore /(^.dev/),feature-first——一次大需求 = 一个 slugged 目录:
-          <slug>/{spec.md(多模块则 map.md+SPEC-<id>.md), plan.md, todo.md, tickets/T-XXX.md}
-          + inbox/(未归属入件)+ research/<slug>.md + lifecycle/(账本)+ audit/(决策 tsv + evidence/)
+          <slug>/{spec.md(多模块则 map.md+SPEC-<id>.md), plan.md, todo.md, research.md, tickets/T-XXX.md}
+          + inbox/(未归属入件)+ lifecycle/(账本)+ audit/(决策 tsv + evidence/)
 docs/     持久资产,进 git——adr/(唯一过程沉淀通道)+ GLOSSARY.md(+MAP)+ CONSTRAINTS.md + REPO.md + agents/(栈配置)
 根目录     只留 AGENTS.md/CLAUDE.md(硬约定),指针行指向 docs/
 ```

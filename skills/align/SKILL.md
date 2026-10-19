@@ -34,7 +34,7 @@ When an interview surfaces a question that is best answered by building rather t
 ## Workflow
 
 1. Inspect the codebase and existing docs before asking questions when the answer may already be present.
-2. Look for `docs/GLOSSARY.md` and `docs/GLOSSARY-MAP.md`, and `docs/adr/`. A legacy root `GLOSSARY.md`/`GLOSSARY-MAP.md` is the same convention under the old roof: read it as found; moving it is the owner's call. Legacy repos that predate the rename use `CONTEXT.md`/`CONTEXT-MAP.md`: read them as the glossary and offer to rename once, at the end of the session.
+2. Look for `docs/GLOSSARY.md` and `docs/GLOSSARY-MAP.md`, and `docs/adr/`.
 3. Interview the user one decision at a time until the plan is precise enough to act on.
 4. Use the ask_user skill/tool for each question; ask exactly one focused question per turn and wait for the answer before continuing. Word each question so "yes" accepts your recommended answer.
 5. For each question, include your recommended answer.

@@ -8,7 +8,7 @@ description: >-
 kind: execution
 fixture: intake-w6
 target: triage-issue:fires,implement:stays-quiet
-expected_outcome: The report lands in tasks/plan.md as a new ticket carrying a category and state recommendation (bug + needs-triage/ready-for-agent with reasoning), or the reply surfaces exactly one confirmation question with the recommendation attached; no source files are edited and no fix is implemented.
+expected_outcome: The report lands in .dev/inbox/ as a new ticket file (T-<id>.md carrying its triage status) carrying a category and state recommendation (bug + needs-triage/ready-for-agent with reasoning), or the reply surfaces exactly one confirmation question with the recommendation attached; no source files are edited and no fix is implemented.
 ---
 
 刚收到一个用户报障:设置页里切完主题、点了保存,再进设置页主题又变回默认了,刷新也一样。帮我按这个仓库自己的流程把它归置一下。

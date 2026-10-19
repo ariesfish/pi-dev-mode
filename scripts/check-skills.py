@@ -51,9 +51,9 @@ except ImportError:  # local fallback: minimal parser for this repo's frontmatte
 
 KILLS = {
     "align", "code-map", "code-review", "constraints", "diagnose", "doubt",
-    "implement", "implement-all", "issues", "pi-dev-mode", "prd", "proto",
+    "implement", "implement-all", "pi-dev-mode", "proto",
     "refact", "repo-map", "research", "retro", "review", "setup", "spec",
-    "tdd", "triage-issue", "use-the-stack", "wayfinder",
+    "tdd", "triage-issue", "use-the-stack",
     "create-verification-skill", "maintain-verification-skill",
     "benchmark-checklist", "eval",
 }

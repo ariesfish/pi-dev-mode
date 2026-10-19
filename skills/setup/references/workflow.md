@@ -34,7 +34,7 @@ pi-dev-mode          # the router that picks between all of these
 - `docs/agents/issue-tracker.md` — how skills read and publish issues.
 - `docs/agents/triage-labels.md` — canonical triage roles mapped to repo labels/statuses.
 - `docs/agents/domain.md` — where domain docs live and how to consume them.
-- `docs/GLOSSARY.md` — glossary only; no implementation details. (Legacy: root copy; pre-rename `CONTEXT.md`)
+- `docs/GLOSSARY.md` — glossary only; no implementation details
 - `docs/adr/*.md` — hard-to-reverse, surprising trade-off decisions.
 - Spec (.dev/<slug>/spec.md, feature-first dir) — the feature contract: objective, decisions, out of scope, three-label acceptance. Per-developer process memory, gitignored.
 - Issues — independently grabbable vertical slices.

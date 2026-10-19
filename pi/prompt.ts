@@ -31,19 +31,8 @@ const PARALLEL_CALLS =
 function repoStateNote(cwd: string): string | undefined {
   try {
     const has = (...paths: string[]) => paths.some((p) => existsSync(join(cwd, p)));
-    const glossary = has(
-      "docs/GLOSSARY.md",
-      "docs/GLOSSARY-MAP.md",
-      "GLOSSARY.md",
-      "CONTEXT.md",
-      "GLOSSARY-MAP.md",
-    );
-    const tracker = has(
-      "docs/agents/issue-tracker.md",
-      ".dev",
-      "tasks/plan.md",
-      ".scratch",
-    );
+    const glossary = has("docs/GLOSSARY.md", "docs/GLOSSARY-MAP.md");
+    const tracker = has("docs/agents/issue-tracker.md", ".dev");
     if (glossary && tracker) return undefined;
     const lines = ["This repo is not yet configured for the skills:"];
     if (!glossary)
@@ -52,7 +41,7 @@ function repoStateNote(cwd: string): string | undefined {
       lines.push(
         "- no issue-tracker config: docs/agents/issue-tracker.md or a local `.dev/` tracker (one slugged dir per feature; tasks/triage-issue bootstrap it on first use, one confirmation; or run the setup skill)",
       );
-    if (!has("docs/CONSTRAINTS.md", "CONSTRAINTS.md"))
+    if (!has("docs/CONSTRAINTS.md"))
       lines.push("- no docs/CONSTRAINTS.md: define the quality bar before an autonomous run (constraints skill)");
     return lines.join("\n");
   } catch {

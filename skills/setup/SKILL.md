@@ -56,10 +56,10 @@ Check the current repo before proposing changes:
 - `git remote -v` and `.git/config` for the issue tracker host.
 - Root `CLAUDE.md` and `AGENTS.md` for existing agent instructions.
 - Existing `## Agent skills` sections.
-- `docs/GLOSSARY.md` and `docs/GLOSSARY-MAP.md` (legacy: root copies, or `CONTEXT.md`/`CONTEXT-MAP.md` from before the rename).
+- `docs/GLOSSARY.md` and `docs/GLOSSARY-MAP.md`.
 - `docs/adr/` and `src/*/docs/adr/`.
 - Existing `docs/agents/` files.
-- `.dev/<slug>/plan.md` / `.dev/inbox/` for the local-files tracker (feature-first); legacy global `tasks/plan.md` and `.scratch/<slug>/` show the same tracker under the old roof.
+- `.dev/<slug>/plan.md` / `.dev/inbox/` for the local-files tracker (feature-first).
 
 ### 2. Choose the editable agent instruction file
 
@@ -78,7 +78,7 @@ Explain that engineering skills publish, read, label, and close work items throu
 Default to:
 
 - **GitHub** when a remote points at GitHub. Use `references/issue-tracker-github.md` as the seed.
-- **Local files (.dev/, feature-first)** when the repo shows `.dev/<slug>/plan.md` or `.dev/inbox/`, or carries legacy `tasks/plan.md` / `.scratch/`, or has no remote issue tracker, or the user prefers local files. Use `references/issue-tracker.md` as the seed: one slugged directory per feature — `spec.md` + `plan.md` + `todo.md` + `tickets/`; unattributed intake in `.dev/inbox/`; `/.dev/` is gitignored — per-developer process memory, never pushed; skills read and write through plain file edits.
+- **Local files (.dev/, feature-first)** when the repo shows `.dev/<slug>/plan.md` or `.dev/inbox/`, or has no remote issue tracker, or the user prefers local files. Use `references/issue-tracker.md` as the seed: one slugged directory per feature — `spec.md` + `plan.md` + `todo.md` + `tickets/`; unattributed intake in `.dev/inbox/`; `/.dev/` is gitignored — per-developer process memory, never pushed; skills read and write through plain file edits.
 - **Other** for Jira, Linear, custom trackers, or unknown workflows. Use `ask_user` to ask for the workflow and write `docs/agents/issue-tracker.md` from scratch.
 
 Do not offer or generate GitLab setup in this skill.
@@ -103,10 +103,10 @@ Explain that architecture, diagnosis, and TDD skills read domain context and ADR
 
 Use `references/domain.md` as the seed. Default to:
 
-- **Single-context** when the repo has `docs/GLOSSARY.md` (or a legacy root `GLOSSARY.md`/`CONTEXT.md`) and no glossary map.
-- **Multi-context** when `docs/GLOSSARY-MAP.md` (or a legacy map) exists and points to per-context `GLOSSARY.md` files.
+- **Single-context** when the repo has `docs/GLOSSARY.md` and no glossary map.
+- **Multi-context** when `docs/GLOSSARY-MAP.md` exists and points to per-context `GLOSSARY.md` files.
 
-The seed names `docs/GLOSSARY.md`/`docs/GLOSSARY-MAP.md` as the convention. When the repo already uses `CONTEXT.md`/`CONTEXT-MAP.md`, record that layout in `docs/agents/domain.md` instead: it is the same convention under the old names, and renaming is the repo owner's call, not this skill's.
+The seed names `docs/GLOSSARY.md`/`docs/GLOSSARY-MAP.md` as the convention.
 
 ### 6. Confirm the draft
 

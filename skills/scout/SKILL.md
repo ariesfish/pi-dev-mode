@@ -8,8 +8,7 @@ description: >-
   decisions, not deliverables. Use when a loose idea is too big or too foggy
   to plan directly, or when the user asks to explore the direction first.
   Chinese triggers: 探路, 摸方向, 方向不明, 方向都没定, 先探探路, 去向未定,
-  值得先探一下, 大工程规划, 这摊子太大, 找路, 决策地图, scout (renamed from
-  wayfinder, 2026-10-18).
+  值得先探一下, 大工程规划, 这摊子太大, 找路, 决策地图, scout.
 ---
 
 <!-- pi-dev-mode changelog:
