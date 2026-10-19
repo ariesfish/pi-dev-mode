@@ -15,6 +15,7 @@ description: >-
 - 2026-10 P1.1: absorbed the retired build skill's default-mode rigor (three-label AC reading, staged commit, evidence-honesty reporting); handoff note to implement-all added.
 - 2026-10 P2.6 (pie observation #3): scope check added — multi-area blobs refused to issues → implement-all.
 - 2026-10 P2.7 (F, retro A-F round): visual acceptance — visual criteria delegate to the `viewer` agent (multimodal); a text-only model must not self-assess pixel parity (P1 first shot did, and produced two reference deviations).
+  - 2026-10 P6.1: ledger dir renamed .dev/sdlc/ → .dev/lifecycle/ (user call).
   - 2026-10 P5: opt-in ledger section (open/run tdd/close via gates/gate.sh; no .sdlc → unchanged).
   - 2026-10 P5.1 (standing instrument I root cause, v3): sessions hung twice on FOREGROUND viewer spawns with config-archaeology model ids while the legal render+pixel-diff evidence was already in hand (run 2 built it correctly, then still blocked on the spawn). v3: render evidence closes the visual gate — viewer is optional background enhancement, only foreground (deepseek-flash pinned) when no headless render exists at all.
   - 2026-10 P5.2 (v4, from the v4-bank kill forensics): two more foreground spawns on hand-typed ids ('sonnet', 'funai/gpt-5.6-terra') burned 20 of the 25 budget minutes before the render pipeline even started. v4 rule: spawn by TYPE (subagent_type: viewer carries the pin); hand-typed model ids are a bug shape; render evidence closes the gate, viewer is background-only enhancement.
@@ -58,6 +59,6 @@ Report with evidence, not self-report: the failing-test output (or the skip-test
 
 ## Ledger (opt-in)
 
-目标仓有 `.dev/sdlc/`(账本开启;工具 = 技能包的 `../../gates/gate.sh`,repo 内运行):票开工先 `gate.sh open <票号> "<标题>"`(已开则沿用),每道过的 D 类门 `gate.sh run <票号> tdd -- <测试命令>` 入账(FAIL 也入账,首跑红是事实),收工 `gate.sh close <票号> --note "<一句话>"`。`.dev/sdlc/` 不在场:一字不加,全套照旧。
+目标仓有 `.dev/lifecycle/`(账本开启;工具 = 技能包的 `../../gates/gate.sh`,repo 内运行):票开工先 `gate.sh open <票号> "<标题>"`(已开则沿用),每道过的 D 类门 `gate.sh run <票号> tdd -- <测试命令>` 入账(FAIL 也入账,首跑红是事实),收工 `gate.sh close <票号> --note "<一句话>"`。`.dev/lifecycle/` 不在场:一字不加,全套照旧。
 
 For a whole task graph, or an unattended run, use `implement-all` (auto: single approval, serial. parallel: one implementer per frontier ticket, each in its own worktree). This skill stays one ticket, in hand; its scope check refuses multi-area blobs back to `tasks`.

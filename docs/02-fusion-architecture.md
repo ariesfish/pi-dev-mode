@@ -84,7 +84,7 @@ flowchart TB
 | `.pi/skills/verify-<app>/`(五段+feature map) | pstack create-verification-skill(路径 Pi 化) | create-verification-skill | bug-fix、build、review、ship、maintain-verification-skill |
 | `evidence/`(截图/ARIA/trace/基准输出) | pstack 证据标准 | verify 适配器 | review/ship(独立裁决引用) |
 | `.dev/audit/<task>.tsv` 决策台账 | pstack show-me-your-work | 自主循环每迭代 | retro、morning audit |
-| `.dev/sdlc/items/<id>/state.json`(**opt-in**) | 我方设计稿 | gate.sh | 跨会话接手、指标收割 |
+| `.dev/lifecycle/items/<id>/state.json`(**opt-in**) | 我方设计稿 | gate.sh | 跨会话接手、指标收割 |
 
 **图的落点**:SPEC→tickets 是意图纵深;GLOSSARY/ADR 是知识横切(每个环节都读);CONSTRAINTS 是质量的"公差表"(spec 定对错,constraints 定"够不够好");verify+evidence 是证明责任;decisions 是审计线。
 

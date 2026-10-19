@@ -25,6 +25,7 @@ description: >-
   lens reports). check-skills.py enforces the naming.
 - 2026-10 P2.7 (F, retro A-F round): visual diffs get a `viewer` pass —
   text-only lenses cannot approve visual parity.
+  - 2026-10 P6.1: ledger dir renamed .dev/sdlc/ → .dev/lifecycle/ (user call).
   - 2026-10 P5: A-class verdict ledgering via gates/gate.sh verdict (opt-in, .sdlc/ present only).
 -->
 
@@ -127,9 +128,9 @@ covered], evidence: [paths]}`. Present its PASS/FAIL beside the aggregated
 verdict: a verifier FAIL — or disagreement with the lenses — reads as
 INCONCLUSIVE, named as such, with what would close it.
 
-账本入场(目标仓有 `.dev/sdlc/`):verdict 文件自写落盘后,`gates/gate.sh verdict
+账本入场(目标仓有 `.dev/lifecycle/`):verdict 文件自写落盘后,`gates/gate.sh verdict
 <票号> --from <verdict.json> --note "<一句话>"` 入账(A 类门,记 sha256 与
-verdict);无 `.dev/sdlc/` 照旧,verdict 文件本身仍是必交的。
+verdict);无 `.dev/lifecycle/` 照旧,verdict 文件本身仍是必交的。
 
 ## Composition notes
 

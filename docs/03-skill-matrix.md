@@ -135,6 +135,7 @@ delegation:guard-the-context-window。
 
 - **prd 裁撤**:mattp 上游早已把 to-prd 并入 to-spec,pi-dev-mode 此前有意保留的 PRD 分歧(docs/02)结束。职责吸收:Out of Scope 回归 spec 模板;user-story 覆盖折进验收标准(journey 列表,每旅程至少一条三标签);需求触发词迁移到 spec 的描述。
 - **spec 六节决策制**:Tech Stack/Commands/Project Structure/Code Style/Testing Strategy 从模板删除——仓库级事实一次成型于 docs/CONSTRAINTS.md 与 AGENTS.md,模型读真仓库(照片会过期,仓库不会);Boundaries 收窄为本特性 Ask First 触发器;保留假设面板、审批硬停轮、living-document。
-- **`.dev/` 过程记忆统一**(gitignore `/^.dev/`,单一根):spec/<slug>.md(slug 必填,多模块 <initiative>/map.md+SPEC-<id>.md)、plan.md、todo.md、tickets/T-XXX.md、research/<slug>.md、sdlc/、audit/。本地 tracker 双轨(.scratch/ 与根 tasks/)合一为 setup references/issue-tracker-dev.md;legacy 屋顶照读。
+- **`.dev/` 过程记忆统一**(gitignore `/^.dev/`,单一根):spec/<slug>.md(slug 必填,多模块 <initiative>/map.md+SPEC-<id>.md)、plan.md、todo.md、tickets/T-XXX.md、research/<slug>.md、sdlc/、audit/。本地 tracker 双轨(.scratch/ 与根 tasks/)合一为 setup references/issue-tracker.md;legacy 屋顶照读。
 - **docs/ 持久资产归位**:GLOSSARY(+MAP)/CONSTRAINTS/REPO 从根迁入 docs/,与 adr/ 同层;legacy 根文件照读,搬迁归 owner。
+- **P6.1 追平(同日,用户拍板)**:issue-tracker-dev.md 更名 issue-tracker.md;`.dev/sdlc/` 更名 `.dev/lifecycle/`。
 - **验收**:check-skills 26 技能全绿(prd/issues/wayfinder 留 KILLS 绊线);模型回放触发回归未在本轮执行——standing instruments(B/bootstrap、G/拆分表、E/multi-area)需在新路径下复跑。

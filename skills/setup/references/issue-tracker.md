@@ -16,7 +16,7 @@ edits.
 | `.dev/tickets/T-XXX.md` | Full ticket body when richer than its plan row (optional) |
 | `.dev/spec/<slug>.md` | The feature contract (`spec` skill) |
 | `.dev/research/<slug>.md` | Research notes (`research` skill) |
-| `.dev/sdlc/`, `.dev/audit/` | Machine ledgers (`gates/gate.sh`; only when opted in) |
+| `.dev/lifecycle/`, `.dev/audit/` | Machine ledgers (`gates/gate.sh`; only when opted in) |
 
 ## Creating an issue
 

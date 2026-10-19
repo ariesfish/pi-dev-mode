@@ -18,6 +18,7 @@ description: >-
 - 2026-10 P2.5: eval row added (skill-change promotion gate).
 - 2026-10 P2.6 (pie observation #3): scope test — multi-area tasks route to issues → implement-all, never to implement as one blob.
 - 2026-10 P2.7 (A, retro A-F round): delegation line names the `agent` tool (lowercase). An attempted scope-gate hardening was rejected by the eval gate (evals/skill-impact.md 2026-10-17) — v4-pro full-tool sessions implemented directly despite it.
+  - 2026-10 P6.1: local tracker seed renamed issue-tracker.md; ledger dir .dev/lifecycle/ (user call).
   - 2026-10 P4/P5: full body (P4) + opt-in ledger line (P5: .sdlc/ presence is the switch, gates/README owns the format).
   - 2026-10 P5.1 (standing instrument G axis): multi-area routing row gains the action shape — first reply = the split table itself; file contents before split confirmation is the breach shape. Also: P4's duplicate Reply-contract section merged into the original (single section now).
 -->
@@ -136,4 +137,4 @@ One line each — enough to steer when the owning skill is not loaded.
 
 ## Ledger(可选,默认关)
 
-`.dev/sdlc/` 目录在场 = 账本开启(D 类脚本门/A 类裁决门入账 + history 可重放;`retro` 挖首过率/翻转率,详见包内 `gates/README.md`)。**不在场一切照旧(P1-P4 行为)**——账本是叙述层,不是依赖。
+`.dev/lifecycle/` 目录在场 = 账本开启(D 类脚本门/A 类裁决门入账 + history 可重放;`retro` 挖首过率/翻转率,详见包内 `gates/README.md`)。**不在场一切照旧(P1-P4 行为)**——账本是叙述层,不是依赖。

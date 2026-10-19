@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # gate.sh — SDLC ledger gates (P5, opt-in). Zero deps beyond bash + python3.
 #
-# The ledger lives in the TARGET project: .dev/sdlc/items/<id>/state.json.
+# The ledger lives in the TARGET project: .dev/lifecycle/items/<id>/state.json.
 # Its absence is the OFF state — every command here refuses (exit 2) without
 # one, so a closed ledger never changes skill behavior.
 #
@@ -22,7 +22,7 @@ die() { echo "gate.sh: $*" >&2; exit 2; }
 usage() {
   cat <<'EOF'
 Usage: gate.sh <command> [args]        (run from the target project root)
-  open <id> "<title>"                  open item ledger (.dev/sdlc/ opt-in)
+  open <id> "<title>"                  open item ledger (.dev/lifecycle/ opt-in)
   run <id> <gate> [-d dir] [--note s] -- <cmd...>
                                        run D-class gate, append history
   verdict <id> --from <verdict.json> [--note s]
@@ -52,7 +52,7 @@ case "$cmd" in
 import json, sys, pathlib, datetime
 gate_home, item, title = sys.argv[1], sys.argv[2], sys.argv[3]
 root = pathlib.Path.cwd()
-sdlc = root / ".dev/sdlc"
+sdlc = root / ".dev/lifecycle"
 state_f = sdlc / "items" / item / "state.json"
 if state_f.exists():
     sys.exit(f"gate.sh: item {item} already open at {state_f}")
@@ -60,9 +60,9 @@ state_f.parent.mkdir(parents=True, exist_ok=True)
 readme = sdlc / "README.md"
 if not readme.exists():
     readme.write_text(
-        "# .dev/sdlc/ ledger (opt-in)\n\n"
+        "# .dev/lifecycle/ ledger (opt-in)\n\n"
         "Opened by gate.sh (pi-dev-mode P5). Removing/renaming this dir closes the\n"
-        "ledger — all skills then behave exactly as P1-P4 (no .dev/sdlc, no ledger).\n\n"
+        "ledger — all skills then behave exactly as P1-P4 (no .dev/lifecycle, no ledger).\n\n"
         "- items/<id>/state.json — gates + append-only history (replayable)\n"
         "- observe/ — L4 tail stub (post-deploy baseline loop; intentionally unimplemented)\n",
         encoding="utf-8",
@@ -100,8 +100,8 @@ PYEOF
     exec "$PY" - "$GATE_HOME" "$id" "$gate" "$dir" "$note" "$@" <<'PYEOF'
 import json, subprocess, sys, pathlib, datetime, shlex
 item, gate, dir_, note, argv = sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6:]
-f = pathlib.Path.cwd() / ".dev/sdlc" / "items" / item / "state.json"
-if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/sdlc ledger)")
+f = pathlib.Path.cwd() / ".dev/lifecycle" / "items" / item / "state.json"
+if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/lifecycle ledger)")
 state = json.loads(f.read_text())
 proc = subprocess.run(argv, cwd=dir_, capture_output=True, text=True)
 ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -130,9 +130,9 @@ PYEOF
     exec "$PY" - "$GATE_HOME" "$id" "$file" "$note" <<'PYEOF'
 import json, hashlib, sys, pathlib, datetime
 item, file, note = sys.argv[2], sys.argv[3], sys.argv[4]
-f = pathlib.Path.cwd() / ".dev/sdlc" / "items" / item / "state.json"
+f = pathlib.Path.cwd() / ".dev/lifecycle" / "items" / item / "state.json"
 vf = pathlib.Path(file)
-if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/sdlc ledger)")
+if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/lifecycle ledger)")
 if not vf.exists(): sys.exit(f"gate.sh: verdict file not found: {file}")
 raw = vf.read_bytes()
 try:
@@ -159,8 +159,8 @@ PYEOF
     exec "$PY" - "$GATE_HOME" "$id" "$note" <<'PYEOF'
 import json, sys, pathlib, datetime
 item, note = sys.argv[2], sys.argv[3]
-f = pathlib.Path.cwd() / ".dev/sdlc" / "items" / item / "state.json"
-if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/sdlc ledger)")
+f = pathlib.Path.cwd() / ".dev/lifecycle" / "items" / item / "state.json"
+if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/lifecycle ledger)")
 state = json.loads(f.read_text())
 ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 state["closed"] = ts
@@ -175,8 +175,8 @@ PYEOF
   show)
     exec "$PY" - "$GATE_HOME" "$id" <<'PYEOF'
 import json, sys, pathlib
-f = pathlib.Path.cwd() / ".dev/sdlc" / "items" / sys.argv[2] / "state.json"
-if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/sdlc ledger)")
+f = pathlib.Path.cwd() / ".dev/lifecycle" / "items" / sys.argv[2] / "state.json"
+if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/lifecycle ledger)")
 print(f.read_text())
 PYEOF
     ;;
@@ -185,8 +185,8 @@ PYEOF
     exec "$PY" - "$GATE_HOME" "$id" <<'PYEOF'
 import json, subprocess, sys, pathlib, hashlib
 item = sys.argv[2]
-f = pathlib.Path.cwd() / ".dev/sdlc" / "items" / item / "state.json"
-if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/sdlc ledger)")
+f = pathlib.Path.cwd() / ".dev/lifecycle" / "items" / item / "state.json"
+if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/lifecycle ledger)")
 state = json.loads(f.read_text())
 drift = 0
 for e in state["history"]:
@@ -212,8 +212,8 @@ PYEOF
   mine)
     exec "$PY" - "$GATE_HOME" <<'PYEOF'
 import json, pathlib
-sdlc = pathlib.Path.cwd() / ".dev/sdlc"
-if not sdlc.exists(): sys.exit("gate.sh: no .dev/sdlc ledger (closed)")
+sdlc = pathlib.Path.cwd() / ".dev/lifecycle"
+if not sdlc.exists(): sys.exit("gate.sh: no .dev/lifecycle ledger (closed)")
 rows = []
 for f in sorted(sdlc.glob("items/*/state.json")):
     s = json.loads(f.read_text())

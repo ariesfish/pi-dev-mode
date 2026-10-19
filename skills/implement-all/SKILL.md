@@ -20,6 +20,7 @@ description: >-
   auto mode; its default one-task mode merged into `implement`. Rationale:
   the two doors duplicated ~80% and "build" collided with the npm-build verb
   inside its own protocol.
+  - 2026-10 P6.1: ledger dir renamed .dev/sdlc/ → .dev/lifecycle/ (user call).
   - 2026-10 P5: auto mode step 6 — opt-in per-ticket ledger (open/…/close; blocker tickets stay open). No .sdlc → unchanged.
   - 2026-10 P6: prd retired — spec is the only upstream contract.
 -->
@@ -110,10 +111,10 @@ For every task, in either mode:
 5. **Summarize with evidence, not self-report**: failing-test output for at
    least one RED per task (or its skip-test line), suite and build results,
    commit hashes. "Inconclusive" is not a pass; flag it instead.
-6. **Ledger (opt-in)**: 目标仓有 `.dev/sdlc/` 时,每票 `gates/gate.sh open` 开票,
+6. **Ledger (opt-in)**: 目标仓有 `.dev/lifecycle/` 时,每票 `gates/gate.sh open` 开票,
    票内 D 类门按 `implement` 的 ledger 条款 run 入账(tdd/check),票收工
    `close --note`;遇 blocker 的票停在 open 状态不 close,人裁决后重跑。
-   `.dev/sdlc/` 不在场:无账本步骤,照旧。
+   `.dev/lifecycle/` 不在场:无账本步骤,照旧。
 
 ## PARALLEL mode (multi-agent orchestration)
 
