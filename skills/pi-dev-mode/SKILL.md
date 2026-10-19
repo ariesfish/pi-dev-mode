@@ -45,7 +45,7 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Whole task graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
 | Something is broken or slow | `diagnose` (its perf branch passes `benchmark-checklist` before a number is claimed) |
 | Review a diff / PR / branch (single two-axis pass) | `code-review` |
-| Gate a merge / ship | `review` (four lenses in parallel readonly reviewers, one aggregated verdict;高风险合并加独立裁决者——异模型 fresh agent 自写 `.audit/evidence/` verdict 文件) |
+| Gate a merge / ship | `review` (four lenses in parallel readonly reviewers, one aggregated verdict;高风险合并加独立裁决者——异模型 fresh agent 自写 `.dev/audit/evidence/` verdict 文件) |
 | A measured number is about to be claimed | `benchmark-checklist` before the number leaves the room |
 | Non-trivial decision mid-flight, high stakes | `doubt` (fresh adversarial reviewer, bounded loop) |
 | Session ending / before handoff | `retro` |
@@ -81,7 +81,7 @@ and what changes for them before any implementation detail.
 - 用用户的语言回答;每个论断同句携带证据或标签——`[check: …]` `[evidence: …]` `[judgment: …]`,或一个可打开的指针(commit/file:line/工件路径)。
 - 无证据就说"未验证",绝不编造貌似合理的引用;未覆盖的项如实列出,不静默跳过。
 - 结论先行,证据随行;不灌水(unslop):删除空洞的总结段、形容词堆叠和凑版面段落。
-- 证据工件不被 cleanup 删除;.audit/ 台账 append-only;决策点名理由,不点名修辞。
+- 证据工件不被 cleanup 删除;.dev/audit/ 台账 append-only;决策点名理由,不点名修辞。
 
 
 ## Playbooks (10, 精选)
@@ -103,7 +103,7 @@ Named by need; each names its owning skill — follow the skill body, not this s
 8. **门**: `code-review` (two-axis single pass) / `review` (four lenses + aggregate; high-stakes adds the independent verifier verdict file); numbers leave the room only after `benchmark-checklist`.
 
 **发布 (ship)**
-9. **ship**: `review` gate first (APPROVE or informed accept), then land: one primary number (per benchmark 七问), release notes, post-ship verify pass, evidence archived (`.audit/evidence/`, survives cleanup).
+9. **ship**: `review` gate first (APPROVE or informed accept), then land: one primary number (per benchmark 七问), release notes, post-ship verify pass, evidence archived (`.dev/audit/evidence/`, survives cleanup).
 10. **回路**: `retro` at session end / before handoff; substantive skill edits route through `eval` (Mode A/B) — a rejected change lands in `evals/skill-impact.md`.
 
 ## Principles index (12, 精选自 pstack 24)
@@ -130,7 +130,7 @@ One line each — enough to steer when the owning skill is not loaded.
 过夜自主 = **`implement-all auto` + `/loop` 心跳 + decisions 台账**,三件各司其职:
 
 1. **白天**: `spec`→`tasks` 把活拆成带上限的工单(frontier 每轮 1-3 张,HITL 项全置后),人审批一次。
-2. **启动**: `implement-all auto` 自主跑票——单票一 commit + `.audit/T-XXX.tsv` 每决策一行(七列定稿:show 列给人看活、skip_test 列给诚实的跳过);停止条件照技能(测试不过/spec 缺口/需要人的决策 → 停下写在 replies 里,不合糊推进)。
+2. **启动**: `implement-all auto` 自主跑票——单票一 commit + `.dev/audit/T-XXX.tsv` 每决策一行(七列定稿:show 列给人看活、skip_test 列给诚实的跳过);停止条件照技能(测试不过/spec 缺口/需要人的决策 → 停下写在 replies 里,不合糊推进)。
 3. **心跳**: `/loop 30m 检查 frontier:还有就绪票就推进,有停止条件就停,全清就总结收账`——间隔自定;print 模式下用 `schedule_wakeup` 等价。
 4. **晨间审计**: decisions tsv 每行 before/after/evidence 指针齐全即审计通过;`review` 抽查高风险票;`retro` 收回路沉淀。
 

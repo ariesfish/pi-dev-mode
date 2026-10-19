@@ -50,7 +50,7 @@ Scope: the no-edit rule binds product and source changes. Bootstrapping this sta
 
 If the task's acceptance is visual (样式/布局/参考图对齐) and your model cannot see images (`read` says so), delegate the visual check to a multimodal viewer agent — never claim visual parity from code or pixel reconstruction alone.
 
-High-stakes merges also earn an independent adjudicator: a fresh readonly agent on a different model, judging the diff alone and writing its own PASS|FAIL verdict file under `.audit/evidence/` (`review` skill's independent-verifier section).
+High-stakes merges also earn an independent adjudicator: a fresh readonly agent on a different model, judging the diff alone and writing its own PASS|FAIL verdict file under `.dev/audit/evidence/` (`review` skill's independent-verifier section).
 
 User instructions (AGENTS.md, CLAUDE.md, direct requests) take precedence. Other session-start mandates still apply; when a task meets this stack's criteria above, route implementation through pi-dev-mode.
 </EXTREMELY_IMPORTANT>

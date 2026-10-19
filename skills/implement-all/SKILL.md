@@ -27,20 +27,21 @@ description: >-
 # Implement All
 
 Implement a whole plan: the tickets from `tasks` (task graph), or a task list
-in `tasks/plan.md`. `implement` is one ticket, serial, in-hand; this skill
+in `.dev/plan.md`. `implement` is one ticket, serial, in-hand; this skill
 takes the whole graph. Complement, not subordinate: `implement` after this
 README.
 
 ## What implement-all needs before it starts
 
-1. **A spec**, at a known path: `SPEC.md` at the root, `docs/SPEC.md`, or a
-   file under `spec/`. A README or an arbitrary doc is not a spec. If none
-   exists: stop, tell the user to run `spec` first. Do not invent requirements.
+1. **A spec**, at a known path: `.dev/spec/<slug>.md` (multi-module work:
+   `.dev/spec/<initiative>/map.md` plus its `SPEC-<id>.md` files). A README
+   or an arbitrary doc is not a spec. If none exists: stop, tell the user to
+   run `spec` first. Do not invent requirements.
 2. **A task list / task graph**: tracker tickets sliced by `tasks`, or
-   `tasks/plan.md` (with per-task checklists in `tasks/todo.md`). If absent,
+   `.dev/plan.md` (with per-task checklists in `.dev/todo.md`). If absent,
    invoke `tasks` to generate one.
 3. **A clean baseline**: `git status --porcelain` shows nothing outside
-   expected planning artifacts (SPEC.md, docs/SPEC.md, spec/*, tasks/*).
+   expected planning artifacts (`.dev/*` — process memory, gitignored).
    Autonomous and parallel commits must not absorb unrelated local work, or
    the clean-rollback guarantee breaks.
 
@@ -74,7 +75,7 @@ For every task, in either mode:
 - Run the regression suite and the build.
 - Commit **only the files that task touched** plus its task-status update —
   never `git add -A` — one commit per task, so any point is a clean rollback.
-- Append one row per decision to the trail (`.audit/<task-slug>.tsv`). Final format
+- Append one row per decision to the trail (`.dev/audit/<task-slug>.tsv`). Final format
   (P3 定稿): columns `id, decision, reason, evidence, verdict, skip_test, show` —
   cells single-line, evidence is a pointer (commit / file:line / artifact path),
   never prose; verdict is a predicate state (`green` / `red` / `reverted` /

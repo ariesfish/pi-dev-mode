@@ -53,7 +53,7 @@ RIGHT (vertical):
 
 ## Cost gate
 
-Before writing a test, price it honestly. If the test path is expensive — slow end-to-end runs, heavy fixtures, production-like state, an unclear repro — do not force it. Fall back to the **closest executable check** (a targeted script, a snapshot diff, a log assertion, a focused integration check), and record the decision in the decision trail (`.audit/<task-slug>.tsv`, or a comment on the issue) as:
+Before writing a test, price it honestly. If the test path is expensive — slow end-to-end runs, heavy fixtures, production-like state, an unclear repro — do not force it. Fall back to the **closest executable check** (a targeted script, a snapshot diff, a log assertion, a focused integration check), and record the decision in the decision trail (`.dev/audit/<task-slug>.tsv`, or a comment on the issue) as:
 
 ```
 skip-test: <reason> | fallback: <the check you ran instead>

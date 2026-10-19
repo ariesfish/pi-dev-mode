@@ -121,7 +121,7 @@ tier — e.g. deepseek-flash under a v4-pro session; a multimodal verifier can
 view drive screenshots as evidence). It sees **the diff and the evidence
 pointers, never the lens outputs** — independence is the point. It adjudicates
 on its own reading — Critical/Required findings of its own — and **writes its
-verdict file itself** to `.audit/evidence/review-<slug>/verdict.json`:
+verdict file itself** to `.dev/audit/evidence/review-<slug>/verdict.json`:
 `{verdict: PASS|FAIL, blockers: [file:line + reason], checked: [what it
 covered], evidence: [paths]}`. Present its PASS/FAIL beside the aggregated
 verdict: a verifier FAIL — or disagreement with the lenses — reads as

@@ -62,7 +62,7 @@ actually found (no placeholders left):
   examples. Prefer stable handles (ARIA 标签/可访问名、data 属性、提示文案、路由
   路径)over coordinates and tab order — 与 control-web 的定位次序一致。
 - **Evidence:** what to capture for a proof and where it goes — recommend
-  `.audit/evidence/verify-<app>-<runId>/`(与 implement-all 的 .audit 台账同根,
+  `.dev/audit/evidence/verify-<app>-<runId>/`(与 implement-all 的 .dev/audit 台账同根,
   review 裁决可复核)。Verify side effects alongside what's visible; mocks only
   where a production boundary already isolates the external system.
 - **Cleanup:** tear down what the run created. Never kill by process name; kill
