@@ -136,4 +136,4 @@ One line each — enough to steer when the owning skill is not loaded.
 
 ## Ledger(可选,默认关)
 
-`.sdlc/` 目录在场 = 账本开启(D 类脚本门/A 类裁决门入账 + history 可重放;`retro` 挖首过率/翻转率,详见包内 `gates/README.md`)。**不在场一切照旧(P1-P4 行为)**——账本是叙述层,不是依赖。
+`.dev/sdlc/` 目录在场 = 账本开启(D 类脚本门/A 类裁决门入账 + history 可重放;`retro` 挖首过率/翻转率,详见包内 `gates/README.md`)。**不在场一切照旧(P1-P4 行为)**——账本是叙述层,不是依赖。

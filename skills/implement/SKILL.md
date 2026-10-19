@@ -58,6 +58,6 @@ Report with evidence, not self-report: the failing-test output (or the skip-test
 
 ## Ledger (opt-in)
 
-目标仓有 `.sdlc/`(账本开启;工具 = 技能包的 `../../gates/gate.sh`,repo 内运行):票开工先 `gate.sh open <票号> "<标题>"`(已开则沿用),每道过的 D 类门 `gate.sh run <票号> tdd -- <测试命令>` 入账(FAIL 也入账,首跑红是事实),收工 `gate.sh close <票号> --note "<一句话>"`。`.sdlc/` 不在场:一字不加,全套照旧。
+目标仓有 `.dev/sdlc/`(账本开启;工具 = 技能包的 `../../gates/gate.sh`,repo 内运行):票开工先 `gate.sh open <票号> "<标题>"`(已开则沿用),每道过的 D 类门 `gate.sh run <票号> tdd -- <测试命令>` 入账(FAIL 也入账,首跑红是事实),收工 `gate.sh close <票号> --note "<一句话>"`。`.dev/sdlc/` 不在场:一字不加,全套照旧。
 
 For a whole task graph, or an unattended run, use `implement-all` (auto: single approval, serial. parallel: one implementer per frontier ticket, each in its own worktree). This skill stays one ticket, in hand; its scope check refuses multi-area blobs back to `tasks`.

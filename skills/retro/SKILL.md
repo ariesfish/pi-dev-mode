@@ -43,7 +43,7 @@ findings; a class counts once it has happened twice.
    - **Navigation** — the agent searched long for things a pointer would have
      named. Finding: a navigation pointer (GLOSSARY, REPO.md, a comment) or
      misplaced docs.
-   - **Ledger rates (opt-in)** — 目标仓有 `.sdlc/` 时,先跑技能包
+   - **Ledger rates (opt-in)** — 目标仓有 `.dev/sdlc/` 时,先跑技能包
      `gates/gate.sh mine`:D 门首过率 + A 裁决翻转(分歧),连同
      `.dev/audit/*.tsv` 的 `skip_test` 率。三率出修复:编码为 constraints 行
      (新门槛)或吞进既有 lint(correct 的最高层级修复),不改 prose。

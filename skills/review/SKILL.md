@@ -127,9 +127,9 @@ covered], evidence: [paths]}`. Present its PASS/FAIL beside the aggregated
 verdict: a verifier FAIL — or disagreement with the lenses — reads as
 INCONCLUSIVE, named as such, with what would close it.
 
-账本入场(目标仓有 `.sdlc/`):verdict 文件自写落盘后,`gates/gate.sh verdict
+账本入场(目标仓有 `.dev/sdlc/`):verdict 文件自写落盘后,`gates/gate.sh verdict
 <票号> --from <verdict.json> --note "<一句话>"` 入账(A 类门,记 sha256 与
-verdict);无 `.sdlc/` 照旧,verdict 文件本身仍是必交的。
+verdict);无 `.dev/sdlc/` 照旧,verdict 文件本身仍是必交的。
 
 ## Composition notes
 
