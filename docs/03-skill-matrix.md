@@ -151,3 +151,10 @@ delegation:guard-the-context-window。
 - **起因**:用户问 SKILL.md 里的 changelog 有什么用、加载时剥不剥——实测:pi 触发技能读原文件全文,HTML 注释对 LLM 是纯 token,没有任何剥离;全库 28 块共 ~19.6KB(~5-6k tokens),平均占技能体积 12%(tasks 26%/implement 25%),每次触发都白付。
 - **裁决**:消费者是"编辑技能的人/agent",不是触发技能的会话——历史层收敛到 git log(本仓 commit message 带全量 rationale)+ 本文档落地记录,文件内不再携带。
 - **触面**:26 SKILL.md + 2 agents 块删除(原文不动一字,进 git 历史);check-skills.py 撤销第 4 条验收(changelog 在场),strip_changelog 一并退役。
+
+### P6.6 落地(2026-10-19):三连改名 + 票词汇统一(用户点单)
+
+- **align → grill-me**(用户点单,利于 mattp 生态传播):grilling #1193 血统正名——mattp 最出圈的技能名拷问直译,与"拷打方案"触发词贴合。触发词增补"拷问我"。
+- **tasks → tickets**:技能第一句产物名词就是 tickets(名字与实体脱节);mattp 上游即 to-tickets;全包工件名词已统一 ticket,`.dev/<slug>/tickets/` 目录名早已如此。同步统一概念词:task graph/task list/task-slug/per-task → ticket graph/ticket list/ticket-slug/per-ticket。P5.2 的 issues→tasks 落地记录保留为史。
+- **use-the-stack → dev-mode-help**:它是帮助/发现页(给人浏览、给无 mandate 会话定位),与主技能配对:pi-dev-mode(路由器)+ dev-mode-help(帮助页)。
+- 触面:3 个 git mv + evals/tasks→evals/tickets(target 同步 tickets:fires);反引号引用、非反引号点名、概念词、KILLS、hook/prompt.ts/lifecycle.ts/README/docs02 全清;checker 绿。

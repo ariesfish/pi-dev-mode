@@ -4,7 +4,7 @@
 **大 mode 一键进场,单点技能独立爆破,工件契约是心脏。**
 
 ```
-基座(15件) →基座 宿主      align code/diagnose implement* proto refact repo research setup tdd triage
+基座(15件) →基座 宿主      grill-me code/diagnose implement* proto refact repo research setup tdd triage
 pstack      →升级包 验证的心脏    证据标准 独立裁决 数字纪律 verify 生成器 反馈环冻结复用
 mattp       →血统确认          grilling domain 哲学 tracker 管道 + 工程件第二轮补齐已在 基座 落地
 addyosmani  →升级包 生命周期与质量合同  SPEC CONSTRAINTS 三类验收标注 停止条件(已并入 implement-all auto)
@@ -26,9 +26,9 @@ addyosmani  →升级包 生命周期与质量合同  SPEC CONSTRAINTS 三类验
 **三层使用方式:**
 1. 大 mode:`/skill:pi-dev-mode` 或让它经 mandate 自动进场——路由表按"阶段 × 类型 × 雾级"派发
 2. 显式技能直调:`/skill:spec` `/skill:implement-all`(auto / parallel 模式)`/skill:code-review` …(独立执行技能无生命周期命令层,直接用具名技能)
-3. 单点:`/skill:align`、`/skill:benchmark-checklist`、`/skill:constraints`……任何技能独立跑,靠工件在场咬合,不在场就降级
+3. 单点:`/skill:grill-me`、`/skill:benchmark-checklist`、`/skill:constraints`……任何技能独立跑,靠工件在场咬合,不在场就降级
 
-**技能构成:P6 后 26 件** = 基座 14 在任(P6 裁撤 prd,与 mattp 上游 to-prd 并入 to-spec 对齐;issues→tasks、wayfinder→scout 经 P5.2 改名)+ 新增 12:spec/constraints/use-the-stack/pi-dev-mode(P1)、doubt/retro/code-review/benchmark-checklist/eval(P2 系)、create/maintain-verification-skill(P3)+ agents×2(code-reviewer/security-auditor)+ references + evals/ 用例库(11 例)。
+**技能构成:P6.6 后 26 件** = 基座 14 在任(P6 裁撤 prd;改名族:issues→tasks→tickets、wayfinder→scout、align→grill-me、use-the-stack→dev-mode-help)+ 新增 12:spec/constraints/pi-dev-mode/dev-mode-help(P1)、doubt/retro/code-review/benchmark-checklist/eval(P2 系)、create/maintain-verification-skill(P3)+ agents×2(code-reviewer/security-auditor)+ references + evals/ 用例库(11 例)。
 (散件说明:`~/.agents/skills/` 里留下的 `handoff` 等散件按引用归类,不重复收编。旧 dev-* 原件备份在 `~/.agents/dev-skills-backup-2026-10-15/`。)
 
 **工件布局(P6 统一,2026-10-18 用户拍板):**

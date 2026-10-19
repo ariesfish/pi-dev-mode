@@ -2,7 +2,7 @@
 name: setup
 description: >-
   Set up per-repository agent configuration for developer workflow skills. Use
-  before first use of spec, tasks, triage-issue,
+  before first use of spec, tickets, triage-issue,
   diagnose, tdd, refact, repo-map, or code-map in a repo,
   or when those skills lack context about the issue tracker, triage labels, or
   domain documentation layout. Creates or updates an Agent skills block in

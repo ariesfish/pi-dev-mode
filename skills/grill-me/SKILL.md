@@ -1,12 +1,12 @@
 ---
-name: align
+name: grill-me
 description: >-
   Challenge architecture and product design plans against the existing domain
   language, sharpen terminology, and update documentation (docs/GLOSSARY.md, ADRs)
   inline as decisions crystallise. Use when the user wants to clarify domain
   language, stress-test a developer plan against the project's language and
   documented decisions, or decide whether a design choice deserves an ADR.
-  Chinese triggers: 拷打方案, 澄清需求, 统一术语, 领域建模, 写 ADR.
+  Chinese triggers: 拷问我, 拷打方案, 澄清需求, 统一术语, 领域建模, 写 ADR.
 ---
 
 # Align
@@ -15,7 +15,7 @@ Use this skill to align fuzzy architecture or product-design ideas with precise 
 
 ## Workflow role
 
-Use `align` before `spec`, `tasks`, `tdd`, or `refact` when the plan has fuzzy domain language, unresolved trade-offs, or decisions that may deserve an ADR. Its output is aligned language and durable context, not implementation.
+Use `grill-me` before `spec`, `tickets`, `tdd`, or `refact` when the plan has fuzzy domain language, unresolved trade-offs, or decisions that may deserve an ADR. Its output is aligned language and durable context, not implementation.
 
 When an interview surfaces a question that is best answered by building rather than asking ("does this state machine feel right?", "which layout?"), route that one question to `proto`, then resume the interview with the answer. A question a prototype can settle is not the human's to answer.
 

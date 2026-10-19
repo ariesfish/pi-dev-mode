@@ -7,14 +7,14 @@ setup
   -> repo-map        # optional durable repo-wide onboarding map
   -> code-map        # orient in unfamiliar task-specific code
   -> research        # delegate primary-source investigation to a background agent
-  -> align           # align language, decisions, docs/GLOSSARY.md, ADRs
+  -> grill-me        # interrogate language, decisions, GLOSSARY, ADRs (one question per turn)
   -> proto           # answer unclear design/UI/logic questions
   -> spec            # synthesize the conversation + decisions into the contract
   -> constraints     # define "good enough to ship" with numbers (docs/CONSTRAINTS.md)
-  -> issues          # split the plan into vertical slices (task graph)
+  -> tickets         # split the plan into vertical slices (ticket graph)
   -> triage-issue    # route incoming issues through labels and agent briefs
   -> implement       # one ticket, serial, TDD at the seams
-  -> implement-all  # the whole task graph: auto (serial, single approval) or parallel (multi-agent worktrees)
+  -> implement-all  # the whole ticket graph: auto (serial, single approval) or parallel (multi-agent worktrees)
   -> review          # merge gate: four lenses (two-axis, comments, doubt, constraints) in parallel
   -> benchmark-checklist  # vet a measured number before it is reported
   -> doubt            # in-flight adversarial cross-exam of a non-trivial decision
@@ -46,17 +46,17 @@ pi-dev-mode          # the router that picks between all of these
 - If the repo is unfamiliar and needs durable onboarding context, use `repo-map`.
 - If you do not understand the task-specific code area, use `code-map` before planning or editing.
 - If a question needs external docs/APIs read, delegate it to `research` and keep working.
-- If language or trade-offs are fuzzy, use `align` before writing specs.
+- If language or trade-offs are fuzzy, use `grill-me` before writing specs.
 - If the best design is unknown, use `proto` before committing to a spec or task breakdown.
-- If the work is feature-shaped: `spec` then `tasks`, then `implement-all`.
+- If the work is feature-shaped: `spec` then `tickets`, then `implement-all`.
 - If the destination itself is undecided (big, foggy), use `scout` first — decisions, not deliverables.
 - If no quality bar is written down, `constraints` before an autonomous run.
 - If the work starts as an issue, use `triage-issue`; send ready work to implementation.
-- One ticket in hand: `implement`. Whole task graph: `implement-all` — auto for an unattended serial run, parallel when the frontier is wide.
+- One ticket in hand: `implement`. Whole ticket graph: `implement-all` — auto for an unattended serial run, parallel when the frontier is wide.
 - After implementation, before merging: `review` (the four-lens merge gate); `code-review` alone for a single two-axis pass.
 - About to commit non-trivial code or take a high-stakes step: `doubt` mid-flight, before the merge gate.
 - A measured number is about to be reported: `benchmark-checklist` first; a number without its limiter is not a result.
 - Session over, before handoff: `retro`; its skill edits feed this stack itself.
 - If something is broken or slow, use `diagnose` before refactoring.
 - If code friction remains after implementation or diagnosis, use `refact`.
-- Browsing/unsure what to pick: `use-the-stack`, or say it in plain words and let `pi-dev-mode` route.
+- Browsing/unsure what to pick: `dev-mode-help`, or say it in plain words and let `pi-dev-mode` route.

@@ -29,7 +29,7 @@ spec goes stale where the repo does not. One test per candidate line:
 
 Where the content comes from, in order:
 
-1. **align's labeled candidates exist in this conversation**: harvest them
+1. **grill-me's labeled candidates exist in this conversation**: harvest them
    verbatim into the spec's Acceptance criteria.
 2. **Neither**: synthesize from the conversation and codebase as they stand
    (no interview), surface your assumptions (Phase 2), and let the approval
@@ -138,8 +138,8 @@ clarification, content, and approval gates, not the file format.
 After approval, this stack takes over (this skill hands off, it does not
 plan or build):
 
-- `tasks` — slices the spec into vertical tracer-bullet tickets (task
-  breakdown is **tasks'** canonical authority; if this spec ever disagrees
+- `tickets` — slices the spec into vertical tracer-bullet tickets (task
+  breakdown is **tickets'** canonical authority; if this spec ever disagrees
   with the ticket graph, the graph wins and the spec gets updated).
 - `implement` (one ticket) / `implement-all` (whole graph: auto serial
   single-approval, or parallel multi-agent) — execution.

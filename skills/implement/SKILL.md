@@ -12,7 +12,7 @@ description: >-
 
 ## The scope check (run it first)
 
-Count the areas or modules the task names. **More than one is not one ticket.** A checklist-shaped ask ("do X + Y + Z", a whole-area rebuild, porting a reference implementation wholesale) is a task graph missing its split: refuse the blob, route to `tasks` to slice it, and let `implement-all` (auto or parallel, per frontier width) execute. Implementing a multi-area blob as a single serial pass buries the split, the tracker bootstrap, and every per-ticket verification.
+Count the areas or modules the task names. **More than one is not one ticket.** A checklist-shaped ask ("do X + Y + Z", a whole-area rebuild, porting a reference implementation wholesale) is a ticket graph missing its split: refuse the blob, route to `tickets` to slice it, and let `implement-all` (auto or parallel, per frontier width) execute. Implementing a multi-area blob as a single serial pass buries the split, the tracker bootstrap, and every per-ticket verification.
 
 Implement the work described by the user in the spec or tickets.
 
@@ -53,4 +53,4 @@ D-class gate with `gate.sh run <id> tdd -- <test command>` (FAILs recorded
 too — a first-pass red is a fact), and close with `gate.sh close <id> --note
 "<one line>"`. Without `.dev/lifecycle/`: add nothing, full unchanged behavior.
 
-For a whole task graph, or an unattended run, use `implement-all` (auto: single approval, serial. parallel: one implementer per frontier ticket, each in its own worktree). This skill stays one ticket, in hand; its scope check refuses multi-area blobs back to `tasks`.
+For a whole ticket graph, or an unattended run, use `implement-all` (auto: single approval, serial. parallel: one implementer per frontier ticket, each in its own worktree). This skill stays one ticket, in hand; its scope check refuses multi-area blobs back to `tickets`.

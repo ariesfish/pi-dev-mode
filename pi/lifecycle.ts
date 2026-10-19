@@ -30,7 +30,7 @@ const COMMANDS: LifecycleCommand[] = [
     frame: (args) =>
       args.includes("--auto")
         ? `implement-all auto 启动:${args.replace("--auto", "").trim() || "按 tracker 里就绪的工单开工"}——单审批后自主跑完,每票一 commit + decisions tsv 留痕,停止条件照技能。`
-        : `按 implement/implement-all 技能实现:${args || "当前 tracker 里就绪的工单"}。单区单票走 implement;多区/多票走 implement-all。若没有 SPEC 与工单,先按技能拒绝并指引 spec/tasks 路径。`,
+        : `按 implement/implement-all 技能实现:${args || "当前 tracker 里就绪的工单"}。单区单票走 implement;多区/多票走 implement-all。若没有 SPEC 与工单,先按技能拒绝并指引 spec/tickets 路径。`,
   },
   {
     name: "review",

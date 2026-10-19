@@ -3,7 +3,7 @@ name: pi-dev-mode
 description: >-
   Default entry point for any non-trivial task on this stack: routes the work to
   the right lifecycle stage and skill, then keeps the routing tight until the
-  work ships. Use at the start of a task, when a job spans spec/tasks/
+  work ships. Use at the start of a task, when a job spans spec/tickets/
   implementation/review, or for standing requests like "get this PR green",
   "ship the stack", "I'm going to bed, finish it". Chinese triggers: 走流程,
   用 pi-dev, 该用哪个技能, 大干一场.
@@ -23,13 +23,13 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Signal | Go to |
 |---|---|
 | Repo has no stack config, and the task needs it | don't detour: the dependent skill bootstraps in place (one confirmation); `setup` only for a deliberate full pass |
-| Fuzzy idea, no shared language yet | `align` (then `proto` if a question is best answered by building) |
+| Fuzzy idea, no shared language yet | `grill-me` (then `proto` if a question is best answered by building) |
 | A question needs external docs read | `research` (background) |
-| Formalize the work | `spec` -> `tasks` |
+| Formalize the work | `spec` -> `tickets` |
 | Incoming bug report / feature request needs filing & labels | `triage-issue` (same tracker, inbound lane) |
 | One ticket to build (names ONE area or module) | `implement` |
-| A task naming MULTIPLE areas or modules (checklist-shaped: "X + Y + Z", whole-area rebuild, porting a reference set) | not `implement`'s job: split first (`tasks`) → `implement-all` (auto or parallel). **First reply = the split table itself** (ticket name / scope / deps / one-line acceptance for each); any file deliverable appearing before the split is confirmed is the breach shape — a single-pass build |
-| Whole task graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
+| A task naming MULTIPLE areas or modules (checklist-shaped: "X + Y + Z", whole-area rebuild, porting a reference set) | not `implement`'s job: split first (`tickets`) → `implement-all` (auto or parallel). **First reply = the split table itself** (ticket name / scope / deps / one-line acceptance for each); any file deliverable appearing before the split is confirmed is the breach shape — a single-pass build |
+| Whole ticket graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
 | Something is broken or slow | `diagnose` (its perf branch passes `benchmark-checklist` before a number is claimed) |
 | Review a diff / PR / branch (single two-axis pass) | `code-review` |
 | Gate a merge / ship | `review` (four lenses in parallel readonly reviewers, one aggregated verdict; high-stakes merges add an independent adjudicator — a fresh agent on a different model writes its own verdict file under `.dev/audit/evidence/`) |
@@ -41,12 +41,12 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Ship / land a green stack | `review` then the shipping playbook (pstack's shipping playbook underneath) |
 | Unfamiliar code area / whole repo | `code-map` / `repo-map` |
 
-**Scope test (before the fog test):** count the areas or modules the task names. More than one is not a ticket — it is a task graph missing its split. Routing a multi-area blob to `implement` buries the split, the tracker bootstrap, and the frontier; sort it into tickets first.
+**Scope test (before the fog test):** count the areas or modules the task names. More than one is not a ticket — it is a ticket graph missing its split. Routing a multi-area blob to `implement` buries the split, the tracker bootstrap, and the frontier; sort it into tickets first.
 
 **Fog test:** if the destination itself is undecided (more than a session's
 work, more unknowns than tasks, "which direction is still undecided"), that is
 `scout`-grade work — say so and route there: chart decision tickets first
-(plan-don't-do); scout hands its settled decisions to `tasks`.
+(plan-don't-do); scout hands its settled decisions to `tickets`.
 
 ## While it runs
 
@@ -75,9 +75,9 @@ and what changes for them before any implementation detail.
 Named by need; each names its owning skill — follow the skill body, not this summary.
 
 **Intent chain**
-1. **idea → shared language**: fuzzy ask → `align` (one question per turn, terms land in GLOSSARY). A question best answered by building detours to `proto`, then back.
+1. **idea → shared language**: fuzzy ask → `grill-me` (one question per turn, terms land in GLOSSARY). A question best answered by building detours to `proto`, then back.
 2. **Formalize**: `spec` (six decision sections, three-label acceptance, assumptions named, approval gate before hand-off).
-3. **Slice**: `tasks` (tracer bullet, single-metric, HITL/AFK, dependency graph → one-ticket frontier) — multi-area blobs never reach `implement` whole.
+3. **Slice**: `tickets` (tracer bullet, single-metric, HITL/AFK, dependency graph → one-ticket frontier) — multi-area blobs never reach `implement` whole.
 
 **Build**
 4. **One ticket**: `implement` (tdd kernel inside, one test at a time, RED before GREEN).
@@ -101,7 +101,7 @@ One line each — enough to steer when the owning skill is not loaded.
 - **subtract-before-you-add**: remove, then simplify, then add.
 - **build-the-lever**: prefer checks/scripts that keep paying over one-off heroics.
 - **exhaust-the-design-space**: when the design is open, spawn the alternatives before choosing.
-- **model-the-domain**: names carry truth (GLOSSARY first; align/refact enforce).
+- **model-the-domain**: names carry truth (GLOSSARY first; grill-me/refact enforce).
 - **boundary-discipline**: know which side of each boundary a change lives on.
 - **type-system-discipline**: make the compiler enforce what prose claims.
 - **prove-it-works**: a generator/probe that never ran is a draft — run it.
@@ -115,7 +115,7 @@ One line each — enough to steer when the owning skill is not loaded.
 
 Overnight autonomy = **`implement-all auto` + `/loop` heartbeat + decisions tsv**, each with its own job:
 
-1. **Daytime**: `spec` → `tasks` slices the work into bounded tickets (1-3 frontier tickets per round, HITL items pushed last); the human approves once.
+1. **Daytime**: `spec` → `tickets` slices the work into bounded tickets (1-3 frontier tickets per round, HITL items pushed last); the human approves once.
 2. **Launch**: `implement-all auto` works the tickets — one commit per ticket + one row per decision in `.dev/audit/T-XXX.tsv` (seven columns, final: the show column shows the human the work, the skip_test column records honest skips); stop conditions per that skill (failing test / spec gap / a human decision needed → stop and write it in the replies, never push through vaguely).
 3. **Heartbeat**: `/loop 30m check the frontier: advance ready tickets, stop on stop-conditions, wrap up and settle accounts when clear` — interval as you like; in print mode, `schedule_wakeup` is the equivalent.
 4. **Morning audit**: the decisions tsv passes audit when every row carries before/after/evidence pointers; `review` spot-checks high-risk tickets; `retro` closes the loop.

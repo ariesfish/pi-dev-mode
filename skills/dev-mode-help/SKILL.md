@@ -1,5 +1,5 @@
 ---
-name: use-the-stack
+name: dev-mode-help
 description: >-
   One-page discovery map for this stack: which skill for which situation, how
   they chain into a lifecycle, and where the mode, mandate, and host mapping
@@ -12,8 +12,8 @@ description: >-
 Situation → skill. When in doubt, say what you want in plain words and let `pi-dev-mode` route; this page is for picking directly.
 
 ```text
-setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto ─→ spec ─→
- constraints ─→ tasks ─→ triage-issue ─→ implement / implement-all ─→ review ─… doubt / benchmark-checklist / retro cut across
+setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ proto ─→ spec ─→
+ constraints ─→ tickets ─→ triage-issue ─→ implement / implement-all ─→ review ─… doubt / benchmark-checklist / retro cut across
  code-review ─→ diagnose ─→ refact … scout above it all
 ```
 
@@ -25,11 +25,11 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 | Understand the whole repo once | `repo-map` | durable docs/REPO.md navigation map |
 | Understand one area before changing it | `code-map` | area map, callers, impact, next step |
 | A question needs docs/APIs read | `research` | background agent, primary sources, cited file |
-| Sharpen a fuzzy idea; agree on words | `align` | one question at a time; docs/GLOSSARY.md + ADRs written inline |
+| Sharpen a fuzzy idea; agree on words | `grill-me` | one question at a time; docs/GLOSSARY.md + ADRs written inline |
 | Unsure the state machine / layout is right | `proto` | throwaway artifact answers the question |
 | Formalize intent into the building contract | `spec` | six decision sections, three-label acceptance, .dev/<slug>/spec.md |
 | Define "good enough to ship" with numbers | `constraints` | docs/CONSTRAINTS.md floor + enforced rows + diff watch |
-| Split the plan into work | `tasks` | vertical slices, task graph, frontier |
+| Split the plan into work | `tickets` | vertical slices, task graph, frontier |
 | Route incoming reports | `triage-issue` | label state machine, agent briefs |
 | Do one ticket now (ONE area — its scope check refuses multi-area blobs to issues) | `implement` | serial, tdd at the seams, AC three-labels, review, commit |
 | Do the whole graph | `implement-all` | auto (single approval, serial) or parallel (integration branch + frontier + worktrees) |
@@ -46,8 +46,8 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 
 ## How they chain
 
-- **Intent chain**: align → (proto) → spec → tasks → implement-family.
-- **Knowledge base (always-on)**: docs/GLOSSARY.md + docs/adr/ from `align`/`refact`; every skill reads them and speaks the project's language.
+- **Intent chain**: grill-me → (proto) → spec → tickets → implement-family.
+- **Knowledge base (always-on)**: docs/GLOSSARY.md + docs/adr/ from `grill-me`/`refact`; every skill reads them and speaks the project's language.
 - **Quality contract**: docs/CONSTRAINTS.md from `constraints`; `code-review` watches the diff against it; `implement-all` treats rows as gates.
 - **Verification**: every build ends on the real artifact; `diagnose` freezes proven repro loops for the verification machinery (landing P3).
 

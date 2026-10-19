@@ -66,7 +66,7 @@ Every ticket is HITL (worked with a human) or AFK (agent alone). A HITL ticket o
 
 - **Research (AFK)**: knowledge outside the working directory. Resolved by a subagent running `research`, findings on a throwaway branch, pushed but never PR'd.
 - **Prototype (HITL)**: raise the discussion's fidelity with a cheap concrete artifact. Calls `proto`; links the prototype as an asset.
-- **Grilling (HITL)**: the default. Calls `align` (interview + language, GLOSSARY/ADR inline).
+- **Grilling (HITL)**: the default. Calls `grill-me` (interview + language, GLOSSARY/ADR inline).
 - **Task (HITL/AFK)**: manual work blocking a decision (sign up for a service, provision access, move data so its shape can be seen). It earns its place by unblocking a decision, not by delivering the destination.
 
 ## Fog of war
@@ -81,7 +81,7 @@ The map is deliberately incomplete. Beyond the live tickets: **Not yet specified
 
 ### Chart the map (loose idea)
 
-1. **Name the destination** via `align`.
+1. **Name the destination** via `grill-me`.
 2. **Map breadth-first** (not deep on any one thread). If this surfaces no fog and the journey fits one session, you don't need a map: stop and ask how to proceed.
 3. **Create the map** ( label): Destination and Notes filled, fog sketched into Not yet specified.
 4. **Create the tickets you can specify now** as children; wire blocking edges and cross-references in a **second pass** with real ids — a placeholder `#<n>` auto-links to an unrelated issue. Wire, don't paste.
@@ -92,7 +92,7 @@ The map is deliberately incomplete. Beyond the live tickets: **Not yet specified
 
 1. Load the map (low-res; not every ticket body).
 2. Choose the ticket (user-named, else first frontier ticket). Claim it before any work.
-3. Resolve it as its `scout:<type>` label names — read the **label**, not the body: the body never states the type. Zoom ticket bodies on demand; a `## Notes` block may name other skills; in doubt, `align`.
+3. Resolve it as its `scout:<type>` label names — read the **label**, not the body: the body never states the type. Zoom ticket bodies on demand; a `## Notes` block may name other skills; in doubt, `grill-me`.
 4. Record: resolution comment, close, append the one-line gist to Decisions so far.
 5. Graduate newly specifiable fog into tickets (create, then wire); rule mis-scoped tickets out of scope; update tickets a decision invalidates.
 

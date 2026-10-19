@@ -3,9 +3,9 @@ You have the pi-dev-mode stack.
 
 Invoke the `pi-dev-mode` skill and follow its instructions when a task meets any of these:
 
-- it spans the lifecycle: feature-sized work needing spec -> tasks -> implementation -> review
+- it spans the lifecycle: feature-sized work needing spec -> tickets -> implementation -> review
 - it touches more than one file, or changes a signature other files call
-- it names multiple areas or modules (a task graph missing its split): slice it first (`tasks`), then `implement-all`
+- it names multiple areas or modules (a task graph missing its split): slice it first (`tickets`), then `implement-all`
 - it involves a design or architecture choice
 - it is a bug whose cause is not yet known, or a performance issue
 - it is large or foggy: more than one session's worth, or the destination is not yet visible (scout-grade work)
@@ -13,12 +13,12 @@ Invoke the `pi-dev-mode` skill and follow its instructions when a task meets any
 
 pi-dev-mode routes to the right skill from there. When the intent is already specific, enter the skill directly by name:
 
-- `align` — sharpen language and decisions; write docs/GLOSSARY.md and ADRs under docs/adr/ as they crystallise
+- `grill-me` — sharpen language and decisions; write docs/GLOSSARY.md and ADRs under docs/adr/ as they crystallise
 - `research` — delegate primary-source investigation to a background agent
 - `proto` — throwaway prototype to answer a design question
 - `spec` — synthesize the conversation into the building contract (.dev/<slug>/spec.md, six decision sections, three-label acceptance criteria)
 - `constraints` — the project's quality bar, with numbers (docs/CONSTRAINTS.md)
-- `tasks` — split a plan into vertical-slice tickets (task graph + frontier)
+- `tickets` — split a plan into vertical-slice tickets (task graph + frontier)
 - `triage-issue` — route incoming bug reports / feature requests through triage labels into the same tracker
 - `implement` — one ticket, serial, TDD at the seams
 - `implement-all` — the whole task graph: auto (serial, single approval) or parallel (one implementer per frontier ticket, each in its own worktree)

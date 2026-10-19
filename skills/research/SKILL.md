@@ -15,4 +15,4 @@ Its job:
 
 1. Investigate the question against **primary sources** (official docs, source code, specs, first-party APIs), not a secondary write-up of them. Follow every claim back to the source that owns it.
 2. Write the findings to a single Markdown file at `.dev/<slug>/research.md`, citing each claim's source — the feature's own directory; no feature dir yet → name the effort with a slug and create it (a research note is often the first thing a feature dir holds). Several notes on one effort: `.dev/<slug>/research/<topic>.md`.
-3. A conclusion worth keeping after the question is answered does not stay in process memory: escalate it — an architecture decision to `align`/ADR, a quality bar to `constraints`, a domain term to the glossary. The note itself expires with the question.
+3. A conclusion worth keeping after the question is answered does not stay in process memory: escalate it — an architecture decision to `grill-me`/ADR, a quality bar to `constraints`, a domain term to the glossary. The note itself expires with the question.

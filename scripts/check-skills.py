@@ -53,12 +53,12 @@ except ImportError:  # local fallback: minimal parser for this repo's frontmatte
             return out
 
 KILLS = {
-    "align", "code-map", "code-review", "constraints", "diagnose", "doubt",
+    "code-map", "code-review", "constraints", "diagnose", "doubt",
     "implement", "implement-all", "pi-dev-mode", "proto",
-    "refact", "repo-map", "research", "retro", "review", "setup", "spec",
-    "tdd", "triage-issue", "use-the-stack",
+    "grill-me", "refact", "repo-map", "research", "retro", "review",
+    "setup", "spec", "tdd", "tickets", "triage-issue",
     "create-verification-skill", "maintain-verification-skill",
-    "benchmark-checklist", "eval",
+    "benchmark-checklist", "dev-mode-help", "eval",
 }
 
 # Words a candidate-facing eval prompt must never carry: they leak the meta.

@@ -12,7 +12,7 @@ description: >-
 
 A prototype is **throwaway code that answers a question**. The question decides the shape.
 
-Use `proto` before `spec` or `tasks` when a design, state-machine, business-rule, or UI decision is too unclear to specify directly. Keep only the answered decision; delete or absorb the prototype before implementation.
+Use `proto` before `spec` or `tickets` when a design, state-machine, business-rule, or UI decision is too unclear to specify directly. Keep only the answered decision; delete or absorb the prototype before implementation.
 
 ## Pick a branch
 

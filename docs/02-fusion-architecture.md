@@ -79,7 +79,7 @@ flowchart TB
 | `docs/GLOSSARY.md`(+`docs/GLOSSARY-MAP.md` 多上下文;legacy 根文件/`CONTEXT.md` 照读)、`docs/adr/` | mattp domain-modeling | grilling/domain-modeling/improve-codebase-architecture | 全部技能(domain 语言即压缩) |
 | `SPEC.md` 六节决策制(`.dev/<slug>/spec.md`) | mattp to-spec(上游已并 to-prd)+ addyosmani spec-driven(P6 瘦身) | spec | planning、implement-all auto、triage |
 | SPEC 的**验收标准三类标注**:`[check: cmd] / [evidence: 规程] / [judgment: 谁]` | 我方设计稿 §6.1 | spec-driven 写入 | gate.sh(D 类门)、verify(A 类门)、review(人审点) |
-| tickets / `.dev/<slug>/plan.md` + `todo.md`(+全文票 `tickets/`,feature-first 目录) | mattp to-tickets(格式)+ addyosmani planning(依赖图) | tasks / planning | implement-all、triage |
+| tickets / `.dev/<slug>/plan.md` + `todo.md`(+全文票 `tickets/`,feature-first 目录) | mattp to-tickets(格式)+ addyosmani planning(依赖图) | tickets / planning | implement-all、triage |
 | `docs/CONSTRAINTS.md` | addyosmani constraint-driven | constraint-driven(访谈) | code-review(读门槛)、gate.sh(机械化检查)、implement-all(floor 兜底) |
 | `.pi/skills/verify-<app>/`(五段+feature map) | pstack create-verification-skill(路径 Pi 化) | create-verification-skill | bug-fix、build、review、ship、maintain-verification-skill |
 | `evidence/`(截图/ARIA/trace/基准输出) | pstack 证据标准 | verify 适配器 | review/ship(独立裁决引用) |
@@ -112,11 +112,11 @@ flowchart TB
 
 | 信号(用户原话特征) | 去向 |
 |---|---|
-| "我想做 X 但没想清楚" / 空泛想法 | idea-refine(并入 grilling 侧 references)→ 没有领域语言先 **align** |
-| 没想清 + 说不出术语 | **align**(拷打方案,一次一问,边问边落 CONTEXT/ADR) |
+| "我想做 X 但没想清楚" / 空泛想法 | idea-refine(并入 grilling 侧 references)→ 没有领域语言先 **grill-me** |
+| 没想清 + 说不出术语 | **grill-me**(拷打方案,一次一问,边问边落 GLOSSARY/ADR) |
 | 想清楚了要正式立项 | **spec**(对话 → 六节决策合同,`.dev/<slug>/`,三类验收标注) |
 | "这个仓库质量没标准" / agent 老压低质量 | **constraints**(CONSTRAINTS.md) |
-| 有 SPEC 要拆活 | **tasks**(tracer-bullet + HITL/AFK + 依赖图升级) |
+| 有 SPEC 要拆活 | **tickets**(tracer-bullet + HITL/AFK + 依赖图升级) |
 | 大雾(会话装不下、"这个方向都不确定") | **wayfinder**(决策票地图,plan-don't-do) |
 | "先做两个原型对比 / 我不确定这个状态机对不对" | **proto**(logic/UI 双分支) |
 | 看不懂某块代码 / 改哪里 | **code-map**(区域级)/ **repo-map**(仓库级 REPO.md) |

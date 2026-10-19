@@ -1,15 +1,15 @@
 ---
-name: tasks
+name: tickets
 description: >-
-  Break a spec or plan into independently-grabbable tasks on the project
+  Break a spec or plan into independently-grabbable tickets on the project
   tracker using tracer-bullet vertical slices. Use when the user wants to
-  convert a plan into tasks, create implementation tickets, or break work
+  convert a plan into tickets, create implementation tickets, or break work
   down as part of a developer workflow. Chinese triggers: 拆任务, 拆工单, 拆成 tasks, 垂直切片, 把 spec 拆成任务.
 ---
 
 # Tasks
 
-Break a plan into independently-grabbable tickets (vertical slices, tracer bullets). This skill sits after `align` or `spec` in the developer workflow and before `tdd` implementation; incoming reports route to `triage-issue`.
+Break a plan into independently-grabbable tickets (vertical slices, tracer bullets). This skill sits after `grill-me` or `spec` in the developer workflow and before `tdd` implementation; incoming reports route to `triage-issue`.
 
 The tracker and triage label vocabulary should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `.dev/<slug>/plan.md` or `.dev/inbox/` (→ local files), incumbent conventions under `docs/` — then:
 - **One conclusive signal** → ask exactly ONE confirmation question carrying your recommendation.
@@ -65,7 +65,7 @@ For each approved slice, publish a new ticket to the tracker. Use the body templ
 
 Publish tickets in dependency order (blockers first) so you can reference real ticket identifiers in the "Blocked by" field. When the source material (spec or plan) lives as a tracker ticket, attach each published slice as a sub-issue of it (GitHub sub-issues), so the parent reference is structural rather than prose.
 
-The "Blocked by" field is the task graph's edges. The **frontier** — slices with no unfinished blockers — is exactly what `implement-all` (parallel mode) works, one implementer per frontier ticket in its own worktree. Draft the graph while you slice (Step 4), not after publishing: a ticket published without its edges is momentarily a false frontier entry. Where the tracker supports native dependencies, wire those too, so the frontier renders in the tracker's own UI.
+The "Blocked by" field is the ticket graph's edges. The **frontier** — slices with no unfinished blockers — is exactly what `implement-all` (parallel mode) works, one implementer per frontier ticket in its own worktree. Draft the graph while you slice (Step 4), not after publishing: a ticket published without its edges is momentarily a false frontier entry. Where the tracker supports native dependencies, wire those too, so the frontier renders in the tracker's own UI.
 
 <issue-template>
 ## Parent

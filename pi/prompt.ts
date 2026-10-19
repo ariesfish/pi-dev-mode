@@ -36,10 +36,10 @@ function repoStateNote(cwd: string): string | undefined {
     if (glossary && tracker) return undefined;
     const lines = ["This repo is not yet configured for the skills:"];
     if (!glossary)
-      lines.push("- no domain glossary: docs/GLOSSARY.md (align seeds it lazily)");
+      lines.push("- no domain glossary: docs/GLOSSARY.md (grill-me seeds it lazily)");
     if (!tracker)
       lines.push(
-        "- no issue-tracker config: docs/agents/issue-tracker.md or a local `.dev/` tracker (one slugged dir per feature; tasks/triage-issue bootstrap it on first use, one confirmation; or run the setup skill)",
+        "- no issue-tracker config: docs/agents/issue-tracker.md or a local `.dev/` tracker (one slugged dir per feature; tickets/triage-issue bootstrap it on first use, one confirmation; or run the setup skill)",
       );
     if (!has("docs/CONSTRAINTS.md"))
       lines.push("- no docs/CONSTRAINTS.md: define the quality bar before an autonomous run (constraints skill)");

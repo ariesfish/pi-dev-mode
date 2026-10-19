@@ -12,7 +12,7 @@ description: >-
 
 Go up a layer of abstraction before changing code.
 
-Use `code-map` before `spec`, `tasks`, `tdd`, `diagnose`, or `refact` when the relevant code area is unfamiliar. For repo-wide durable onboarding, use `repo-map` instead.
+Use `code-map` before `spec`, `tickets`, `tdd`, `diagnose`, or `refact` when the relevant code area is unfamiliar. For repo-wide durable onboarding, use `repo-map` instead.
 
 Use the project's domain glossary vocabulary when available. Explain the area in terms of domain concepts first, then implementation names.
 
