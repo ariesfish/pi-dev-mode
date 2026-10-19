@@ -9,14 +9,6 @@ description: >-
   给这个仓库做个 verify 技能, 驱动技能, 控制技能, 验证生成器, 会话框怎么验证.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P3: ported from pstack create-verification-skill (browser-use lineage
-  via pstack); pi-native paths (.pi/skills/verify-<app>/), platform mappings ride
-  references/pi-host.md, Drive harness = adapters/control-web (frozen interface,
-  三纠偏:自起隔离实例/ARIA 优先/helper 冻结); prove-before-handover kept verbatim
-  in spirit — the P3 acceptance gate is this skill running itself once.
--->
-
 # Create a verification skill
 
 Every serious project needs a scripted way to drive the real app and prove

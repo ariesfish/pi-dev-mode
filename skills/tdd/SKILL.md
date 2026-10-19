@@ -11,11 +11,6 @@ description: >-
 
 # TDD
 
-<!-- pi-dev-mode changelog:
-- migrated from ~/.agents/skills/dev-tdd (2026-10); no upstream mattp@49dd158 delta applied this round.
-- 2026-10 P1 upgrade (03 matrix row): cost gate (expensive test paths fall back to the closest executable check with a recorded skip-test entry); behavior-assertion discipline added to the checklist.
-- 2026-10 P2.7 (B, retro A-F round): answer-only requests — tell-me/point-me/no-takeover requests get an evidence-carrying answer, never an edit (P2 routing r2 overreach: user said "告诉我改哪行" and the candidate edited two files).
--->
 ## Philosophy
 
 **Core principle**: Tests should verify behavior through public interfaces, not implementation details. Code can change entirely; tests shouldn't.

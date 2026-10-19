@@ -8,13 +8,6 @@ description: >-
   Chinese triggers: 维护验证技能, 审计 verify 技能, verify 技能巡检, feature map 盘点.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P3: ported from pstack maintain-verification-skill; pi-native target
-  paths (.pi/skills/verify-*/) + platform mappings via references/pi-host.md;
-  source wave dispatches read-only lowercase-`agent` children per the retro-A
-  dispersed-naming convention; live-pass invariants kept verbatim in spirit.
--->
-
 # Maintain a verification skill
 
 A feature map rots the moment the app changes. This skill is the upkeep loop for

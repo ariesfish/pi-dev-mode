@@ -11,9 +11,6 @@ description: >-
 
 # Proto
 
-<!-- pi-dev-mode changelog:
-- migrated from ~/.agents/skills/dev-proto (2026-10); no upstream mattp@49dd158 delta applied this round.
--->
 A prototype is **throwaway code that answers a question**. The question decides the shape.
 
 Use `proto` before `spec` or `tasks` when a design, state-machine, business-rule, or UI decision is too unclear to specify directly. Keep only the answered decision; delete or absorb the prototype before implementation.

@@ -145,3 +145,9 @@ delegation:guard-the-context-window。
 - **起因**:用户指出 `.dev/spec/` 按需求分、plan/todo/tickets 却全局共享的不对称——前者是 P6 取了旧 tasks-files 半边的形状,`.scratch/` 血统本来就是 feature-first。单人本地 tracker 场景下,全局队列的三条理由(入件无归属/frontier 全仓/T-id 命名空间)全部为弱理由,"半成品续跑进一个目录"是硬目标。
 - **形状**:`.dev/<slug>/{spec.md, plan.md, todo.md, tickets/}` 一次大需求一个目录;`.dev/inbox/` 收未归属入件(route 定了过继);scout 地图落 `.dev/<slug>/scout-map.md` 与决策票同目录;T-id 仍全局唯一;跨需求 implement-all 用 glob `.dev/*/plan.md` 取 frontier 并集;research/、lifecycle/、audit/ 留全局。ship 清理 = 整目录删除。
 - **触面**:issue-tracker.md 重写;spec/tasks/triage-issue/scout/implement-all/code-review/setup(+workflow)/use-the-stack/hook/prompt.ts/lifecycle.ts/docs02/README 同步。P6 节的 `.dev/spec/` 表述以本节为准。
+
+### P6.4 落地(2026-10-19):changelog 块全删(用户拍板 B)
+
+- **起因**:用户问 SKILL.md 里的 changelog 有什么用、加载时剥不剥——实测:pi 触发技能读原文件全文,HTML 注释对 LLM 是纯 token,没有任何剥离;全库 28 块共 ~19.6KB(~5-6k tokens),平均占技能体积 12%(tasks 26%/implement 25%),每次触发都白付。
+- **裁决**:消费者是"编辑技能的人/agent",不是触发技能的会话——历史层收敛到 git log(本仓 commit message 带全量 rationale)+ 本文档落地记录,文件内不再携带。
+- **触面**:26 SKILL.md + 2 agents 块删除(原文不动一字,进 git 历史);check-skills.py 撤销第 4 条验收(changelog 在场),strip_changelog 一并退役。

@@ -11,24 +11,6 @@ description: >-
   四镜头, 合并前把关, 审一遍, 发布前审查, review pipeline.
 ---
 
-<!-- pi-dev-mode changelog:
-  - 2026-10 P5.2 (user-refined lane split): description names the lane boundary both ways — the review gate for merge/ship; `code-review` is the quick non-gate pass (and lens 1 already rides it).
-- 2026-10 P2, N (assembly): lens 1 rides the code-review skill's two-axis
-  protocol; lens 2 inlines the comment-discipline core (pstack no-comments
-  ideas, no comment-sicko dependency); lens 3 inlines doubt's adversarial
-  shape; lens 4 executes constraints' diff-watch against docs/CONSTRAINTS.md.
-  Heavier passes (pstack:thermo-*) stay opt-in by direct invocation, not a
-  dependency.
-- 2026-10 P2.7 (A, retro A-F round): the spawn instruction names the tool —
-  lowercase `agent` (pi-dev's own), never another package's `Agent` (P2
-  run-1 picked the wrong tool in a two-tool environment and lost all four
-  lens reports). check-skills.py enforces the naming.
-- 2026-10 P2.7 (F, retro A-F round): visual diffs get a `viewer` pass —
-  text-only lenses cannot approve visual parity.
-  - 2026-10 P6.1: ledger dir renamed .dev/sdlc/ → .dev/lifecycle/ (user call).
-  - 2026-10 P5: A-class verdict ledgering via gates/gate.sh verdict (opt-in, .sdlc/ present only).
--->
-
 # Review
 
 A merge gate, not an in-flight posture (that is `doubt`). Four lenses over one

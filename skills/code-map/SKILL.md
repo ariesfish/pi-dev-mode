@@ -11,9 +11,6 @@ description: >-
 
 # Code Map
 
-<!-- pi-dev-mode changelog:
-- migrated from ~/.agents/skills/dev-code-map (2026-10); no upstream mattp@49dd158 delta applied this round.
--->
 Go up a layer of abstraction before changing code.
 
 Use `code-map` before `spec`, `tasks`, `tdd`, `diagnose`, or `refact` when the relevant code area is unfamiliar. For repo-wide durable onboarding, use `repo-map` instead.

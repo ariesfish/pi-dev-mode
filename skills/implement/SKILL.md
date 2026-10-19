@@ -1,25 +1,13 @@
 ---
 name: implement
 description: >-
-  Implement a piece of work based on a spec or ticket. Fetches the ticket by
+  Implement a piece of work based on a spec or ticket. Fetches
   the ticket by reference, implements at pre-agreed seams with TDD, typechecks
   and tests as it goes, reviews the result, and commits. Use when the user
   wants to implement a ticket, start work on an issue, or says "do this one".
   Chinese triggers: 实现这张票, 实现 issue, 开工, 干活, 按票实现, 实现 spec,
   做这个任务, implement this.
 ---
-
-<!-- pi-dev-mode changelog:
-- migrated from mattp/skills/engineering/implement @49dd158, localized: setup→dev-setup,
-  tdd→dev-tdd, code-review→dev-code-review; Chinese triggers added.
-- 2026-10 P1.1: absorbed the retired build skill's default-mode rigor (three-label AC reading, staged commit, evidence-honesty reporting); handoff note to implement-all added.
-- 2026-10 P2.6 (pie observation #3): scope check added — multi-area blobs refused to issues → implement-all.
-- 2026-10 P2.7 (F, retro A-F round): visual acceptance — visual criteria delegate to the `viewer` agent (multimodal); a text-only model must not self-assess pixel parity (P1 first shot did, and produced two reference deviations).
-  - 2026-10 P6.1: ledger dir renamed .dev/sdlc/ → .dev/lifecycle/ (user call).
-  - 2026-10 P5: opt-in ledger section (open/run tdd/close via gates/gate.sh; no .sdlc → unchanged).
-  - 2026-10 P5.1 (standing instrument I root cause, v3): sessions hung twice on FOREGROUND viewer spawns with config-archaeology model ids while the legal render+pixel-diff evidence was already in hand (run 2 built it correctly, then still blocked on the spawn). v3: render evidence closes the visual gate — viewer is optional background enhancement, only foreground (deepseek-flash pinned) when no headless render exists at all.
-  - 2026-10 P5.2 (v4, from the v4-bank kill forensics): two more foreground spawns on hand-typed ids ('sonnet', 'funai/gpt-5.6-terra') burned 20 of the 25 budget minutes before the render pipeline even started. v4 rule: spawn by TYPE (subagent_type: viewer carries the pin); hand-typed model ids are a bug shape; render evidence closes the gate, viewer is background-only enhancement.
--->
 
 # Implement
 

@@ -8,13 +8,6 @@ description: >-
   API 调研, 背景调查, primary sources, 帮我查.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P6.3: landing moved into the feature dir — .dev/<slug>/research.md (was .dev/research/<slug>.md), matching the feature-first working set.
-- migrated from mattp/skills/engineering/research @49dd158, localized: Chinese
-  triggers added. Dependency note: wayfinder (P1 acquisition) fires research
-  tickets through this skill.
--->
-
 # Research
 
 Spin up a **background agent** with the `agent` tool (lowercase, pi-dev's own — `run_in_background: true`) to do the research, so you keep working while it reads.

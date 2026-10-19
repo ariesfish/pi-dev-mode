@@ -8,17 +8,6 @@ description: >-
   这个栈怎么用, 技能地图, 有什么技能, 怎么开始, use the stack.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P1 new acquisition (N): the discovery page for sessions without the
-  mandate or for humans browsing. The closed-loop map lives on in
-  setup/references/workflow.md; this page is situation-first.
-- 2026-10 P2: rows and chain updated for review / doubt / benchmark-checklist / retro.
-- 2026-10 P2.5: eval row added.
-- 2026-10 P6: prd retired (intent chain folded into spec); stale `issues`/
-  `wayfinder` names refreshed to `tasks`/`scout`; spec row points at .dev/spec/;
-  GLOSSARY/CONSTRAINTS/REPO rows re-pointed under docs/.
--->
-
 # Use the Stack
 
 Situation → skill. When in doubt, say what you want in plain words and let `pi-dev-mode` route; this page is for picking directly.

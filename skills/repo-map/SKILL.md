@@ -11,11 +11,6 @@ description: >-
 
 # Repo Map
 
-<!-- pi-dev-mode changelog:
-- migrated from ~/.agents/skills/dev-repo-map
-- 2026-10-15 synced to mattp@49dd158 (d80fa0f): GLOSSARY.md naming adopted (legacy CONTEXT.md noted).
--->
-
 Create or update `docs/REPO.md` as a **navigation map**, not a repository encyclopedia.
 
 The goal is to help a human or future agent enter the repo quickly: what this repo is, how to run the main loop, where to start for common changes, which boundaries matter, and what to ignore.

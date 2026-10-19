@@ -11,16 +11,6 @@ description: >-
   上线前评测, eval.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P2.5: new, synthesizing pstack's Eval playbook (blinding discipline,
-  transcript-verified chains, promote/reject synthesis) with addyosmani's
-  evals harness (fires/stays-quiet case bank, graders, skill-impact ledger).
-  Pi-native: candidates run as headless `pi -p` with --skill <tree> only;
-  judges attach transcripts via @file; transcripts live under --session-dir.
-- 2026-10 P2.6.1: dialogue-kind candidates run --tools read (unbounded full-tool candidates dig instead of answering).
-- 2026-10 P2.7 (D, retro A-F round): fixture mechanism — execution-kind cases run full-tool in a fixture copy with a timeout; dialogue cases may declare a fixture copied into the scratch cwd (contents-in-cwd: the candidate's cwd IS the project root; a fixture landing as a subdir reads as an empty cwd — observed in the first dogfood run). check-skills.py validates fixture wiring.
--->
-
 # Eval
 
 A skill change is a hypothesis. This skill runs the experiment before the

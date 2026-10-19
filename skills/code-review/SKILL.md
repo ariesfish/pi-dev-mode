@@ -13,16 +13,6 @@ description: >-
   检查.
 ---
 
-<!-- pi-dev-mode changelog:
-  - 2026-10 P5.2 (user-refined lane split): description sharpens the boundary — code-review is the quick single-pass lane; the merge/ship GATE is the review skill (four lenses, lens 1 points back here).
-- migrated from mattp/skills/engineering/code-review @49dd158 (post-3da8c01:
-  standards-file search, foreground parallel sub-agents, tracker-doc wording),
-  localized: setup→dev-setup; Chinese triggers added.
-  This is lens 1 of the future `review` pipeline (P2): the pipeline assembles
-  this, no-comments (lens 2), adversarial doubt (lens 3), and a CONSTRAINTS.md
-  diff audit (lens 4). Standalone use stays valid.
--->
-
 # Code Review
 
 Two-axis review of the diff between `HEAD` and a fixed point the user supplies:

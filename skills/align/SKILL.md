@@ -10,15 +10,6 @@ description: >-
   更新 GLOSSARY, 沉淀上下文.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P6 (artifact layout): GLOSSARY.md / GLOSSARY-MAP.md move from the repo root to docs/ (beside docs/adr/); legacy root files and pre-rename CONTEXT.md read as found.
-- migrated from ~/.agents/skills/dev-align (mattp-derived base)
-- 2026-10-15 synced to mattp@49dd158 (d80fa0f): CONTEXT.md/CONTEXT-MAP.md renamed to
-  GLOSSARY.md/GLOSSARY-MAP.md as the primary convention; legacy CONTEXT.md files are
-  read as the glossary. grilling #1193: word questions so "yes" accepts the recommendation.
-Append new entries below this line only. - 2026-10 P1 upgrade (03 matrix row): three-label acceptance-criteria seeding; proto inter-routing for build-answerable questions.
--->
-
 # Align
 
 Use this skill to align fuzzy architecture or product-design ideas with precise domain language, explicit trade-offs, and durable project documentation.

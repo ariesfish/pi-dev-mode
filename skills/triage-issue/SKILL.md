@@ -10,16 +10,6 @@ description: >-
 
 # Triage Issue
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P6.2: unattributed intake lands in .dev/inbox/ under the local-files tracker; bootstrap evidence signals re-pointed (feature plan / inbox).
-- migrated from ~/.agents/skills/dev-triage-issue (mattp triage derived)
-- 2026-10-15 synced to mattp@49dd158: redundancy check ported into Gather context
-  (search for an existing implementation by domain concept before grilling).
-- 2026-10 P1 upgrade (03 matrix row): performance reports route to diagnose with a baseline-first brief; agent briefs carry the three-label acceptance criteria.
-- 2026-10 P1.2 (pie dogfood observation): missing config bootstraps in place (one confirmation with a recommendation) instead of stopping to demand setup.
-- 2026-10 P1.3 (user refinement): three-tier bootstrap — conclusive evidence → one confirmation; inconclusive or conflicting → ask_user with options labeled by the repo evidence found (or its absence).
--->
-
 Move issues on the project issue tracker through a small state machine of triage roles.
 
 Every comment or issue posted to the issue tracker during triage **must** start with this disclaimer:

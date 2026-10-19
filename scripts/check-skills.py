@@ -7,9 +7,12 @@ Validated, in order:
      see benchmark-checklist's P2.1 changelog)
   2. name present and equals the skill's directory name (skills only)
   3. description present, non-empty, and carries Chinese triggers
-  4. a pi-dev-mode changelog block follows the frontmatter
-  5. cross-references: every `skill-name`-shaped backtick reference in a body
-     (outside changelog blocks) resolves to an existing skill
+  4. cross-references: every `skill-name`-shaped backtick reference in a body
+     resolves to an existing skill
+
+Skill history lives in git log and docs/03 landing records, not in the files
+  (P6.4: changelog blocks removed — they rode as tokens every time a skill
+  fired).
 
 Exit 0 = green. Requires PyYAML (python3 -m pip install pyyaml).
 """
@@ -62,10 +65,6 @@ KILLS = {
 META_WORDS = re.compile(r"\b(skill|skills|principle|principles|rubric|judge|grader|score|compare|experiment|pi-dev-mode)\b|SKILL\.md", re.I)
 
 
-def strip_changelog(text: str) -> str:
-    return re.sub(r"<!-- pi-dev-mode changelog:.*?-->", "", text, flags=re.S)
-
-
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
     failures: list[str] = []
@@ -103,9 +102,7 @@ def main() -> int:
         dups = sorted({h for h in heads if heads.count(h) > 1})
         if dups:
             failures.append(f"{rel}: duplicate section heading(s): {dups}")
-        if "pi-dev-mode changelog" not in text[: len(m.group(0)) + 400]:
-            failures.append(f"{rel}: no changelog block after frontmatter")
-        body = strip_changelog(text)
+        body = text
         for mm in re.finditer(r"`([a-z][a-z0-9-]*)`", body):
             n = mm.group(1)
             if n in KILLS and n not in names:
@@ -117,7 +114,7 @@ def main() -> int:
         # ("subagent sessions live under...").
         DISPATCH_VERBS = re.compile(r"\b(spawn\w*|launch\w*|fire\w*|delegat\w*|spin\s+up|kick\s+off)\b", re.I)
         SUBAGENT = r"sub[- ]?agents?"
-        fm_body = strip_changelog(text[m.end():])
+        fm_body = text[m.end():]
         dispatches = (
             f.parent.name != "agents"
             and (re.search(r"\bbackground\s+agents?\b", fm_body, re.I)
@@ -179,7 +176,7 @@ def main() -> int:
         for f in failures:
             print(f"FAIL {f}")
         return 1
-    print("OK: YAML frontmatter, names, triggers, changelogs, cross-references, fixtures")
+    print("OK: YAML frontmatter, names, triggers, cross-references, fixtures")
     return 0
 
 

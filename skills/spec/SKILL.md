@@ -11,26 +11,6 @@ description: >-
   定规格, 规格文档, 立项, spec first, 需求文档, 整理需求.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P6.2: landing is the feature dir itself — .dev/<slug>/spec.md (was .dev/spec/<slug>.md); multi-module map+SPEC-<id>.md live in .dev/<initiative>/. One feature, one directory, everything in it.
-- 2026-10 P1 new acquisition: forked from addyosmani spec-driven-development,
-  adapted to this stack: task breakdown delegates to tasks; execution
-  delegates to implement / implement-all; acceptance criteria use the
-  three-label convention. mattp to-spec is the "no interview, just synthesis"
-  precedent.
-- 2026-10 P6 (user-approved artifact-layout round): prd retired, upstream-
-  aligned (mattp merged to-prd into to-spec long ago) — its duties absorbed
-  here: Out of Scope returns, user-story coverage folds into Acceptance as a
-  journey list, requirement triggers migrate into this skill's description.
-  Template slimmed to decision-only: Tech Stack / Commands / Project
-  Structure / Code Style / Testing Strategy dropped — repo-level facts live
-  once in docs/CONSTRAINTS.md and AGENTS.md, and the model reads the real repo,
-  which never goes stale the way a spec snapshot does. Boundaries narrowed to
-  this-feature Ask First triggers. Landing is single and slug-mandatory:
-  .dev/spec/<slug>.md as per-developer process memory, gitignored — parallel
-  features never collide over one root SPEC.md.
--->
-
 # Spec
 
 The spec is the shared source of truth between you and the human: what is

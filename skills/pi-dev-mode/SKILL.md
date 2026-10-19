@@ -9,20 +9,6 @@ description: >-
   用 pi-dev, 全流程做这个, 帮我安排这个活, 该用哪个技能, 大干一场.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P0 skeleton: routing table active; playbooks and the principles
-  index land in P4 (see docs/04-implementation.md). Until then this skill
-  routes with the table below and stays out of the way on small tasks.
-- 2026-10 P1.2 (pie dogfood observation): routing row for lazy config bootstrap added.
-- 2026-10 P2: routing rows for review / doubt / benchmark-checklist / retro; P2 placeholders resolved.
-- 2026-10 P2.5: eval row added (skill-change promotion gate).
-- 2026-10 P2.6 (pie observation #3): scope test — multi-area tasks route to issues → implement-all, never to implement as one blob.
-- 2026-10 P2.7 (A, retro A-F round): delegation line names the `agent` tool (lowercase). An attempted scope-gate hardening was rejected by the eval gate (evals/skill-impact.md 2026-10-17) — v4-pro full-tool sessions implemented directly despite it.
-  - 2026-10 P6.1: local tracker seed renamed issue-tracker.md; ledger dir .dev/lifecycle/ (user call).
-  - 2026-10 P4/P5: full body (P4) + opt-in ledger line (P5: .sdlc/ presence is the switch, gates/README owns the format).
-  - 2026-10 P5.1 (standing instrument G axis): multi-area routing row gains the action shape — first reply = the split table itself; file contents before split confirmation is the breach shape. Also: P4's duplicate Reply-contract section merged into the original (single section now).
--->
-
 # Pi Dev Mode
 
 You own the routing. Read the task, pick the entry below, then stay in the
@@ -83,7 +69,6 @@ and what changes for them before any implementation detail.
 - 无证据就说"未验证",绝不编造貌似合理的引用;未覆盖的项如实列出,不静默跳过。
 - 结论先行,证据随行;不灌水(unslop):删除空洞的总结段、形容词堆叠和凑版面段落。
 - 证据工件不被 cleanup 删除;.dev/audit/ 台账 append-only;决策点名理由,不点名修辞。
-
 
 ## Playbooks (10, 精选)
 

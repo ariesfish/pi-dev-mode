@@ -11,21 +11,6 @@ description: >-
   一口气实现, 自主跑完, 全部做完, implement all.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P1: migrated from mattp implement-spec @49dd158, localized
-  (sources dev-prd & dev-issues; tdd; code-review; research).
-- 2026-10 P1.1: renamed implement-spec → implement-all and absorbed the build
-  skill (retired): its "auto" mode (SPEC discovery, clean baseline, single
-  approval, six stop conditions, recovery, .audit trail) is now this skill's
-  auto mode; its default one-task mode merged into `implement`. Rationale:
-  the two doors duplicated ~80% and "build" collided with the npm-build verb
-  inside its own protocol.
-  - 2026-10 P6.2: feature-first working set — spec at `.dev/<slug>/spec.md`, task graph at `.dev/<slug>/plan.md`(+todo,tickets); unattributed intake in `.dev/inbox/`; multi-feature frontier = glob union.
-  - 2026-10 P6.1: ledger dir renamed .dev/sdlc/ → .dev/lifecycle/ (user call).
-  - 2026-10 P5: auto mode step 6 — opt-in per-ticket ledger (open/…/close; blocker tickets stay open). No .sdlc → unchanged.
-  - 2026-10 P6: prd retired — spec is the only upstream contract.
--->
-
 # Implement All
 
 Implement a whole plan: the tickets from `tasks` (task graph), or a task list

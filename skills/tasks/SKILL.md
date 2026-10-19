@@ -11,29 +11,6 @@ description: >-
 
 # Tasks
 
-<!-- pi-dev-mode changelog:
-  - 2026-10 P5.2b (B-solo rerun forensics): the no-signal bootstrap branch structurally produced a SECOND question beside the Step-4 bundle confirmation — folded into one.
-- migrated from ~/.agents/skills/dev-issues (mattp to-issues/to-tickets derived;
-  upstream has since merged to-prd/to-issues into to-spec/to-tickets — the
-  PRD layer is retired as of P6 (user-approved, upstream-aligned), see
-  docs/02-fusion-architecture.md)
-- 2026-10 P6.2: feature-first working set — local tickets land in the source feature's `.dev/<slug>/` dir (was a shared global plan/todo); unattributed intake → `.dev/inbox/`.
-- 2026-10 P6: prd retired — this skill's input is now spec or plan only;
-  "keeping the PRD layer" divergence ends. Legacy root `tasks/plan.md` and
-  `.scratch/` layouts read as before; new repos land under `.dev/`.
-- 2026-10-15 synced to mattp@49dd158 (cffab50): attach slices as sub-issues of the parent.
-- 2026-10 P1 upgrade (03 matrix row): Blocked-by named as the task-graph edges; frontier semantics and the implement-spec handshake documented.
-- 2026-10 P1.2 (pie dogfood observation): missing config bootstraps in place (one confirmation with a recommendation) instead of stopping to demand setup.
-- 2026-10 P1.3 (user refinement): three-tier bootstrap — conclusive evidence → one confirmation; inconclusive or conflicting → ask_user with options labeled by the repo evidence found (or its absence).
-- 2026-10 P5.1 (standing instrument B retried, root cause): §'Quiz the user' asked four questions per turn — the skill itself commanded the interrogation. Rewritten to stated-defaults + one bundle question (one-question-per-turn is the stack's own model-the-domain discipline). [as issues]
-- 2026-10 P5.2: renamed issues → tasks (the GitHub idiom 'issue' means inbound
-  reports, which is exactly why the old trigger words collided).
-- 2026-10 P5.2a (user correction): the merged-intake experiment reverted —
-  triage-issue stands as its own skill again; tasks stays outbound-slicing
-  only. Inbound trigger words (入件/归置/分诊/看 issue) handed back to
-  triage-issue's description.
--->
-
 Break a plan into independently-grabbable tickets (vertical slices, tracer bullets). This skill sits after `align` or `spec` in the developer workflow and before `tdd` implementation; incoming reports route to `triage-issue`.
 
 The tracker and triage label vocabulary should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `.dev/<slug>/plan.md` or `.dev/inbox/` (→ local files), incumbent conventions under `docs/` — then:

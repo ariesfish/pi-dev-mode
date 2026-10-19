@@ -9,18 +9,6 @@ description: >-
   改进流程, what went wrong, retro.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P6.1: ledger dir renamed .dev/sdlc/ → .dev/lifecycle/ (user call).
-- 2026-10 P2, M-synthesis: mattp retro @49dd158 as the base (session
-  retrospective on the agent's environment); pstack reflect absorbed (findings
-  route to concrete edits, approval before applying, structural-enforcement
-  check) and pstack correct absorbed (fix classes at the highest level that
-  works; rule ↔ enforcement pairing). writing-for-agents dependency inlined as
-  a compact style block instead of a skill reference.
-- 2026-10 P2.5: substantive skill edits route through the eval skill (trigger regression or variant A/B) before applying; rejected changes land in evals/skill-impact.md.
-  - 2026-10 P5: opt-in ledger-rate mining (gate.sh mine → first-pass / flips / skip-test; encode as constraints or lint; no ledger → unchanged).
--->
-
 # Retro
 
 The user asked for a retrospective. You are proposing improvements to the

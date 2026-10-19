@@ -11,13 +11,6 @@ description: >-
   设置约束, 别让 AI 偷偷降标准, CONSTRAINTS.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P1 new acquisition: forked from addyosmani constraint-driven-development.
-  Adapted: rows are machine-readable (gate.sh reads the Checked-by column when
-  the opt-in ledger lands, P5); the diff-watch section is the canonical source
-  that code-review's lens 4 will execute.
--->
-
 # Constraints
 
 Other skills describe what good looks like. This skill writes down **this project's** bar, with numbers, in a file any agent can read and any check can enforce. Spec says what to build; tdd proves it works; constraints say what "good enough to ship" means — before anyone argues about it in a pull request.

@@ -11,16 +11,6 @@ description: >-
   找茬, 二意见, second opinion, doubt it.
 ---
 
-<!-- pi-dev-mode changelog:
-- 2026-10 P2: forked from addyosmani doubt-driven-development, localized:
-  fresh-context reviewer = a readonly background agent (different model family
-  when routable) instead of Claude Code personas; the cross-model CLI piping
-  section collapsed into pi-native reviewer routing (model param); loading
-  constraints adapted to pi's agent depth cap.
-- 2026-10 P2.7 (A, retro A-F round): the reviewer spawn names the tool —
-  lowercase `agent`, never another package's `Agent`.
--->
-
 # Doubt
 
 A confident answer is not a correct one. Long sessions accumulate context that

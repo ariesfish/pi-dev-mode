@@ -12,11 +12,6 @@ description: >-
 
 # Refact
 
-<!-- pi-dev-mode changelog:
-- migrated from ~/.agents/skills/dev-refact (mattp improve-codebase-architecture derived)
-- 2026-10-15 synced to mattp@49dd158 (d80fa0f): GLOSSARY.md naming adopted.
--->
-
 Surface architectural friction and propose **deepening opportunities** — refactors that turn shallow modules into deep ones. The aim is testability and AI-navigability.
 
 ## Glossary
