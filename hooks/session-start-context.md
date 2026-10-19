@@ -16,7 +16,7 @@ pi-dev-mode routes to the right skill from there. When the intent is already spe
 - `align` — sharpen language and decisions; write docs/GLOSSARY.md and ADRs under docs/adr/ as they crystallise
 - `research` — delegate primary-source investigation to a background agent
 - `proto` — throwaway prototype to answer a design question
-- `spec` — synthesize the conversation into the building contract (.dev/spec/, six decision sections, three-label acceptance criteria)
+- `spec` — synthesize the conversation into the building contract (.dev/<slug>/spec.md, six decision sections, three-label acceptance criteria)
 - `constraints` — the project's quality bar, with numbers (docs/CONSTRAINTS.md)
 - `tasks` — split a plan into vertical-slice tickets (task graph + frontier)
 - `triage-issue` — route incoming bug reports / feature requests through triage labels into the same tracker

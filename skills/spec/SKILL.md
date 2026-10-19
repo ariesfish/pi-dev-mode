@@ -4,7 +4,7 @@ description: >-
   Turn a conversation into an approved spec — the building contract a plan
   slices and an autonomous build trusts. Decision-only template: objective,
   implementation decisions, out of scope, three-label acceptance criteria,
-  ask-first triggers, open questions. Lives under .dev/spec/ as per-developer
+  ask-first triggers, open questions. Lives at .dev/<slug>/spec.md as per-developer
   process memory (gitignored); recurses per capability module with a map when
   the work spans modules. Use at the start of feature-sized work, or when a
   build needs an authoritative contract. Chinese triggers: 写 SPEC, 生成规格,
@@ -12,6 +12,7 @@ description: >-
 ---
 
 <!-- pi-dev-mode changelog:
+- 2026-10 P6.2: landing is the feature dir itself — .dev/<slug>/spec.md (was .dev/spec/<slug>.md); multi-module map+SPEC-<id>.md live in .dev/<initiative>/. One feature, one directory, everything in it.
 - 2026-10 P1 new acquisition: forked from addyosmani spec-driven-development,
   adapted to this stack: task breakdown delegates to tasks; execution
   delegates to implement / implement-all; acceptance criteria use the
@@ -80,8 +81,8 @@ Build order: identity → billing
   by these ids.
 - Dependency arrows point one way; a cycle means one module.
 - The map, not filename guessing, is the index: a multi-module initiative
-  lands at `.dev/spec/<initiative>/` — `map.md` plus one `SPEC-<id>.md` per
-  module alongside it.
+  lands inside that initiative's feature dir `.dev/<initiative>/` — `map.md`
+  plus one `SPEC-<id>.md` per module alongside it.
 
 ## Phase 2: Write the spec
 
@@ -94,10 +95,11 @@ ASSUMPTIONS I'M MAKING:
 → Correct me now or I'll proceed with these.
 ```
 
-**Template** (write to `.dev/spec/<slug>.md` — slug mandatory; this is the
-only landing implement-all looks in. Create `.dev/` if absent and make sure
-`/.dev/` is gitignored: the spec is per-developer process memory, not shared
-repo content):
+**Template** (write to `.dev/<slug>/spec.md` inside the feature's own
+feature-first directory — slug mandatory; this is the only landing
+implement-all looks in. Create `.dev/<slug>/` if absent and make sure `/.dev/`
+is gitignored: the spec is per-developer process memory, not shared repo
+content):
 
 ```markdown
 # Spec: [slug]
@@ -170,5 +172,6 @@ The spec is a living contract. When a discovery changes the data model or a
 decision, update the spec first, then the code — a divergence between spec
 and implementation is a finding, not a fact. It stays per-developer process
 memory: the durable, shared record of why is the merged code, the commits,
-and ADRs under docs/adr/; the local `.dev/spec/` copy is what lets its owner
-pick a half-done feature back up.
+and ADRs under docs/adr/; the local `.dev/<slug>/` directory — spec, plan,
+todo, tickets, all in one place — is what lets its owner pick a half-done
+feature back up.

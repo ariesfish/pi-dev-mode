@@ -21,7 +21,7 @@ const COMMANDS: LifecycleCommand[] = [
     name: "spec",
     description: "Start spec-driven development — SPEC before code (/spec <ask>)",
     skill: "spec",
-    frame: (args) => `请把这个需求按 spec 技能产出六节决策合同:三类验收标注齐全,写入 .dev/spec/<slug>.md,等待审批。需求:${args || "(延续当前上下文)"}`,
+    frame: (args) => `请把这个需求按 spec 技能产出六节决策合同:三类验收标注齐全,写入 .dev/<slug>/spec.md,等待审批。需求:${args || "(延续当前上下文)"}`,
   },
   {
     name: "build",

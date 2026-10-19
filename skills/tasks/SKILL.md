@@ -17,6 +17,7 @@ description: >-
   upstream has since merged to-prd/to-issues into to-spec/to-tickets — the
   PRD layer is retired as of P6 (user-approved, upstream-aligned), see
   docs/02-fusion-architecture.md)
+- 2026-10 P6.2: feature-first working set — local tickets land in the source feature's `.dev/<slug>/` dir (was a shared global plan/todo); unattributed intake → `.dev/inbox/`.
 - 2026-10 P6: prd retired — this skill's input is now spec or plan only;
   "keeping the PRD layer" divergence ends. Legacy root `tasks/plan.md` and
   `.scratch/` layouts read as before; new repos land under `.dev/`.
@@ -35,7 +36,7 @@ description: >-
 
 Break a plan into independently-grabbable tickets (vertical slices, tracer bullets). This skill sits after `align` or `spec` in the developer workflow and before `tdd` implementation; incoming reports route to `triage-issue`.
 
-The tracker and triage label vocabulary should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `.dev/plan.md` (→ local files), legacy `tasks/plan.md` / `.scratch/` (→ local files, old roof), incumbent conventions under `docs/` — then:
+The tracker and triage label vocabulary should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `.dev/<slug>/plan.md` or `.dev/inbox/` (→ local files), legacy `tasks/plan.md` / `.scratch/` (→ local files, old roof), incumbent conventions under `docs/` — then:
 - **One conclusive signal** → ask exactly ONE confirmation question carrying your recommendation.
 - **No signal, or conflicting signals** → this choice folds into the ONE bundle confirmation of Step 4, never a separate interrogation turn: `ask_user` with the tracker candidates as options, labeled with the evidence you found (or its absence — e.g. "no remote, no tracker files → local files under `.dev/` (recommended: zero service dependencies, per-developer gitignored)"), recommended option first, never invent a tracker the repo shows no evidence for. Take the answer and move straight to slicing.
 Then seed `docs/agents/` from the setup skill's references and continue the work this skill was invoked for.
@@ -84,7 +85,7 @@ fresh question — one question per turn is the ceiling, not a quota to fill.
 
 ### 5. Publish the tickets to the tracker
 
-For each approved slice, publish a new ticket to the tracker. Use the body template below. These tickets are considered ready for AFK agents, so publish them with the correct triage label unless instructed otherwise.
+For each approved slice, publish a new ticket to the tracker. Use the body template below. These tickets are considered ready for AFK agents, so publish them with the correct triage label unless instructed otherwise. Under the local-files tracker, tickets land inside the source feature's own directory — `.dev/<slug>/plan.md` section + `todo.md` block (+ optional `tickets/T-XXX.md`), slug taken from the spec's directory; unattributed intake goes to `.dev/inbox/` instead (see setup references/issue-tracker.md).
 
 Publish tickets in dependency order (blockers first) so you can reference real ticket identifiers in the "Blocked by" field. When the source material (spec or plan) lives as a tracker ticket, attach each published slice as a sub-issue of it (GitHub sub-issues), so the parent reference is structural rather than prose.
 

@@ -22,6 +22,7 @@ description: >-
 - 2026-10 P1 upgrade (03 matrix row): third tracker profile (Tasks files, tasks/plan.md + todo.md); one-time offers for CONSTRAINTS.md and the verification skill.
 - 2026-10 P1.2 (pie dogfood observation): lazy bootstrap is the primary path; this skill is the deliberate/explicit pass. Dependent skills bootstrap in place instead of stopping to demand setup.
 - 2026-10 P1.3: bootstrap ladder wording aligned (conclusive → confirm; inconclusive → ask_user with evidence-labeled options).
+- 2026-10 P6.2: local tracker layout is feature-first — one `.dev/<slug>/` dir per initiative (spec+plan+todo+tickets), `.dev/inbox/` for unattributed intake, T-ids globally unique.
 - 2026-10 P6.1: issue-tracker-dev.md renamed to issue-tracker.md (user call).
 - 2026-10 P6: the two local tracker profiles (`.scratch/` Local Markdown, root `tasks/` Tasks files) merged into one — **local files under `.dev/`** (gitignored per-developer process memory); legacy layouts read as found. Old seeds retired into `issue-tracker.md`.
 -->
@@ -58,8 +59,7 @@ Check the current repo before proposing changes:
 - `docs/GLOSSARY.md` and `docs/GLOSSARY-MAP.md` (legacy: root copies, or `CONTEXT.md`/`CONTEXT-MAP.md` from before the rename).
 - `docs/adr/` and `src/*/docs/adr/`.
 - Existing `docs/agents/` files.
-- `.dev/plan.md` for the local-files tracker; legacy `tasks/plan.md` or
-  `.scratch/` show the same tracker under the old roof.
+- `.dev/<slug>/plan.md` / `.dev/inbox/` for the local-files tracker (feature-first); legacy global `tasks/plan.md` and `.scratch/<slug>/` show the same tracker under the old roof.
 
 ### 2. Choose the editable agent instruction file
 
@@ -78,7 +78,7 @@ Explain that engineering skills publish, read, label, and close work items throu
 Default to:
 
 - **GitHub** when a remote points at GitHub. Use `references/issue-tracker-github.md` as the seed.
-- **Local files (.dev/)** when the repo shows `.dev/plan.md`, or carries legacy `tasks/plan.md` / `.scratch/`, or has no remote issue tracker, or the user prefers local files. Use `references/issue-tracker.md` as the seed: `.dev/plan.md` holds the ordered slices, `.dev/todo.md` holds per-task checklists, `/.dev/` is gitignored — per-developer process memory, never pushed; skills read and write through plain file edits.
+- **Local files (.dev/, feature-first)** when the repo shows `.dev/<slug>/plan.md` or `.dev/inbox/`, or carries legacy `tasks/plan.md` / `.scratch/`, or has no remote issue tracker, or the user prefers local files. Use `references/issue-tracker.md` as the seed: one slugged directory per feature — `spec.md` + `plan.md` + `todo.md` + `tickets/`; unattributed intake in `.dev/inbox/`; `/.dev/` is gitignored — per-developer process memory, never pushed; skills read and write through plain file edits.
 - **Other** for Jira, Linear, custom trackers, or unknown workflows. Use `ask_user` to ask for the workflow and write `docs/agents/issue-tracker.md` from scratch.
 
 Do not offer or generate GitLab setup in this skill.

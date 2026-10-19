@@ -139,3 +139,9 @@ delegation:guard-the-context-window。
 - **docs/ 持久资产归位**:GLOSSARY(+MAP)/CONSTRAINTS/REPO 从根迁入 docs/,与 adr/ 同层;legacy 根文件照读,搬迁归 owner。
 - **P6.1 追平(同日,用户拍板)**:issue-tracker-dev.md 更名 issue-tracker.md;`.dev/sdlc/` 更名 `.dev/lifecycle/`。
 - **验收**:check-skills 26 技能全绿(prd/issues/wayfinder 留 KILLS 绊线);模型回放触发回归未在本轮执行——standing instruments(B/bootstrap、G/拆分表、E/multi-area)需在新路径下复跑。
+
+### P6.2 落地(2026-10-19):feature-first 工作区(用户拍板)
+
+- **起因**:用户指出 `.dev/spec/` 按需求分、plan/todo/tickets 却全局共享的不对称——前者是 P6 取了旧 tasks-files 半边的形状,`.scratch/` 血统本来就是 feature-first。单人本地 tracker 场景下,全局队列的三条理由(入件无归属/frontier 全仓/T-id 命名空间)全部为弱理由,"半成品续跑进一个目录"是硬目标。
+- **形状**:`.dev/<slug>/{spec.md, plan.md, todo.md, tickets/}` 一次大需求一个目录;`.dev/inbox/` 收未归属入件(route 定了过继);scout 地图落 `.dev/<slug>/scout-map.md` 与决策票同目录;T-id 仍全局唯一;跨需求 implement-all 用 glob `.dev/*/plan.md` 取 frontier 并集;research/、lifecycle/、audit/ 留全局。ship 清理 = 整目录删除。
+- **触面**:issue-tracker.md 重写;spec/tasks/triage-issue/scout/implement-all/code-review/setup(+workflow)/use-the-stack/hook/prompt.ts/lifecycle.ts/docs02/README 同步。P6 节的 `.dev/spec/` 表述以本节为准。

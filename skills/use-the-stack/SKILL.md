@@ -39,7 +39,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ align ─→ proto 
 | A question needs docs/APIs read | `research` | background agent, primary sources, cited file |
 | Sharpen a fuzzy idea; agree on words | `align` | one question at a time; docs/GLOSSARY.md + ADRs written inline |
 | Unsure the state machine / layout is right | `proto` | throwaway artifact answers the question |
-| Formalize intent into the building contract | `spec` | six decision sections, three-label acceptance, .dev/spec/<slug>.md |
+| Formalize intent into the building contract | `spec` | six decision sections, three-label acceptance, .dev/<slug>/spec.md |
 | Define "good enough to ship" with numbers | `constraints` | docs/CONSTRAINTS.md floor + enforced rows + diff watch |
 | Split the plan into work | `tasks` | vertical slices, task graph, frontier |
 | Route incoming reports | `triage-issue` | label state machine, agent briefs |

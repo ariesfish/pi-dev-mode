@@ -34,8 +34,9 @@ addyosmani  →升级包 生命周期与质量合同  SPEC CONSTRAINTS 三类验
 
 **工件布局(P6 统一,2026-10-18 用户拍板):**
 ```
-.dev/     过程记忆,gitignore /(^.dev/),单一根——spec/<slug>.md(slug 必填;多模块 <initiative>/map.md+SPEC-<id>.md)
-          plan.md + todo.md + tickets/T-XXX.md(本地 tracker,唯一本地方案)+ research/<slug>.md + sdlc/(账本)+ audit/(决策 tsv + evidence/)
+.dev/     过程记忆,gitignore /(^.dev/),feature-first——一次大需求 = 一个 slugged 目录:
+          <slug>/{spec.md(多模块则 map.md+SPEC-<id>.md), plan.md, todo.md, tickets/T-XXX.md}
+          + inbox/(未归属入件)+ research/<slug>.md + lifecycle/(账本)+ audit/(决策 tsv + evidence/)
 docs/     持久资产,进 git——adr/(唯一过程沉淀通道)+ GLOSSARY.md(+MAP)+ CONSTRAINTS.md + REPO.md + agents/(栈配置)
 根目录     只留 AGENTS.md/CLAUDE.md(硬约定),指针行指向 docs/
 ```

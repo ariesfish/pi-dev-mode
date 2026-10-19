@@ -11,6 +11,7 @@ description: >-
 # Triage Issue
 
 <!-- pi-dev-mode changelog:
+- 2026-10 P6.2: unattributed intake lands in .dev/inbox/ under the local-files tracker; bootstrap evidence signals re-pointed (feature plan / inbox).
 - migrated from ~/.agents/skills/dev-triage-issue (mattp triage derived)
 - 2026-10-15 synced to mattp@49dd158: redundancy check ported into Gather context
   (search for an existing implementation by domain concept before grilling).
@@ -49,9 +50,9 @@ Five **state** roles:
 
 Every triaged issue should carry exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
 
-These are canonical role names — the actual label strings used in the issue tracker may differ. The mapping should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `.dev/plan.md` (→ local files), legacy `tasks/plan.md` / `.scratch/` (→ local files, old roof), incumbent conventions under `docs/` — then:
+These are canonical role names — the actual label strings used in the issue tracker may differ. The mapping should have been provided by `setup`. If missing, do not stop and send the user away. Read the repo evidence for the tracker — `git remote -v` (github.com → GitHub; a gitlab remote or none → no signal), `.dev/<slug>/plan.md` or `.dev/inbox/` (→ local files), legacy `tasks/plan.md` / `.scratch/` (→ local files, old roof), incumbent conventions under `docs/` — then:
 - **One conclusive signal** → ask exactly ONE confirmation question carrying your recommendation.
-- **No signal, or conflicting signals** → use `ask_user` and let the user choose: present each candidate as an option labeled with the evidence you found (or its absence — e.g. "`.dev/plan.md` exists → local files", "no remote, no tracker files → local files under `.dev/` (recommended: zero service dependencies, per-developer gitignored)"), recommend one, never invent a tracker the repo shows no evidence for.
+- **No signal, or conflicting signals** → use `ask_user` and let the user choose: present each candidate as an option labeled with the evidence you found (or its absence — e.g. "`.dev/<slug>/plan.md` or `.dev/inbox/` exists → local files", "no remote, no tracker files → local files under `.dev/` (recommended: zero service dependencies, per-developer gitignored)"), recommend one, never invent a tracker the repo shows no evidence for.
 Then seed `docs/agents/` from the setup skill's references and continue the work this skill was invoked for.
 
 State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time — flag transitions that look unusual and ask before proceeding.

@@ -36,7 +36,7 @@ pi-dev-mode          # the router that picks between all of these
 - `docs/agents/domain.md` — where domain docs live and how to consume them.
 - `docs/GLOSSARY.md` — glossary only; no implementation details. (Legacy: root copy; pre-rename `CONTEXT.md`)
 - `docs/adr/*.md` — hard-to-reverse, surprising trade-off decisions.
-- Spec (.dev/spec/) — the feature contract: objective, decisions, out of scope, three-label acceptance. Per-developer process memory, gitignored.
+- Spec (.dev/<slug>/spec.md, feature-first dir) — the feature contract: objective, decisions, out of scope, three-label acceptance. Per-developer process memory, gitignored.
 - Issues — independently grabbable vertical slices.
 - Tests/code — source of truth for behavior and implementation.
 

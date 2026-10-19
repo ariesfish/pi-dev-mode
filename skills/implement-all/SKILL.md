@@ -20,6 +20,7 @@ description: >-
   auto mode; its default one-task mode merged into `implement`. Rationale:
   the two doors duplicated ~80% and "build" collided with the npm-build verb
   inside its own protocol.
+  - 2026-10 P6.2: feature-first working set — spec at `.dev/<slug>/spec.md`, task graph at `.dev/<slug>/plan.md`(+todo,tickets); unattributed intake in `.dev/inbox/`; multi-feature frontier = glob union.
   - 2026-10 P6.1: ledger dir renamed .dev/sdlc/ → .dev/lifecycle/ (user call).
   - 2026-10 P5: auto mode step 6 — opt-in per-ticket ledger (open/…/close; blocker tickets stay open). No .sdlc → unchanged.
   - 2026-10 P6: prd retired — spec is the only upstream contract.
@@ -28,19 +29,20 @@ description: >-
 # Implement All
 
 Implement a whole plan: the tickets from `tasks` (task graph), or a task list
-in `.dev/plan.md`. `implement` is one ticket, serial, in-hand; this skill
+in a feature's `.dev/<slug>/plan.md`. `implement` is one ticket, serial, in-hand; this skill
 takes the whole graph. Complement, not subordinate: `implement` after this
 README.
 
 ## What implement-all needs before it starts
 
-1. **A spec**, at a known path: `.dev/spec/<slug>.md` (multi-module work:
-   `.dev/spec/<initiative>/map.md` plus its `SPEC-<id>.md` files). A README
+1. **A spec**, at a known path: `.dev/<slug>/spec.md` (multi-module work:
+   `.dev/<initiative>/map.md` plus its `SPEC-<id>.md` files). A README
    or an arbitrary doc is not a spec. If none exists: stop, tell the user to
    run `spec` first. Do not invent requirements.
-2. **A task list / task graph**: tracker tickets sliced by `tasks`, or
-   `.dev/plan.md` (with per-task checklists in `.dev/todo.md`). If absent,
-   invoke `tasks` to generate one.
+2. **A task list / task graph**: tracker tickets sliced by `tasks`, or the
+   feature's `.dev/<slug>/plan.md` (with per-task checklists in its `todo.md`).
+   Multiple features in flight: glob `.dev/*/plan.md` and take the union of
+   per-feature frontiers. If absent, invoke `tasks` to generate one.
 3. **A clean baseline**: `git status --porcelain` shows nothing outside
    expected planning artifacts (`.dev/*` — process memory, gitignored).
    Autonomous and parallel commits must not absorb unrelated local work, or

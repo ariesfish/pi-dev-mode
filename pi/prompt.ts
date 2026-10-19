@@ -40,7 +40,7 @@ function repoStateNote(cwd: string): string | undefined {
     );
     const tracker = has(
       "docs/agents/issue-tracker.md",
-      ".dev/plan.md",
+      ".dev",
       "tasks/plan.md",
       ".scratch",
     );
@@ -50,7 +50,7 @@ function repoStateNote(cwd: string): string | undefined {
       lines.push("- no domain glossary: docs/GLOSSARY.md (align seeds it lazily)");
     if (!tracker)
       lines.push(
-        "- no issue-tracker config: docs/agents/issue-tracker.md or a local `.dev/plan.md` tracker (tasks/triage-issue bootstrap it on first use, one confirmation; or run the setup skill)",
+        "- no issue-tracker config: docs/agents/issue-tracker.md or a local `.dev/` tracker (one slugged dir per feature; tasks/triage-issue bootstrap it on first use, one confirmation; or run the setup skill)",
       );
     if (!has("docs/CONSTRAINTS.md", "CONSTRAINTS.md"))
       lines.push("- no docs/CONSTRAINTS.md: define the quality bar before an autonomous run (constraints skill)");

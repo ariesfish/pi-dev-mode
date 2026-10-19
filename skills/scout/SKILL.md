@@ -13,6 +13,7 @@ description: >-
 ---
 
 <!-- pi-dev-mode changelog:
+- 2026-10 P6.2: local landing is the feature dir — .dev/<slug>/scout-map.md + decision tickets in the same directory (slug survives into the build).
 - 2026-10 P1 new acquisition: ported from mattp wayfinder @49dd158 (post-8295b8e:
   wayfinder: labels never triage labels, no placeholder refs, research branches
   pushed but never PR'd). Localized: grilling+domain-modeling → align;
@@ -39,7 +40,7 @@ Every map and ticket is an issue with a **name**: its title. In everything the h
 
 ## The map
 
-A single issue labelled `scout:map`, the canonical artifact, an **index** not a store: decisions are gisted in one line each and live in their tickets. Where the map, tickets, blocking, and frontier queries live is tracker-specific — the tracker config comes from `setup` (default: local files under `.dev/`). No tracker provided → tell the user to run `setup` first.
+A single issue labelled `scout:map`, the canonical artifact, an **index** not a store: decisions are gisted in one line each and live in their tickets. Where the map, tickets, blocking, and frontier queries live is tracker-specific — the tracker config comes from `setup` (default: local files under `.dev/`, where scouting a direction means one feature dir: the map at `.dev/<slug>/scout-map.md`, its decision tickets in the same directory; when the way clears, the spec and build tickets join them). No tracker provided → tell the user to run `setup` first.
 
 Map body:
 
