@@ -62,7 +62,7 @@ pi-dev-mode/
 - **P3** 验证心脏(1-2 周,唯一硬编码块:control-web fork + verify 生成器 + 独立裁决)
 - **P4** mode/命令/自主成型(2-3 天)→ **P5(opt-in)** 账本与改进回路(1 周+)
 
-实施纪律:每阶段端到端跑真实场景留证据(P3 铁律:没跑通的生成器是草稿)。
+实施纪律:每阶段端到端跑真实场景留证据(P3 铁律:没跑通的生成器是草稿)。质量合同在 [docs/CONSTRAINTS.md](docs/CONSTRAINTS.md)——动手前读,不许削弱它来让改动通过;`bash scripts/check.sh` 一条命令 = 本地与 CI 同检(check-skills + test-gates + check-prose)。
 
 ## 状态
 
