@@ -75,8 +75,9 @@ ASSUMPTIONS I'M MAKING:
 ```
 
 **Template** (write to `.dev/<slug>/spec.md` inside the feature's own
-feature-first directory — slug mandatory; this is the only landing
-implement-all looks in. Create `.dev/<slug>/` if absent and make sure `/.dev/`
+feature-first directory — slug mandatory and it starts with `feature-`, the
+whole dir name being the slug (naming contract: setup references/issue-tracker.md);
+this is the only landing implement-all looks in. Create `.dev/<slug>/` if absent and make sure `/.dev/`
 is gitignored: the spec is per-developer process memory, not shared repo
 content):
 

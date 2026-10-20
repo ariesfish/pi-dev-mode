@@ -13,7 +13,7 @@ edits.
 
 ```text
 .dev/
-├── <slug>/                    # 一次大需求的一切
+├── feature-<name>/            # 一次大需求的一切,整名即 slug(如 feature-sdlc-wiring/)
 │   ├── spec.md                # 特性合同(单模块;多模块: map.md + SPEC-<id>.md)
 │   ├── plan.md                # 本需求的切片图:索引 + 阻塞边 + Closed 行
 │   ├── todo.md                # 本需求的检查单 + triage 状态标记
@@ -24,6 +24,7 @@ edits.
 └── audit/                     # 决策台账 tsv + 证据(跨需求)
 ```
 
+- **特性目录命名契约**:顶层特性目录以 `feature-` 起头,**整名(含前缀)即 slug**;保留名 `inbox/` `lifecycle/` `audit/` 永不取该前缀。不以 `feature-` 起头的非保留顶层目录即违规——`ls .dev/` 一眼分区,违规即显眼异类。slug 定名三出生点(spec/research/scout)同守此约。
 - **T-id 全局唯一,跨需求不重号**:下一个 id = `.dev/` 下任何地方出现的最大号 + 1;永不重排。
 - **scout**(探路):地图落 `.dev/<slug>/scout-map.md`,决策票就在同一目录的 plan/tickets 里;路清了 spec.md 进同一目录,slug 贯穿始终。
 - **triage-issue**(入件):无归属的报文落 `.dev/inbox/T-XXX.md`(`Status:` 行带角色);route 定了(哪个需求)就把票过继进该特性的 plan/todo。

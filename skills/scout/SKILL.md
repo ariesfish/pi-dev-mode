@@ -26,7 +26,7 @@ Every map and ticket is an issue with a **name**: its title. In everything the h
 
 ## The map
 
-A single issue labelled `scout:map`, the canonical artifact, an **index** not a store: decisions are gisted in one line each and live in their tickets. Where the map, tickets, blocking, and frontier queries live is tracker-specific — the tracker config comes from `setup` (default: local files under `.dev/`, where scouting a direction means one feature dir: the map at `.dev/<slug>/scout-map.md`, its decision tickets in the same directory; when the way clears, the spec and build tickets join them). No tracker config yet → bootstrap it in place: one confirmation question with local files under `.dev/` recommended — never a detour through `setup`.
+A single issue labelled `scout:map`, the canonical artifact, an **index** not a store: decisions are gisted in one line each and live in their tickets. Where the map, tickets, blocking, and frontier queries live is tracker-specific — the tracker config comes from `setup` (default: local files under `.dev/`, where scouting a direction means one feature dir — its slug starts with `feature-`, the whole dir name being the slug — with the map at `.dev/<slug>/scout-map.md`, its decision tickets in the same directory; when the way clears, the spec and build tickets join them). No tracker config yet → bootstrap it in place: one confirmation question with local files under `.dev/` recommended — never a detour through `setup`.
 
 Map body:
 

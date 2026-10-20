@@ -51,3 +51,5 @@ RED 条目(修复前对旧代码失败的断言)在修复后 replay 会报 `1 DR
 ## 追记:同步核对抓出 post-freeze 缺陷并修复(同日)
 
 两仓同步后第一拉验证就在安装仓暴露崩溃:无账本仓跑 `mine` 报 `NameError: name 'sys' is not defined`——`mine` 的 python 缺 `import sys`,而该分支(无 `.dev/lifecycle/` 拒绝)在狗粮仓(账本在场)从未走过,test-gates.sh 也没断言它。修复:`gate.sh` mine 块补 `import sys`;`test-gates.sh` 补断言 `mine without ledger refused (exit 2)`(23 断言);修复 commit 附随本追记,tsv 以 superseding 行记录。**这正是两仓同步验证的存在理由:同一文件在两种仓库状态下必须都成立。**
+
+2026-10-20 追记 2:.dev 特性目录命名契约(feature- 前缀,整名即 slug)落地后,本文提及的 `.dev/sdlc-wiring/` 迁至 `.dev/feature-sdlc-wiring/`(冻结文档按当时状态保留,不回改;活文档零处引用旧名,mv 无悬挂)。
