@@ -50,6 +50,8 @@ On top of whatever the repo documents, the Standards axis always carries the **s
 - **The repo overrides.** A documented repo standard always wins; where it endorses something the baseline would flag, suppress the smell.
 - **Always a judgement call.** Each smell is a labelled heuristic ("possible Feature Envy"), never a hard violation. Like any standard here, skip anything tooling already enforces.
 
+Domain checklists ride the same axis: when the diff touches the domain, the reviewer also walks this package's `../../references/security-checklist.md` (auth / input validation / headers) and `../../references/accessibility-checklist.md` (a11y patterns) — the repo's own documented standards still override both.
+
 Each smell reads *what it is* → *how to fix*; match it against the diff:
 
 - **Mysterious Name**: a function, variable, or type whose name doesn't reveal what it does or holds. → rename it; if no honest name comes, the design's murky.

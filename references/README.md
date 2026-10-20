@@ -16,12 +16,12 @@
 | spec-driven-development | `spec` |
 | shipping-and-launch | `/ship` 生命周期命令(P4;独立 ship 技能未落地) |
 
-各清单的挂靠(收拢时的用法指引):
-- definition-of-done / testing-patterns → `tdd`、`implement(-all)`、`spec` 的验收/测试节引用
-- security-checklist → `code-review` 镜头、agents/security-auditor
-- performance-checklist → perf 流程(P3/P4 落地时挂)
-- accessibility / observability-checklist → constraints 的维度清单素材
-- orchestration-patterns → implement-all / review 的多代理纪律参考
+各清单的挂靠(2026-10-20 通电,均为已接线实态):
+- security-checklist / accessibility-checklist → `code-review` Standards 轴(域命中时审)
+- performance-checklist / observability-checklist → `constraints` 维度素材
+- definition-of-done → `implement` 完成报告前的常设门槛
+- testing-patterns → `tdd` 原则的 JS/TS 示例
+- orchestration-patterns → `implement-all` PARALLEL 编排纪律(含 persona 资料)
 
 ## 共享格式规范(2026-10-19 单源化)
 

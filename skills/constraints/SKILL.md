@@ -30,7 +30,7 @@ Never ask what you can read. Before the first question: stack (`package.json` / 
 
 One question at a time; every question has a default, so "I don't know" still produces a working config:
 
-1. Beyond the floor, which dimensions to enforce? (coverage on changed code / security scanning / performance budgets / accessibility / architecture boundaries) — say what each pick costs.
+1. Beyond the floor, which dimensions to enforce? (coverage on changed code / security scanning / performance budgets / accessibility / architecture boundaries) — say what each pick costs. Ready-made dimension material lives in this package: `../../references/performance-checklist.md` (Core-Web-Vitals targets + measurement commands) and `../../references/observability-checklist.md` (logging / metrics / tracing / alerting).
 2. When a check fails mid-task: block or warn? Default: block on the floor, warn on the rest for the first two weeks.
 3. Numbers in mind, or measure today and hold that line? Default: measure and hold (ratchet).
 4. Slowest check tolerated before handing work back? Default: 90s at task end, unlimited in CI.

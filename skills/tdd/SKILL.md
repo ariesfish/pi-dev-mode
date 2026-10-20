@@ -18,7 +18,7 @@ description: >-
 
 **Bad tests** are coupled to implementation. They mock internal collaborators, test private methods, or verify through external means (like querying a database directly instead of using the interface). The warning sign: your test breaks when you refactor, but behavior hasn't changed. If you rename an internal function and tests fail, those tests were testing implementation, not behavior.
 
-See [references/tests.md](references/tests.md) for examples and [references/mocking.md](references/mocking.md) for mocking guidelines.
+See [references/tests.md](references/tests.md) for examples and [references/mocking.md](references/mocking.md) for mocking guidelines. JS/TS illustrations of these principles (Arrange-Act-Assert, naming, mock discipline, anti-patterns): this package's `../../references/testing-patterns.md`; other stacks map the same patterns onto the repo's own test framework and commands.
 
 ## Anti-Pattern: Horizontal Slices
 

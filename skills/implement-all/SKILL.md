@@ -111,6 +111,8 @@ For every task, in either mode:
 
 ## PARALLEL mode (multi-agent orchestration)
 
+Orchestration discipline first: the session running this skill is the orchestrator — implementers never spawn each other, and no new multi-agent step gets wired without reading this package's `../../references/orchestration-patterns.md` (endorsed patterns + anti-patterns).
+
 1. Read the spec and tickets to understand the ticket graph.
 2. (optional) An **exploration subagent** (or `research` in the background)
    for any exploration the tickets require. It saves its notes in a directory

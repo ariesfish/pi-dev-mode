@@ -42,7 +42,7 @@ Once done, call the Skill tool with `code-review` to review the work.
 
 Commit your work to the current branch, staging only the files this ticket touched — never `git add -A`.
 
-Report with evidence, not self-report: the failing-test output (or the skip-test line), suite and build results, the commit hash. "Inconclusive" is not a pass; flag it instead.
+Report with evidence, not self-report: the failing-test output (or the skip-test line), suite and build results, the commit hash. "Inconclusive" is not a pass; flag it instead. Before reporting, the increment must also clear the standing Definition of Done — this package's base bar: `../../references/definition-of-done.md` (the repo's own DoD document, if present, overrides it).
 
 ## Ledger (opt-in)
 
