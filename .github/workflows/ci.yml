@@ -1,0 +1,24 @@
+name: check
+
+# Same command as local (scripts/check.sh) — the CI leg of correct's
+# "run the same command locally and in CI" rule. check-prose resolves its
+# diff base from the CI event (PR: origin/$GITHUB_BASE_REF; push: HEAD~1),
+# so fetch-depth must cover both: full clone (tiny repo).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - run: bash scripts/check.sh
