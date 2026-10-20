@@ -40,8 +40,8 @@ Create files lazily:
 
 Reference formats:
 
-- Read `references/glossary-format.md` before creating or editing `docs/GLOSSARY.md`.
-- Read `references/adr-format.md` before creating an ADR.
+- Read `../../references/glossary-format.md` (the package's single source, shared with `refact`) before creating or editing `docs/GLOSSARY.md`.
+- Read `../../references/adr-format.md` before creating an ADR.
 
 ## What to challenge
 

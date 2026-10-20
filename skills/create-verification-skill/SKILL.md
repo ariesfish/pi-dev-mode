@@ -76,7 +76,10 @@ proves it works — four H2s: `Sub-features` / `How to get to it (user POV)` /
 preconditions must FAIL honestly with the reason recorded in Gotchas — never
 loosen it green. The map is the repo's maintained verification
 source — the domain-skills compounding mechanism: every fixed pitfall
-deposits its recipe into the map.
+deposits its recipe into the map. A frozen repro loop (`diagnose`'s
+freeze-the-loop section) is a first-class seed: when one exists for a
+defect, lift that feature's file from it — the drive steps, fixtures, seed
+data, and end-state assertion are already proven.
 
 ## 4. Prove the generated skill before handing it over
 

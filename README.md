@@ -49,6 +49,7 @@ pi-dev-mode/
   hooks/session-start-context.md   路由 mandate(pi-dev 进场条件)
   references/           pi-host.md 宿主映射 v0
   models.json           家族别名解析表(anthropic/openai/openai-codex)
+  agents/               code-reviewer/security-auditor persona——经 pi/config.ts 注册为 pi-dev:* subagent 类型,可显式 spawn;review 四镜头走内联 brief,不经过这两个 persona
   skills/               26 件(基座 14 + 新增 12)
   adapters/control-web/ (P3)browser-harness fork
   gates/(opt-in)        (P5)

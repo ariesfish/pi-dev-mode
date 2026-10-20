@@ -22,3 +22,7 @@
 - performance-checklist → perf 流程(P3/P4 落地时挂)
 - accessibility / observability-checklist → constraints 的维度清单素材
 - orchestration-patterns → implement-all / review 的多代理纪律参考
+
+## 共享格式规范(2026-10-19 单源化)
+
+- `glossary-format.md` / `adr-format.md`——docs/GLOSSARY.md 与 ADR 的写入格式,`grill-me` 与 `refact` 共用的唯一正本(技能内以 `../../references/…` 指针引用);原两技能内副本已撤——撤前已是 adr-format 逐字双拷贝、glossary-format 漂移 2 行。
