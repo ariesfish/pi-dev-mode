@@ -18,7 +18,7 @@ Implement the work described by the user in the spec or tickets.
 
 If the user passes a ticket reference, fetch it from the issue tracker and state its title before starting. If the reference is ambiguous, ask.
 
-The issue tracker should have been provided by `setup`. If missing, run `setup` first.
+If the tracker config is missing, bootstrap it in place — read the repo evidence, one confirmation question carrying your recommendation, then fetch the ticket (the same stance `tickets` ships; never a detour through `setup`).
 
 Read the ticket's acceptance criteria before starting. Three labels: `[check: <command>]` runs the command; `[evidence: <procedure>]` follows the procedure and captures the artifact; `[judgment: <who>]` surfaces the question instead of deciding it. A `[judgment]` you find yourself deciding is a stop-and-ask.
 
