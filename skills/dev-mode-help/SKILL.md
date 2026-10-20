@@ -9,7 +9,7 @@ description: >-
 
 # Dev Mode Help
 
-Situation → skill. When in doubt, say what you want in plain words and let `pi-dev-mode` route; this page is for picking directly.
+Skill catalog, not a second router. When in doubt, say what you want in plain words and let `pi-dev-mode` route — the situation→skill routing table lives once, in its **Routing** section. This page is what each skill is, how they chain, and where things live.
 
 ```text
 setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ proto ─→ spec ─→
@@ -17,32 +17,36 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ pro
  code-review ─→ diagnose ─→ refact … scout above it all
 ```
 
-## "I want to…"
+## The catalog (one line each)
 
-| Situation | Skill | One line |
-|---|---|---|
-| Set this repo up for the stack | `setup` | tracker, triage labels, domain-doc layout |
-| Understand the whole repo once | `repo-map` | durable docs/REPO.md navigation map |
-| Understand one area before changing it | `code-map` | area map, callers, impact, next step |
-| A question needs docs/APIs read | `research` | background agent, primary sources, cited file |
-| Sharpen a fuzzy idea; agree on words | `grill-me` | one question at a time; docs/GLOSSARY.md + ADRs written inline |
-| Unsure the state machine / layout is right | `proto` | throwaway artifact answers the question |
-| Formalize intent into the building contract | `spec` | six decision sections, three-label acceptance, .dev/<slug>/spec.md |
-| Define "good enough to ship" with numbers | `constraints` | docs/CONSTRAINTS.md floor + enforced rows + diff watch |
-| Split the plan into work | `tickets` | vertical slices, task graph, frontier |
-| Route incoming reports | `triage-issue` | label state machine, agent briefs |
-| Do one ticket now (ONE area — its scope check refuses multi-area blobs, routing to `tickets`) | `implement` | serial, tdd at the seams, AC three-labels, review, commit |
-| Do the whole graph | `implement-all` | auto (single approval, serial) or parallel (integration branch + frontier + worktrees) |
-| Review a diff / branch / PR | `code-review` | Standards axis + Spec axis, parallel subagents |
-| Gate a merge: four lenses, one verdict | `review` | two-axis + comments + doubt + constraints, weighted dedup |
-| Cross-examine a decision in flight | `doubt` | fresh adversarial reviewer, 3-cycle bound |
-| Vet a measured number | `benchmark-checklist` | the seven questions, before reporting |
-| Retrospective a session | `retro` | findings routed to checks/types/docs/skill edits |
-| Gate a skill change before it ships | `eval` | trigger regression over evals/, or blinded variant A/B |
-| Something is broken or slow | `diagnose` | build a feedback loop first; RED-then-GREEN commits |
-| Structure feels wrong after the fact | `refact` | deepen modules, seams, locality |
-| The work is too big and foggy to plan | `scout` | decision tickets on the tracker until the way is clear |
-| Route everything for me | `pi-dev-mode` | the router: stage × shape × fog |
+| Skill | What it is |
+|---|---|
+| `setup` | per-repo config: tracker, triage labels, domain-doc layout |
+| `repo-map` | durable docs/REPO.md navigation map for repo-wide onboarding |
+| `code-map` | one-area orientation: modules, callers, impact, next step |
+| `research` | background agent reads primary sources; cited note at `.dev/<slug>/` |
+| `grill-me` | sharpen a fuzzy idea one question at a time; GLOSSARY/ADR written inline |
+| `proto` | throwaway artifact answers the design question before implementation |
+| `spec` | the building contract: six decision sections, three-label acceptance |
+| `constraints` | the quality bar with numbers — floor, enforced rows, diff watch |
+| `tickets` | slice the plan into tracer-bullet tickets (graph + frontier) |
+| `triage-issue` | route inbound reports through the triage-label state machine |
+| `implement` | one ticket, serial, tdd kernel at the seams — scope check refuses multi-area blobs |
+| `tdd` | red-green-refactor kernel: one test at a time, cost gate, answer-only discipline |
+| `implement-all` | the whole graph: auto (serial single-approval) or parallel (integration branch + worktrees) |
+| `diagnose` | feedback loop first; RED-then-GREEN commits; freezes loops that prove themselves |
+| `code-review` | quick lane: Standards + Spec two-axis pass on a diff |
+| `review` | the merge gate: four lenses in parallel, one aggregated verdict |
+| `doubt` | in-flight adversarial cross-examination of a decision, bounded cycles |
+| `benchmark-checklist` | the seven questions before any performance number leaves the room |
+| `eval` | the promotion gate for skill changes: trigger regression / variant A/B |
+| `retro` | session retrospective: findings routed to checks/types/docs/skill edits |
+| `refact` | deepen shallow modules — seams, locality, leverage |
+| `scout` | chart decision tickets until the destination is visible (charting, not charging) |
+| `create-verification-skill` | generate the project's verify-<app> skill + feature map, proven by running |
+| `maintain-verification-skill` | keep the verify skill's feature map honest: parallel readers + live pass |
+| `pi-dev-mode` | the router: stage × shape × fog; owns the routing table |
+| `dev-mode-help` | this page
 
 ## How they chain
 

@@ -26,11 +26,14 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Fuzzy idea, no shared language yet | `grill-me` (then `proto` if a question is best answered by building) |
 | A question needs external docs read | `research` (background) |
 | Formalize the work | `spec` -> `tickets` |
+| The quality bar with numbers is missing, or an autonomous loop is about to run | `constraints` |
 | Incoming bug report / feature request needs filing & labels | `triage-issue` (same tracker, inbound lane) |
 | One ticket to build (names ONE area or module) | `implement` |
 | A task naming MULTIPLE areas or modules (checklist-shaped: "X + Y + Z", whole-area rebuild, porting a reference set) | not `implement`'s job: split first (`tickets`) → `implement-all` (auto or parallel). **First reply = the split table itself** (ticket name / scope / deps / one-line acceptance for each); any file deliverable appearing before the split is confirmed is the breach shape — a single-pass build |
 | Whole ticket graph — unattended or wide frontier | `implement-all` (auto: serial single-approval; parallel: one implementer per frontier ticket) |
+| A standalone test-first ask (red-green-refactor, regression seam, cost gate) | `tdd` (the kernel; rides inside `implement`/`implement-all`) |
 | Something is broken or slow | `diagnose` (its perf branch passes `benchmark-checklist` before a number is claimed) |
+| The repo has no scripted way to prove UI/CLI/service behavior on the real app | `create-verification-skill` (generate one) / `maintain-verification-skill` (keep its feature map honest) |
 | Review a diff / PR / branch (single two-axis pass) | `code-review` |
 | Gate a merge / ship | `review` (four lenses in parallel readonly reviewers, one aggregated verdict; high-stakes merges add an independent adjudicator — a fresh agent on a different model writes its own verdict file under `.dev/audit/evidence/`) |
 | A measured number is about to be claimed | `benchmark-checklist` before the number leaves the room |
@@ -40,6 +43,7 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Structural friction, shallow modules | `refact` |
 | Ship / land a green stack | `review` then the shipping playbook (pstack's shipping playbook underneath) |
 | Unfamiliar code area / whole repo | `code-map` / `repo-map` |
+| "Which skill for what" — stack overview for a new session or teammate | `dev-mode-help` |
 
 **Scope test (before the fog test):** count the areas or modules the task names. More than one is not a ticket — it is a ticket graph missing its split. Routing a multi-area blob to `implement` buries the split, the tracker bootstrap, and the frontier; sort it into tickets first.
 

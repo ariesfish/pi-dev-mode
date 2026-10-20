@@ -203,6 +203,20 @@ def main() -> int:
             if pointer_missing(tok, [f.parent, root]):
                 failures.append(f"{rel}: pointer `{tok}` resolves under neither the skill dir nor the package root")
 
+    # catalog completeness: the router table (`pi-dev-mode`) and the discovery
+    # page (`dev-mode-help`) are the two inventory surfaces — every shipped
+    # skill must be cited in both. Found by audit: the router table lacked
+    # `constraints`, `tdd`, and the verification pair for weeks; nothing noticed.
+    INVENTORY_FILES = ("pi-dev-mode", "dev-mode-help")
+    for inv in INVENTORY_FILES:
+        f = root / "skills" / inv / "SKILL.md"
+        if not f.exists():
+            continue
+        t = f.read_text()
+        for n in sorted(names):
+            if n != inv and f"`{n}`" not in t:
+                failures.append(f"skills/{inv}/SKILL.md: skill `{n}` missing from this inventory surface")
+
     # evals/: structure + leak lint (cases are candidate-facing)
     evals_root = root / "evals"
     fx_root = evals_root / "fixtures"
