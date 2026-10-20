@@ -50,4 +50,4 @@ awk -F'\t' 'NR>1 && $1!="id" && $6!="" && $6!="N/A" {n++} END{print "skip:", n, 
 
 ## 接入的技能(条件性,opt-in)
 
-implement(tdd 绿后 run tdd 门)/ implement-all(票 open→…→close + check 门)/ review(独立裁决 verdict 入账)/ retro(mine 三率)。各技能内的账本条款都以 `.dev/lifecycle/` 在场为前提——不在场一字不改行为。
+**intake → build → verify → land → 回路 全链(7 技能)**:triage-issue(`ready-for-agent` 即开票)/ tickets(出票即开票)/ implement(tdd 绿后 run tdd 门 + exit 4 停票)/ implement-all(票 open→…→close + check 门 + BLOCKED 停票)/ diagnose(repro 门:RED 在前 GREEN 在后;perf 另有 bench 门)/ review(独立裁决 verdict 入账 + merge 读回 land 门)/ retro(mine 三率 + blocked 数)。各技能内的账本条款都以 `.dev/lifecycle/` 在场为前提——不在场一字不改行为。
