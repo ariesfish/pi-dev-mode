@@ -4,17 +4,17 @@
 
 | 原文名称 | 本栈等价 |
 |---|---|
-| /spec, /plan, /tasks | `spec` → `issues` |
+| /spec, /plan, /tasks | `spec` → `tickets` |
 | /build, /build auto | `implement-all`(auto 模式) |
 | /test | `tdd` + 套件/构建步骤(在 implement-all 的每任务环内) |
 | /review | `review`(四镜头管线;镜头 1 = `code-review`) |
-| /ship | `review` 通过后的落地步骤(独立 ship 技能落 P3/P4,pstack shipping 为底) |
+| /ship | `review` 过门后的落地流程(`/ship` 生命周期命令,P4 落 pi/lifecycle.ts;pstack shipping 为底) |
 | code-review-and-quality | `code-review`(双轴)或 review 管线 |
 | incremental-implementation | `implement` / `implement-all` |
 | code-reviewer / security-auditor / test-engineer personae | 本包 agents/(code-reviewer、security-auditor;test-engineer 职能并入实现技能与测试纪律) |
 | constraints(-driven) | `constraints` |
 | spec-driven-development | `spec` |
-| shipping-and-launch | ship 技能(未落地) |
+| shipping-and-launch | `/ship` 生命周期命令(P4;独立 ship 技能未落地) |
 
 各清单的挂靠(收拢时的用法指引):
 - definition-of-done / testing-patterns → `tdd`、`implement(-all)`、`spec` 的验收/测试节引用

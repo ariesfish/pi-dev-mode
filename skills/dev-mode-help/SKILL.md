@@ -7,7 +7,7 @@ description: >-
   introducing it to a new session or teammate. Chinese triggers: 用哪个技能, 这个栈怎么用, 技能地图.
 ---
 
-# Use the Stack
+# Dev Mode Help
 
 Situation → skill. When in doubt, say what you want in plain words and let `pi-dev-mode` route; this page is for picking directly.
 
@@ -31,7 +31,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ pro
 | Define "good enough to ship" with numbers | `constraints` | docs/CONSTRAINTS.md floor + enforced rows + diff watch |
 | Split the plan into work | `tickets` | vertical slices, task graph, frontier |
 | Route incoming reports | `triage-issue` | label state machine, agent briefs |
-| Do one ticket now (ONE area — its scope check refuses multi-area blobs to issues) | `implement` | serial, tdd at the seams, AC three-labels, review, commit |
+| Do one ticket now (ONE area — its scope check refuses multi-area blobs, routing to `tickets`) | `implement` | serial, tdd at the seams, AC three-labels, review, commit |
 | Do the whole graph | `implement-all` | auto (single approval, serial) or parallel (integration branch + frontier + worktrees) |
 | Review a diff / branch / PR | `code-review` | Standards axis + Spec axis, parallel subagents |
 | Gate a merge: four lenses, one verdict | `review` | two-axis + comments + doubt + constraints, weighted dedup |
@@ -49,7 +49,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ pro
 - **Intent chain**: grill-me → (proto) → spec → tickets → implement-family.
 - **Knowledge base (always-on)**: docs/GLOSSARY.md + docs/adr/ from `grill-me`/`refact`; every skill reads them and speaks the project's language.
 - **Quality contract**: docs/CONSTRAINTS.md from `constraints`; `code-review` watches the diff against it; `implement-all` treats rows as gates.
-- **Verification**: every build ends on the real artifact; `diagnose` freezes proven repro loops for the verification machinery (landing P3).
+- **Verification**: every build ends on the real artifact; `diagnose` freezes proven repro loops for the verification machinery (`create-verification-skill`).
 
 ## Where things live
 

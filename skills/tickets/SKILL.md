@@ -7,7 +7,7 @@ description: >-
   down as part of a developer workflow. Chinese triggers: 拆任务, 拆工单, 拆成 tasks, 垂直切片, 把 spec 拆成任务.
 ---
 
-# Tasks
+# Tickets
 
 Break a plan into independently-grabbable tickets (vertical slices, tracer bullets). This skill sits after `grill-me` or `spec` in the developer workflow and before `tdd` implementation; incoming reports route to `triage-issue`.
 

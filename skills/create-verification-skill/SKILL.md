@@ -15,7 +15,7 @@ behavior: launch it, exercise a feature the way a user would, capture evidence.
 This skill generates that as a project-local skill, tailored to the repo.
 Map platform vocabulary differences through `references/pi-host.md`; dispatch
 subagents with the lowercase `agent` tool (foreground to await results, or
-`run_in_background` for a completion notice).You write the generator's output
+`run_in_background` for a completion notice). You write the generator's output
 for the next agent, not for a human: it will be read cold, mid-task, by an agent
 that has never seen the app.
 
@@ -41,7 +41,7 @@ steps.
 ## 2. Generate the skill
 
 Write `.pi/skills/verify-<app>/SKILL.md` (`name: verify-<app>`, description
-naming the app, the main surface, and when to use it)with these sections, each grounded in what the interview
+naming the app, the main surface, and when to use it) with these sections, each grounded in what the interview
 actually found (no placeholders left):
 
 - **Launch:** the exact command that starts the app for verification and how to
@@ -74,14 +74,14 @@ how to reach it, how to drive it with the harness, and what observable end state
 proves it works — four H2s: `Sub-features` / `How to get to it (user POV)` /
 `Driving it with <harness>` / `Gotchas`. A journey whose seed data lacks
 preconditions must FAIL honestly with the reason recorded in Gotchas — never
-loosen it green.The map is the repo's maintained verification
+loosen it green. The map is the repo's maintained verification
 source — the domain-skills compounding mechanism: every fixed pitfall
 deposits its recipe into the map.
 
 ## 4. Prove the generated skill before handing it over
 
 Run its own instructions end to end once: **launch → doctor → drive ONE mapped
-feature → evidence on disk → cleanup, and confirm the evidence survived**.A cleanup that eats the proof
+feature → evidence on disk → cleanup, and confirm the evidence survived**. A cleanup that eats the proof
 fails this step. Fix what fails, and run the generated cleanup after every failed
 iteration too, so broken attempts don't strand processes and ports. **A generated
 skill that was never executed is a draft, not a deliverable.** If you proved it in

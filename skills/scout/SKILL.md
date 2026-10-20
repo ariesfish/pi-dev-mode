@@ -4,7 +4,7 @@ description: >-
   Scout the way before the main work moves: when the destination itself is
   undecided (more than one session can hold, foggier than a plan), chart a
   shared map of decision tickets on the project tracker and resolve them one
-  at a time until the way clear. Charting, not charging — the output is
+  at a time until the way is clear. Charting, not charging — the output is
   decisions, not deliverables. Use when a loose idea is too big or too foggy
   to plan directly, or when the user asks to explore the direction first.
   Chinese triggers: 探路, 摸方向, 方向不明, 去向未定, 这摊子太大.
@@ -83,7 +83,7 @@ The map is deliberately incomplete. Beyond the live tickets: **Not yet specified
 
 1. **Name the destination** via `grill-me`.
 2. **Map breadth-first** (not deep on any one thread). If this surfaces no fog and the journey fits one session, you don't need a map: stop and ask how to proceed.
-3. **Create the map** ( label): Destination and Notes filled, fog sketched into Not yet specified.
+3. **Create the map** (`scout:map` label): Destination and Notes filled, fog sketched into Not yet specified.
 4. **Create the tickets you can specify now** as children; wire blocking edges and cross-references in a **second pass** with real ids — a placeholder `#<n>` auto-links to an unrelated issue. Wire, don't paste.
 5. **Fire the research subagents** with the `agent` tool (lowercase) for `research` tickets in parallel (throwaway branch, push, no PR).
 6. Stop: charting is one session's work; it hand-resolves nothing.

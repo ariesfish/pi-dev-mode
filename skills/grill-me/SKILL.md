@@ -9,15 +9,13 @@ description: >-
   Chinese triggers: 拷问我, 拷打方案, 澄清需求, 统一术语, 领域建模, 写 ADR.
 ---
 
-# Align
+# Grill Me
 
 Use this skill to align fuzzy architecture or product-design ideas with precise domain language, explicit trade-offs, and durable project documentation.
 
 ## Workflow role
 
 Use `grill-me` before `spec`, `tickets`, `tdd`, or `refact` when the plan has fuzzy domain language, unresolved trade-offs, or decisions that may deserve an ADR. Its output is aligned language and durable context, not implementation.
-
-When an interview surfaces a question that is best answered by building rather than asking ("does this state machine feel right?", "which layout?"), route that one question to `proto`, then resume the interview with the answer. A question a prototype can settle is not the human's to answer.
 
 When an interview surfaces a question that is best answered by building rather than asking ("does this state machine feel right?", "which layout?"), route that one question to `proto`, then resume the interview with the answer. A question a prototype can settle is not the human's to answer.
 

@@ -44,10 +44,10 @@ product regression (report it, don't paper over it).
 
 2. **Source wave.** One readonly `agent` subagent per feature file, all
 dispatched concurrently in one message
-   (readonly: true)。Each answers "how does this user-facing feature work?" from
+   (readonly: true). Each answers "how does this user-facing feature work?" from
    source, flags likely doc drift with citations, and returns one concise
    live-verification recipe (feature summary / source entry points / likely
-   drift or none / one recipe)。Children never drive the app and never edit files.
+   drift or none / one recipe). Children never drive the app and never edit files.
 
 3. **Reconcile.** Merge overlapping recipes into as few app states as practical;
    spot-check cited drift, don't re-prove clean claims. Sweep recent churn for
