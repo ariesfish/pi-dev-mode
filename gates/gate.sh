@@ -5,13 +5,24 @@
 # Its absence is the OFF state — every command here refuses (exit 2) without
 # one, so a closed ledger never changes skill behavior.
 #
-# Gate classes (docs/04 P5):
-#   D — deterministic script gate (tdd / check / constraints): run cmd, record exit.
-#   A — adjudicated gate (review verdict): record file hash + parsed verdict.
+# Gate classes (gates/README.md):
+#   D — deterministic script gate (tdd / check / repro / land / constraints):
+#       run cmd, record exit. Evidence = argv + dir + exit + output tail —
+#       re-executable by `replay`.
+#   A — adjudicated gate (review verdict): record file hash + parsed verdict;
+#       replay re-hashes.
 #
-# Ledger discipline: history is append-only; `replay` re-executes D-class
-# history in order and re-hashes A-class verdict files, reporting drift —
-# it never mutates state.
+# Rework budget (item-level): consecutive FAILs per gate count up in
+# state.json; reaching the budget (default 3, `open --budget N`) sets
+# state.blocked and exits 4. While blocked, every run/verdict/close for that
+# item refuses with exit 4 until a human runs `resume <id> --note "<reason>"`
+# (note required, appended to history, counters reset). A PASS (or PASS+
+# verdict, a passing run, a resume) resets the counter. `show` / `replay` /
+# `mine` are read-only and work while blocked. Blocked state is per-item:
+# other items keep running.
+#
+# Exit codes: 0 PASS · 1 FAIL · 2 refusal/usage (no ledger, bad args) ·
+# 3 missing python3 · 4 BLOCKED (budget tripped / blocked item).
 set -euo pipefail
 
 GATE_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -19,18 +30,27 @@ PY=python3
 command -v "$PY" >/dev/null 2>&1 || { echo "gate.sh: python3 required" >&2; exit 3; }
 
 die() { echo "gate.sh: $*" >&2; exit 2; }
+refuse() { echo "gate.sh: $*" >&2; exit 2; }  # without-ledger / bad-arg refusals
+blockrefuse() { echo "gate.sh: BLOCKED item $1 — gate ${2:-?}: ${3:-?} (${4:-?}). Resume with: gate.sh resume $1 --note \"<human reason>\"" >&2; exit 4; }
 usage() {
   cat <<'EOF'
 Usage: gate.sh <command> [args]        (run from the target project root)
-  open <id> "<title>"                  open item ledger (.dev/lifecycle/ opt-in)
+  open <id> "<title>" [--budget N]     open item ledger (.dev/lifecycle/, opt-in);
+                                       --budget N = consecutive-FAIL budget (default 3).
+                                       Idempotent: re-open of a live item reuses it.
   run <id> <gate> [-d dir] [--note s] -- <cmd...>
-                                       run D-class gate, append history
+                                       run D-class gate, append history.
+                                       FAIL counts toward the item budget; budget
+                                       tripped -> state.blocked + exit 4.
   verdict <id> --from <verdict.json> [--note s]
-                                       record A-class verdict (hash + verdict)
-  close <id> [--note s]                close item
-  show <id>                            print state (gates + history)
+                                       record A-class verdict (hash + verdict).
+                                       FAIL/BLOCKED verdicts count toward the budget.
+  resume <id> --note "<reason>"        clear blocked (note required, human-written),
+                                       reset counters, append history. No-op if unblocked.
+  close <id> [--note s]                close item (refused while blocked)
+  show <id>                            print state (gates + history; works while blocked)
   replay <id>                          re-execute D history, re-hash A; drift report (read-only)
-  mine                                 first-pass rate + verdict flips across items
+  mine                                 first-pass rate + verdict flips + blocked count
 EOF
   exit 2
 }
@@ -38,7 +58,7 @@ EOF
 # --- dispatch -------------------------------------------------------------
 cmd="${1:-}"; [ $# -gt 0 ] && shift
 case "$cmd" in
-  open|run|verdict|close|show|replay)
+  open|run|verdict|close|show|replay|resume)
     id="${1:-}"; [ -n "$id" ] || usage; shift || true
     ;;
   mine) ;;
@@ -48,14 +68,27 @@ esac
 case "$cmd" in
   open)
     title="${1:-}"; [ -n "$title" ] || die "open needs a title"
-    exec "$PY" - "$GATE_HOME" "$id" "$title" <<'PYEOF'
-import json, sys, pathlib, datetime
-gate_home, item, title = sys.argv[1], sys.argv[2], sys.argv[3]
+    shift
+    budget=3
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --budget) budget="${2:-}"; shift 2 ;;
+        *) usage ;;
+      esac
+    done
+    exec "$PY" - "$GATE_HOME" "$id" "$title" "$budget" <<'PYEOF'
+import json, sys, pathlib, datetime, re
+gate_home, item, title, budget = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+if not re.fullmatch(r"[1-9][0-9]*", budget or ""):
+    print("gate.sh: --budget must be a positive integer", file=sys.stderr)
+    sys.exit(2)
+budget = int(budget)
 root = pathlib.Path.cwd()
 sdlc = root / ".dev/lifecycle"
 state_f = sdlc / "items" / item / "state.json"
 if state_f.exists():
-    sys.exit(f"gate.sh: item {item} already open at {state_f}")
+    print(f"open {item}: already open at {state_f} (reuse)")
+    sys.exit(0)
 state_f.parent.mkdir(parents=True, exist_ok=True)
 readme = sdlc / "README.md"
 if not readme.exists():
@@ -64,6 +97,8 @@ if not readme.exists():
         "Opened by gate.sh (pi-dev-mode P5). Removing/renaming this dir closes the\n"
         "ledger — all skills then behave exactly as P1-P4 (no .dev/lifecycle, no ledger).\n\n"
         "- items/<id>/state.json — gates + append-only history (replayable)\n"
+        "- item rework budget: consecutive gate FAILs (default 3) block the item until\n"
+        "  `gate.sh resume <id> --note \"<human reason>\"` (see gates/README.md)\n"
         "- observe/ — L4 tail stub (post-deploy baseline loop; intentionally unimplemented)\n",
         encoding="utf-8",
     )
@@ -78,10 +113,11 @@ if not stub.exists():
         encoding="utf-8",
     )
 ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-state = {"id": item, "title": title, "opened": ts, "closed": None,
-         "gates": {}, "history": [{"step": 1, "ts": ts, "type": "open"}]}
+state = {"id": item, "title": title, "opened": ts, "closed": None, "budget": budget,
+         "blocked": None, "gates": {},
+         "history": [{"step": 1, "ts": ts, "type": "open", "budget": budget}]}
 state_f.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-print(f"open {item}: {state_f}")
+print(f"open {item}: {state_f} (budget {budget})")
 PYEOF
     ;;
 
@@ -98,11 +134,20 @@ PYEOF
     done
     [ $# -gt 0 ] || die "run needs a command after --"
     exec "$PY" - "$GATE_HOME" "$id" "$gate" "$dir" "$note" "$@" <<'PYEOF'
-import json, subprocess, sys, pathlib, datetime, shlex
+import json, subprocess, sys, pathlib, datetime
 item, gate, dir_, note, argv = sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6:]
 f = pathlib.Path.cwd() / ".dev/lifecycle" / "items" / item / "state.json"
-if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/lifecycle ledger)")
+if not f.exists():
+    print("gate.sh: item not opened (no .dev/lifecycle ledger)", file=sys.stderr)
+    sys.exit(2)
 state = json.loads(f.read_text())
+blocked = state.get("blocked")
+if blocked:
+    print(f"gate.sh: BLOCKED item {item} — gate {blocked.get('gate')}: "
+          f"{blocked.get('reason')} ({blocked.get('ts')}). Resume with: "
+          f"gate.sh resume {item} --note \"<human reason>\"", file=sys.stderr)
+    sys.exit(4)
+budget = state.get("budget", 3)
 proc = subprocess.run(argv, cwd=dir_, capture_output=True, text=True)
 ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 entry = {"step": len(state["history"]) + 1, "ts": ts, "type": "run", "gate": gate,
@@ -114,11 +159,21 @@ g = state["gates"].get(gate, {"class": "D", "pass": False, "runs": 0, "first_pas
 g["runs"] += 1
 if g["first_pass"] is None: g["first_pass"] = proc.returncode == 0
 g["pass"] = proc.returncode == 0
+g["fails"] = 0 if proc.returncode == 0 else g.get("fails", 0) + 1
 g["ts"] = ts
 state["gates"][gate] = g
-f.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n")
-print(f"run {gate}: {'PASS' if entry['pass'] else 'FAIL'} (exit {proc.returncode}) step {entry['step']}")
-sys.exit(0 if entry["pass"] else 1)
+exit_code = 0 if g["pass"] else 1
+if not g["pass"] and g["fails"] >= budget:
+    state["blocked"] = {"gate": gate, "reason": f"{g['fails']} consecutive FAILs (budget {budget})", "ts": ts}
+    state["history"].append({"step": len(state["history"]), "ts": ts, "type": "blocked",
+                             "gate": gate, "budget": budget})
+    exit_code = 4
+f.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+print(f"run {gate}: {'PASS' if g['pass'] else 'FAIL'} (exit {proc.returncode}) step {entry['step']}")
+if exit_code == 4:
+    print(f"BLOCKED {item}: {state['blocked']['reason']} — "
+          f"gate.sh resume {item} --note \"<human reason>\"")
+sys.exit(exit_code)
 PYEOF
     ;;
 
@@ -130,10 +185,16 @@ PYEOF
     exec "$PY" - "$GATE_HOME" "$id" "$file" "$note" <<'PYEOF'
 import json, hashlib, sys, pathlib, datetime
 item, file, note = sys.argv[2], sys.argv[3], sys.argv[4]
+PASS_WORDS = {"PASS", "PASS+NOTES"}
+KNOWN = PASS_WORDS | {"FAIL", "BLOCKED"}
 f = pathlib.Path.cwd() / ".dev/lifecycle" / "items" / item / "state.json"
 vf = pathlib.Path(file)
-if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/lifecycle ledger)")
-if not vf.exists(): sys.exit(f"gate.sh: verdict file not found: {file}")
+if not f.exists():
+    print("gate.sh: item not opened (no .dev/lifecycle ledger)", file=sys.stderr)
+    sys.exit(2)
+if not vf.exists():
+    print(f"gate.sh: verdict file not found: {file}", file=sys.stderr)
+    sys.exit(2)
 raw = vf.read_bytes()
 try:
     v = json.loads(raw)
@@ -142,15 +203,65 @@ except Exception:
     verdict = "UNPARSEABLE"
 ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 state = json.loads(f.read_text())
+blocked = state.get("blocked")
+if blocked:
+    print(f"gate.sh: BLOCKED item {item} — gate {blocked.get('gate')}: "
+          f"{blocked.get('reason')} ({blocked.get('ts')}). Resume with: "
+          f"gate.sh resume {item} --note \"<human reason>\"", file=sys.stderr)
+    sys.exit(4)
+budget = state.get("budget", 3)
 entry = {"step": len(state["history"]) + 1, "ts": ts, "type": "verdict", "gate": "review",
          "class": "A", "file": file, "sha256": hashlib.sha256(raw).hexdigest()[:16],
          "verdict": verdict}
 if note: entry["note"] = note
 state["history"].append(entry)
-state["gates"]["review"] = {"class": "A", "verdict": verdict, "ts": ts,
-                            "file": file, "runs": state["gates"].get("review", {}).get("runs", 0) + 1}
-f.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n")
+g = state["gates"].get("review", {"class": "A", "verdict": None, "runs": 0})
+g["runs"] += 1; g["verdict"] = verdict; g["ts"] = ts; g["file"] = file
+if verdict in PASS_WORDS:
+    g["fails"] = 0
+elif verdict in KNOWN:
+    g["fails"] = g.get("fails", 0) + 1
+state["gates"]["review"] = g
+exit_code = 0 if verdict in PASS_WORDS else (1 if verdict in KNOWN else 2)
+if verdict in KNOWN and verdict not in PASS_WORDS and g["fails"] >= budget:
+    state["blocked"] = {"gate": "review", "reason": f"{g['fails']} consecutive FAIL verdicts (budget {budget})", "ts": ts}
+    state["history"].append({"step": len(state["history"]), "ts": ts, "type": "blocked",
+                             "gate": "review", "budget": budget})
+    exit_code = 4
+f.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 print(f"verdict {item}: {verdict} ({file} sha:{entry['sha256']})")
+if exit_code == 4:
+    print(f"BLOCKED {item}: {state['blocked']['reason']} — "
+          f"gate.sh resume {item} --note \"<human reason>\"")
+sys.exit(exit_code)
+PYEOF
+    ;;
+
+  resume)
+    note=""
+    while [ $# -gt 0 ]; do case "$1" in --note) note="$2"; shift 2;; *) shift;; esac; done
+    [ -n "$note" ] || die "resume needs --note \"<human reason>\""
+    exec "$PY" - "$GATE_HOME" "$id" "$note" <<'PYEOF'
+import json, sys, pathlib, datetime
+item, note = sys.argv[2], sys.argv[3]
+f = pathlib.Path.cwd() / ".dev/lifecycle" / "items" / item / "state.json"
+if not f.exists():
+    print("gate.sh: item not opened (no .dev/lifecycle ledger)", file=sys.stderr)
+    sys.exit(2)
+state = json.loads(f.read_text())
+blocked = state.get("blocked")
+if not blocked:
+    print(f"resume {item}: not blocked, nothing to resume")
+    sys.exit(0)
+ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+was = blocked.get("gate")
+state["blocked"] = None
+for g in state["gates"].values():
+    g["fails"] = 0
+state["history"].append({"step": len(state["history"]) + 1, "ts": ts, "type": "resume",
+                         "was": was, "note": note})
+f.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+print(f"resume {item}: unblocked (was gate {was}) — {note}")
 PYEOF
     ;;
 
@@ -160,14 +271,22 @@ PYEOF
 import json, sys, pathlib, datetime
 item, note = sys.argv[2], sys.argv[3]
 f = pathlib.Path.cwd() / ".dev/lifecycle" / "items" / item / "state.json"
-if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/lifecycle ledger)")
+if not f.exists():
+    print("gate.sh: item not opened (no .dev/lifecycle ledger)", file=sys.stderr)
+    sys.exit(2)
 state = json.loads(f.read_text())
+blocked = state.get("blocked")
+if blocked:
+    print(f"gate.sh: BLOCKED item {item} — gate {blocked.get('gate')}: "
+          f"{blocked.get('reason')} ({blocked.get('ts')}). Resume with: "
+          f"gate.sh resume {item} --note \"<human reason>\"", file=sys.stderr)
+    sys.exit(4)
 ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 state["closed"] = ts
 entry = {"step": len(state["history"]) + 1, "ts": ts, "type": "close"}
 if note: entry["note"] = note
 state["history"].append(entry)
-f.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n")
+f.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 print(f"close {item} at step {entry['step']}")
 PYEOF
     ;;
@@ -176,7 +295,9 @@ PYEOF
     exec "$PY" - "$GATE_HOME" "$id" <<'PYEOF'
 import json, sys, pathlib
 f = pathlib.Path.cwd() / ".dev/lifecycle" / "items" / sys.argv[2] / "state.json"
-if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/lifecycle ledger)")
+if not f.exists():
+    print("gate.sh: item not opened (no .dev/lifecycle ledger)", file=sys.stderr)
+    sys.exit(2)
 print(f.read_text())
 PYEOF
     ;;
@@ -186,7 +307,9 @@ PYEOF
 import json, subprocess, sys, pathlib, hashlib
 item = sys.argv[2]
 f = pathlib.Path.cwd() / ".dev/lifecycle" / "items" / item / "state.json"
-if not f.exists(): sys.exit("gate.sh: item not opened (no .dev/lifecycle ledger)")
+if not f.exists():
+    print("gate.sh: item not opened (no .dev/lifecycle ledger)", file=sys.stderr)
+    sys.exit(2)
 state = json.loads(f.read_text())
 drift = 0
 for e in state["history"]:
@@ -213,22 +336,25 @@ PYEOF
     exec "$PY" - "$GATE_HOME" <<'PYEOF'
 import json, pathlib
 sdlc = pathlib.Path.cwd() / ".dev/lifecycle"
-if not sdlc.exists(): sys.exit("gate.sh: no .dev/lifecycle ledger (closed)")
+if not sdlc.exists():
+    print("gate.sh: no .dev/lifecycle ledger (closed)", file=sys.stderr)
+    sys.exit(2)
 rows = []
+states = []
 for f in sorted(sdlc.glob("items/*/state.json")):
     s = json.loads(f.read_text())
-    gates = s.get("gates", {})
-    for g, d in sorted(gates.items()):
+    states.append(s)
+    for g, d in sorted(s.get("gates", {}).items()):
         if d["class"] == "D":
             rows.append((s["id"], g, "D", f"runs={d['runs']} first_pass={d.get('first_pass')} pass={d['pass']}"))
         else:
             rows.append((s["id"], g, "A", f"verdict={d['verdict']} runs={d['runs']}"))
 # verdict flips per item: count verdict entries whose outcome differs from previous verdict entry
 flips = 0
-for f in sorted(sdlc.glob("items/*/state.json")):
-    s = json.loads(f.read_text())
+for s in states:
     vs = [e["verdict"] for e in s["history"] if e["type"] == "verdict"]
     flips += sum(1 for a, b in zip(vs, vs[1:]) if a != b)
+blocked = sum(1 for s in states if s.get("blocked"))
 if not rows:
     print("mine: empty ledger")
 else:
@@ -238,6 +364,7 @@ else:
     print(f"mine: D-gates={len(fp)} first_pass={first_pass} first-pass-rate="
           f"{(first_pass / len(fp)):.2f}" if fp else "mine: no D gates")
     print(f"mine: verdict-flips={flips} (disagreement; skip-test rate lives in .audit tsv)")
+print(f"mine: blocked-items={blocked}")
 PYEOF
     ;;
 esac
