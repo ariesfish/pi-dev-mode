@@ -17,15 +17,17 @@
 
 决策台账:`.dev/audit/T-00{1..6}.tsv`(七列,每票 ≥1 行 skip_test 全空——无跳过)。
 
-## 冻结数字(mine @ T-006 收尾)
+## 冻结数字(mine 终值,含 T-006 自身门与修复验证)
 
 ```
-mine: D-gates=14 first_pass=7 first-pass-rate=0.50
+mine: D-gates=16 first_pass=9 first-pass-rate=0.56
 mine: verdict-flips=0 (disagreement; skip-test rate lives in .audit tsv)
 mine: blocked-items=0
 ```
 
-- 首过率 0.50:7 个 first_pass=False 全部是**故意的 RED 门**(每票条款先行入账失败——tdd 纪律的预期形态,不是质量事故);对照组 3 张 check 门首过全绿。
+> 注:先前证据档批冻结于 14/0.50(来计入 T-006 自身 3 门),终值以上表为准;首过失分 7 处全部是故意的 RED 入账。
+
+- 首过率 0.56:首过失败 7 处全部是**故意的 RED 门**(每票条款先行入账失败——tdd 纪律的预期形态,不是质量事故);对照组 check 门首过全绿。
 - verdict 翻转 0:本轮 A 类门零裁决文件(技能栈维护轮,无高风险合并; reviewers 走四镜头文本聚合)。
 - blocked 0:预算熔断从未触发——六票无一票返工超限。
 
