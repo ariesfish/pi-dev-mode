@@ -70,7 +70,7 @@
 
 | 技能 | 来源与处置 | 说明 |
 |---|---|---|
-| `pi-dev-mode` | **N** | 大 mode:路由表(02 §4)+ 精选 playbooks + principles 12 条精选索引 + 回复契约节 |
+| `pi-dev-mode` | **N** | 大 mode:路由表(02 §4)+ 精选 playbooks + principles 12 核 + 5 附注索引 + 回复契约节 |
 | `retro` | mattp retro **M**(pstack reflect/correct 吸收) | 读 Pi 会话日志找改进候选;落点学 correct 的"最高层级修复"(架构>类型>lint>测试>文档)|
 | `use-the-stack` | **N** | 一页发现树(addyosmani using-agent-skills 的对应物,含 dev-workflow 闭环图更新版) |
 
@@ -87,11 +87,12 @@
 | pstack 24 principles 只收 12(精选清单见 02)+ 23 playbooks 只带 ~10 | 融合栈按需精选;其余靠已装 pstack-harness 时自然可用(R) |
 | pstack `unslop`/`technical-writing` 本体 | 少量条款并入 pi-dev-mode 回复契约;整件不收 |
 
-## principles 精选(12/24)
+## principles 精选(12 核 + 5 附注 / 24)
 core:laziness-protocol、foundational-thinking、subtract-before-you-add、build-the-lever、exhaust-the-design-space;
 架构:model-the-domain(与 align/refact 互引)、boundary-discipline、type-system-discipline;
 验证 5 条全收:prove-it-works、fix-root-causes、sequence-verifiable-units、test-behavior-not-implementation、explain-the-number;
-delegation:guard-the-context-window。
+delegation:guard-the-context-window;
+附注(2026-10-20 弃亏案增补,判词见当轮对话/docs):attack-the-premise(diagnose 前提普查)、never-block-on-the-human(overnight 人模型)、make-operations-idempotent(工具/脚本设计)。
 
 ## §0.1 P1.2 增补(pie dogfood 观察:setup 的自动路由)
 

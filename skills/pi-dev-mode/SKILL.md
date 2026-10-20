@@ -96,7 +96,7 @@ Named by need; each names its owning skill — follow the skill body, not this s
 9. **Ship**: `review` gate first (APPROVE or informed accept), then land: one primary number (per the benchmark seven questions), release notes, post-ship verify pass, evidence archived (`.dev/audit/evidence/`, survives cleanup). Ledger on: the merge read-back rides as the `land` gate — close only after it passes.
 10. **The loop**: `retro` at session end / before handoff; substantive skill edits route through `eval` (Mode A/B) — a rejected change lands in `evals/skill-impact.md`.
 
-## Principles index (12, from pstack's 24)
+## Principles index (12 core + 5 addenda, from pstack's 24)
 
 One line each — enough to steer when the owning skill is not loaded.
 
@@ -114,6 +114,9 @@ One line each — enough to steer when the owning skill is not loaded.
 - **test-behavior-not-implementation**: assert what the user sees; green on broken code is worse than no test.
 - (addendum) **explain-the-number**: every number ships with run count, range, limiter.
 - (addendum) **guard-the-context-window**: pointers over payloads; delegate digging to subagents.
+- (addendum) **attack-the-premise**: two fixes that share one premise failed the same gate — census who holds the premise before writing the third.
+- (addendum) **never-block-on-the-human**: human touchpoints are intent confirmation, pure judgment, irreversible ops — everywhere else, proceed and report.
+- (addendum) **make-operations-idempotent**: commands, lifecycle steps, and loops that run amid crashes and retries converge on the same end state.
 
 ## Autonomous / overnight (combo playbook)
 
