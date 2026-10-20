@@ -93,7 +93,7 @@ Named by need; each names its owning skill — follow the skill body, not this s
 8. **The gate**: `code-review` (two-axis single pass) / `review` (four lenses + aggregate; high-stakes adds the independent verifier verdict file); numbers leave the room only after `benchmark-checklist`.
 
 **Ship**
-9. **Ship**: `review` gate first (APPROVE or informed accept), then land: one primary number (per the benchmark seven questions), release notes, post-ship verify pass, evidence archived (`.dev/audit/evidence/`, survives cleanup).
+9. **Ship**: `review` gate first (APPROVE or informed accept), then land: one primary number (per the benchmark seven questions), release notes, post-ship verify pass, evidence archived (`.dev/audit/evidence/`, survives cleanup). Ledger on: the merge read-back rides as the `land` gate — close only after it passes.
 10. **The loop**: `retro` at session end / before handoff; substantive skill edits route through `eval` (Mode A/B) — a rejected change lands in `evals/skill-impact.md`.
 
 ## Principles index (12, from pstack's 24)
