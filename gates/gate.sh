@@ -334,7 +334,7 @@ PYEOF
 
   mine)
     exec "$PY" - "$GATE_HOME" <<'PYEOF'
-import json, pathlib
+import json, pathlib, sys
 sdlc = pathlib.Path.cwd() / ".dev/lifecycle"
 if not sdlc.exists():
     print("gate.sh: no .dev/lifecycle ledger (closed)", file=sys.stderr)

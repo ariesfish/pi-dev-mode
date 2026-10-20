@@ -45,3 +45,7 @@ RED 条目(修复前对旧代码失败的断言)在修复后 replay 会报 `1 DR
 - `bash scripts/test-gates.sh` 绿(22 断言)
 - `python3 scripts/check-skills.py` 绿(T-002..T-006 五票 check 门 + T-001 两跑全绿)
 - 两仓同步:origin/main 与 `~/.pi/agent/git/github.com/ariesfish/pi-dev-mode` 同 commit(收尾命令见下)
+
+## 追记:同步核对抓出 post-freeze 缺陷并修复(同日)
+
+两仓同步后第一拉验证就在安装仓暴露崩溃:无账本仓跑 `mine` 报 `NameError: name 'sys' is not defined`——`mine` 的 python 缺 `import sys`,而该分支(无 `.dev/lifecycle/` 拒绝)在狗粮仓(账本在场)从未走过,test-gates.sh 也没断言它。修复:`gate.sh` mine 块补 `import sys`;`test-gates.sh` 补断言 `mine without ledger refused (exit 2)`(23 断言);修复 commit 附随本追记,tsv 以 superseding 行记录。**这正是两仓同步验证的存在理由:同一文件在两种仓库状态下必须都成立。**

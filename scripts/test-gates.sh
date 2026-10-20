@@ -32,6 +32,7 @@ mkdir -p repo && cd repo || exit 1
 # --- refusal before any ledger exists -------------------------------------
 t "show without ledger refused (exit 2)" 2 "$GATE" show T-9
 t "run without ledger refused (exit 2)" 2 "$GATE" run T-9 g -- false
+t "mine without ledger refused (exit 2)" 2 "$GATE" mine
 
 # --- open, budget 2 --------------------------------------------------------
 t "open --budget 2 exits 0" 0 "$GATE" open T-9 "scenario item" --budget 2
