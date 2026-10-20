@@ -51,6 +51,11 @@ package's `../../gates/gate.sh`, run from the repo): open the ticket with
 `gate.sh open <id> "<title>"` (reuse if already open), record every passed
 D-class gate with `gate.sh run <id> tdd -- <test command>` (FAILs recorded
 too — a first-pass red is a fact), and close with `gate.sh close <id> --note
-"<one line>"`. Without `.dev/lifecycle/`: add nothing, full unchanged behavior.
+"<one line>"`. A gate that exits 4 is BLOCKED — the item's rework budget
+tripped: stop the ticket, report the gate, the consecutive-FAIL reason, and
+the resume command (`gate.sh resume <id> --note "<reason>"`, human note
+required); never retry through that gate and never reroute to another — the
+block is item-level on purpose. Without `.dev/lifecycle/`: add nothing, full
+unchanged behavior.
 
 For a whole ticket graph, or an unattended run, use `implement-all` (auto: single approval, serial. parallel: one implementer per frontier ticket, each in its own worktree). This skill stays one ticket, in hand; its scope check refuses multi-area blobs back to `tickets`.

@@ -92,6 +92,10 @@ For every task, in either mode:
      `git revert` cannot undo — get explicit sign-off first
    - an acceptance label turns out wrong (`[check]` no machine can run,
      `[judgment]` the agent keeps deciding anyway): fix the label, re-confirm
+   - `gates/gate.sh` exits 4 (BLOCKED — the item's rework budget tripped,
+     consecutive FAILs on one gate): stop the ticket, report the gate and the
+     resume command, move to the next ticket only if it is independent —
+     never retry or reroute a blocked item
 4. **After a blocker resolves**, the user re-invokes; resume from the next
    pending task.
 5. **Summarize with evidence, not self-report**: failing-test output for at
@@ -99,9 +103,11 @@ For every task, in either mode:
    commit hashes. "Inconclusive" is not a pass; flag it instead.
 6. **Ledger (opt-in)**: when the target repo carries `.dev/lifecycle/`, open
    each ticket with `gates/gate.sh open`; passed D-class gates ride
-   `implement`'s ledger clause (tdd/check); a landed ticket closes with
+   `implement`'s ledger clause (tdd/check; a FAIL is recorded too — a
+   first-pass red is a fact); a landed ticket closes with
    `close --note`. Blocker tickets stay open for the human verdict, then
-   rerun. Without `.dev/lifecycle/`: no ledger steps, unchanged.
+   rerun. An exit-4 BLOCKED item stops for a human `resume` (auto's stop
+   list). Without `.dev/lifecycle/`: no ledger steps, unchanged.
 
 ## PARALLEL mode (multi-agent orchestration)
 
