@@ -65,6 +65,8 @@ Confirm:
 - [ ] The failure is reproducible across multiple runs (or, for non-deterministic bugs, reproducible at a high enough rate to debug against).
 - [ ] You have captured the exact symptom (error message, wrong output, slow timing) so later phases can verify the fix actually addresses it.
 
+**Ledger (opt-in).** When the target repo carries `.dev/lifecycle/` and the bug has a ledger item (the ticket id from `triage-issue`/`tickets`), the loop's command doubles as the repro gate: record the first reproduction as a D-class FAIL — `gates/gate.sh run <id> repro -- <loop command>` — because a recorded red is a fact and it is the failure-half of the evidence sequence. After the fix, the **same command** must exit 0 — recorded as a `repro` green — before "fixed" is claimed. The perf branch records its bench command the same way (`run <id> bench -- …`). No `.dev/lifecycle/`: no ledger steps, unchanged.
+
 Do not proceed until you reproduce the bug.
 
 ## Phase 3 — Hypothesise
@@ -120,7 +122,7 @@ A loop that reproduced a real defect is verification capital, not scaffolding. B
 
 Required before declaring done:
 
-- [ ] Original repro no longer reproduces (re-run the Phase 1 loop)
+- [ ] Original repro no longer reproduces (re-run the Phase 1 loop; ledger on: that green re-run is recorded as the `repro` gate passing)
 - [ ] Regression test passes (or absence of seam is documented)
 - [ ] All `[DEBUG-...]` instrumentation removed (`grep` the prefix)
 - [ ] Throwaway prototypes deleted (or moved to a clearly-marked debug location)
