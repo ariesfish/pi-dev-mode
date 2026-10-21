@@ -50,11 +50,15 @@ import type { ModelRegistry } from "@earendil-works/pi-coding-agent";
 const NOT_ON_THE_BRIDGE = (what: string) =>
 	`pi-dev durable bridge: ${what} is not available through the pi model registry bridge.`;
 
-// A bare alias: pi's extension loader (jiti/babel) cannot parse the nested
-// `Promise<readonly ModelTypeMap[TType>[]>` shape directly in a method signature.
-type AvailableOfType<TType extends ModelType> = readonly ModelTypeMap[TType>[];
+// pi's extension loader (jiti 2.6.1/babel) cannot parse a generic-keyed
+// indexed type such as ModelTypeMap[TType] in a type position (ParseError
+// "Unexpected token, expected ]", minimal-repro'd 2026-10-21). The class
+// below keeps every signature parser-boring through this concrete union and
+// casts at the boundary, where the export below restores the exact Models
+// interface for typechecking.
+type AnyModelKind = ModelTypeMap[ModelType];
 
-export class RegistryModels implements Models {
+class RegistryModelsBase {
 	constructor(private readonly registry: ModelRegistry) {}
 
 	getProviders(): readonly Provider[] {
@@ -107,8 +111,8 @@ export class RegistryModels implements Models {
 		type: TType,
 		providerId?: string,
 		_options?: AuthOperationOptions,
-	): Promise<AvailableOfType<TType>> {
-		return this.getModelsOfType(type, providerId);
+	): Promise<readonly AnyModelKind[]> {
+		return this.getModelsOfType(type, providerId) as readonly AnyModelKind[];
 	}
 
 	async getAllAvailable(providerId?: string, _options?: AuthOperationOptions): Promise<readonly AnyModel[]> {
@@ -172,3 +176,8 @@ export class RegistryModels implements Models {
 		return this.registry.classify(model, context, options);
 	}
 }
+
+/** RegistryModels: the class body stays parser-boring; this cast restores the exact `Models` interface. */
+export const RegistryModels: new (registry: ModelRegistry) => Models = RegistryModelsBase as unknown as new (
+	registry: ModelRegistry,
+) => Models;
