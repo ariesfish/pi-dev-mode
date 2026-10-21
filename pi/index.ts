@@ -1,12 +1,12 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { join } from "node:path";
 
 import { registerAgentTools } from "./agent-tools.ts";
 import { AgentRunner } from "./agents.ts";
 import { writeSelfArtifact, readIdentitySidecar } from "./artifacts.ts";
 import { registerAsk } from "./ask.ts";
-import { ARTIFACT_FLAG, DEPTH_FLAG, IDENTITY_FLAG, STATE_DIR, defaultSettings, type Settings } from "./config.ts";
+import { ARTIFACT_FLAG, DEPTH_FLAG, IDENTITY_FLAG, defaultSettings, type Settings } from "./config.ts";
 import { INTERCOM_FLAG, registerAnswerChild, registerAskParent, watchIntercom } from "./intercom.ts";
+import { SessionState } from "./session-state.ts";
 import { registerOneShot } from "./one-shot.ts";
 import { registerPathSkills } from "./path-skills.ts";
 import { registerPromptSections } from "./prompt.ts";
@@ -31,7 +31,7 @@ export function install(pi: ExtensionAPI, settings: Settings): void {
       stopIntercom?.();
       stopIntercom = watchIntercom(
         (message) => runner.notify(message, true),
-        join(settings.agentDir, STATE_DIR, ctx.sessionManager.getSessionId(), "intercom"),
+        new SessionState(settings.agentDir, ctx.sessionManager.getSessionId()).intercom,
       );
     });
   }

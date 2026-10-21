@@ -35,6 +35,8 @@ import {
 import { createBashTool, createEditTool, createReadTool, createWriteTool } from "@earendil-works/pi-durable/tools";
 import { NodeExecutionEnv } from "@earendil-works/pi-durable/env/node";
 
+import { SessionState } from "./session-state.ts";
+
 // ─── The ledger document: one root conversation, agents keyed by id ──────────
 
 export interface DurableAgentInfo {
@@ -276,12 +278,12 @@ export class DurableBridge {
 		return this.rootConversation.id;
 	}
 
-	static async open(stateDir: string, models: Models, channel: string): Promise<DurableBridge | undefined> {
+	static async open(state: SessionState, models: Models): Promise<DurableBridge | undefined> {
 		try {
-			askChannel = channel;
-			mkdirSync(stateDir, { recursive: true });
+			askChannel = state.intercom;
+			mkdirSync(state.root, { recursive: true });
 			const { openNodeSqliteStorage } = await import("@earendil-works/pi-durable/storage/sqlite/node");
-			const storage = await openNodeSqliteStorage(join(stateDir, "durable.sqlite"));
+			const storage = await openNodeSqliteStorage(state.durableSqlite);
 			const registry = createRegistry();
 			registry.install(ChildExtension);
 			const harness = await Harness.open(
@@ -421,11 +423,6 @@ export class DurableBridge {
 	private async read<T>(fn: (tx: Tx) => Promise<T> | T): Promise<T | undefined> {
 		return this.rootConversation.commit(fn, BACKGROUND_CONTEXT);
 	}
-}
-
-/** The sqlite file of one parent session's bridge. */
-export function durableSqlitePath(stateDir: string): string {
-	return join(stateDir, "durable.sqlite");
 }
 
 /** Durable agent ids start with "d", rpc ids with "a": a record says which way it runs. */

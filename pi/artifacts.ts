@@ -13,16 +13,6 @@ import { join } from "node:path";
 import type { AgentIdentity, EndedRecord, RunningRecord } from "./agents.ts";
 import { OUTPUT_CAP_BYTES, truncateUtf8 } from "./agent-text.ts";
 
-/** Plans the artifact path for one run under the session's artifacts dir. */
-export function planArtifact(sessionDir: string, id: string, explicitOutput?: string): string {
-  return explicitOutput ? join(process.cwd(), explicitOutput) : join(dirnameOf(sessionDir), "artifacts", `${id}.md`);
-}
-
-function dirnameOf(p: string): string {
-  const i = p.lastIndexOf("/");
-  return i <= 0 ? "." : p.slice(0, i);
-}
-
 export function artifactHeader(identity: AgentIdentity, status: string, exitCode: number | null): string {
   const lines = [
     `agent: ${identity.id}`,

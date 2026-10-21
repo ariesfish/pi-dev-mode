@@ -8,7 +8,6 @@ import {
   artifactHeader,
   artifactText,
   ensureArtifact,
-  planArtifact,
   readIdentitySidecar,
   synthesizeFromArtifact,
   writeSelfArtifact,
@@ -34,16 +33,7 @@ const identity = (over: Partial<AgentIdentity> = {}): AgentIdentity => ({
   ...over,
 }) as AgentIdentity;
 
-describe("planArtifact", () => {
-  test("default lands beside the session dir in artifacts/<id>.md", () => {
-    const got = planArtifact(join(dir, "state", "agents"), "a9");
-    expect(got).toBe(join(dir, "state", "artifacts", "a9.md"));
-  });
-  test("explicit output is anchored to the process cwd and wins", () => {
-    const got = planArtifact(join(dir, "agents"), "a9", "reports/audit.md");
-    expect(got).toBe(join(process.cwd(), "reports/audit.md"));
-  });
-});
+
 
 describe("artifact content roundtrip", () => {
   test("header quotes identity and outcome; text roundtrips under the rule", () => {

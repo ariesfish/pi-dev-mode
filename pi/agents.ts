@@ -1,18 +1,19 @@
-import { spawnSync } from "node:child_process";
 import { randomBytes, randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import type { ExtensionAPI, ExtensionContext, SessionEntry } from "@earendil-works/pi-coding-agent";
 import { type Static, Type } from "typebox";
 import { Value } from "typebox/value";
 
-import { ensureArtifact, planArtifact, synthesizeFromArtifact } from "./artifacts.ts";
-import { intercomDir, INTERCOM_FLAG } from "./intercom.ts";
+import { ensureArtifact, synthesizeFromArtifact } from "./artifacts.ts";
+import { INTERCOM_FLAG } from "./intercom.ts";
 import { noticeOf, OUTPUT_CAP_BYTES, truncateUtf8 } from "./agent-text.ts";
 import type { AgentParams } from "./agent-tools.ts";
-import { alive, type ChildExit, PiChild } from "./child.ts";
-import { ARTIFACT_FLAG, DEPTH_FLAG, GENERAL_PURPOSE, IDENTITY_FLAG, loadAgentTypes, STATE_DIR, readSheet, resolveModel, type Settings } from "./config.ts";
+import { type ChildExit, PiChild } from "./child.ts";
+import { fateOf } from "./fate.ts";
+import { ARTIFACT_FLAG, DEPTH_FLAG, GENERAL_PURPOSE, IDENTITY_FLAG, loadAgentTypes, readSheet, resolveModel, type Settings } from "./config.ts";
 import { DurableBridge, type DeliverReport, newDurableAgentId } from "./durable.ts";
+import { SessionState } from "./session-state.ts";
 import { RegistryModels } from "./durable-models.ts";
 import { ensureWorktree, planWorktree, settleWorktree, type Worktree, worktreeSchema } from "./worktree.ts";
 
@@ -180,54 +181,11 @@ function childArgs(identity: AgentIdentity, depth: number, identityFile?: string
   return args;
 }
 
-// What the system records about a live process, or undefined when it cannot
-// say. Neither value is the process's to change, unlike its arguments: pi sets
-// its title, and ps then shows that in their place. Linux keeps both in /proc,
-// the start as clock ticks since boot. ps works its start time out from the
-// wall clock there, so a clock change moves it, and ps is asked only where
-// /proc is missing, with the locale and time zone pinned so the text is the
-// same on every read.
-function inspect(pid: number): { parentPid: number; start: string } | undefined {
-  let stat = "";
-  try {
-    stat = readFileSync(`/proc/${pid}/stat`, "utf8");
-  } catch {}
-  // State, parent pid, and 17 more fields up to the start time. They follow
-  // the command name, which is in parentheses and may hold any character.
-  const proc = /^ \S (\d+)(?: \S+){17} (\d+) /.exec(stat.slice(stat.lastIndexOf(")") + 1));
-  if (proc) return { parentPid: Number(proc[1]), start: proc[2] };
-  const ps = spawnSync("ps", ["-o", "ppid=", "-o", "lstart=", "-p", String(pid)], { encoding: "utf8", env: { ...process.env, LC_ALL: "C", TZ: "UTC" } });
-  const m = ps.status === 0 ? /^\s*(\d+)\s+(\S.*\S)\s*$/.exec(ps.stdout) : null;
-  return m ? { parentPid: Number(m[1]), start: m[2] } : undefined;
-}
-
-// What became of the process a running record names:
-// - kept: it is still a child of the live pi process that launched it;
-// - orphan: it is the process the record was written for, its launcher gone;
-// - unknown: a process is there, and nothing says whether it is the agent's;
-// - gone: no process is there, or another one is.
-type Fate = "kept" | "orphan" | "unknown" | "gone";
-
-function fateOf(record: RunningRecord): Fate {
-  const { pid, pidStart, parentPid } = record;
-  if (pid === undefined || !alive(pid)) return "gone";
-  const info = inspect(pid);
-  if (info && pidStart !== undefined && info.start !== pidStart) return "gone";
-  // With no word from the system, two live pids keep the record: calling a
-  // live agent stopped would let a message start a second process on its session.
-  const launcherHasIt = info ? info.parentPid === parentPid : alive(parentPid);
-  if (parentPid !== process.pid && launcherHasIt) return "kept";
-  return info && info.start === pidStart ? "orphan" : "unknown";
-}
-
 // An orphan keeps running by design (T-025): detached in its own process
 // group, it finishes, self-writes its artifact, and the next session that
 // restores its records discovers the artifact and delivers the notice. Only
-// a live parent with a session behind it may stop anything.
-function reapOrphan(_record: RunningRecord, _killGraceMs: number): Promise<void> {
-  return Promise.resolve();
-}
-
+// a live parent with a session behind it may stop anything — its fate table
+// lives in fate.ts, tested there without a live process.
 const now = () => new Date().toISOString();
 
 export class AgentRunner {
@@ -264,17 +222,16 @@ export class AgentRunner {
     // Spec D2: background runs behind the durable bridge when it can open —
     // depth 0 only; children of children stay rpc.
     this.latestRegistry = ctx.modelRegistry ?? this.latestRegistry;
+    const state = new SessionState(this.settings.agentDir, ctx.sessionManager.getSessionId());
     if (background && this.settings.depth === 0 && !this.closed) {
-      const state = join(this.settings.agentDir, STATE_DIR, ctx.sessionManager.getSessionId());
       const begun = this.beginDurable(state, { params, def, model, background }, ctx.modelRegistry);
       if (begun) return begun;
     }
 
     const id = `a${randomBytes(8).toString("hex")}`;
-    const state = join(this.settings.agentDir, STATE_DIR, ctx.sessionManager.getSessionId());
-    const sessionDir = join(state, "agents");
-    mkdirSync(sessionDir, { recursive: true });
-    const systemPromptFile = def.body ? join(state, "prompts", `${id}.md`) : undefined;
+    mkdirSync(state.agents, { recursive: true });
+    const sessionDir = state.agents;
+    const systemPromptFile = def.body ? state.promptFile(id) : undefined;
     const worktree = params.isolation === "worktree" ? planWorktree(ctx.cwd, id) : undefined;
     const identity: AgentIdentity = {
       id,
@@ -289,7 +246,7 @@ export class AgentRunner {
       systemPromptFile,
       cwd: worktree?.path ?? ctx.cwd,
       worktree,
-      artifactFile: planArtifact(sessionDir, id, params.output),
+      artifactFile: state.artifactFile(id, params.output),
       startedAt: now(),
     };
     return this.launch(identity, params.prompt, background);
@@ -299,14 +256,14 @@ export class AgentRunner {
   // tool sees its agent id at once — then tries the bridge; a bridge that
   // cannot open swaps itself for an rpc launch under the same id.
   private beginDurable(
-    state: string,
+    state: SessionState,
     spec: { params: AgentParams; def: { model?: string; body?: string; effort?: string }; model: string; background: boolean },
     registry: unknown,
   ): RunningRecord | undefined {
     if (this.bridgeOff) return undefined;
     const { params, def, model, background } = spec;
     const id = newDurableAgentId();
-    const sessionDir = join(state, "agents");
+    const sessionDir = state.agents;
     mkdirSync(sessionDir, { recursive: true });
     let worktree;
     try {
@@ -333,7 +290,7 @@ export class AgentRunner {
       sessionDir,
       cwd: worktree?.path ?? process.cwd(),
       worktree,
-      artifactFile: planArtifact(sessionDir, id, params.output),
+      artifactFile: state.artifactFile(id, params.output),
       startedAt: now(),
       durable: true,
       instructions,
@@ -413,7 +370,7 @@ export class AgentRunner {
     const { command, args } = this.settings.pi;
     const identityFile = identity.artifactFile ? this.ensureIdentityFile(identity) : undefined;
     // The intercom channel sits in the parent session's own state directory.
-    const channel = intercomDir(dirname(identity.sessionDir));
+    const channel = SessionState.fromSessionDir(identity.sessionDir).intercom;
     const env = { PI_DEV_AGENT_ID: identity.id, PI_DEV_AGENT_DESCRIPTION: identity.description };
     const child = new PiChild(
       command,
@@ -440,7 +397,7 @@ export class AgentRunner {
   }
 
   private ensureIdentityFile(identity: AgentIdentity): string {
-    const file = join(dirname(identity.sessionDir), "identities", `${identity.id}.json`);
+    const file = SessionState.fromSessionDir(identity.sessionDir).identityFile(identity.id);
     mkdirSync(dirname(file), { recursive: true });
     writeFileSync(
       file,
@@ -470,13 +427,13 @@ export class AgentRunner {
   // failed open never retries, so a broken dependency costs one attempt.
   // The registry rides the caller's ExtensionContext (the ExtensionAPI
   // itself exposes none; T-030 live probe).
-  private ensureBridge(stateDir: string, registry: unknown): Promise<DurableBridge | undefined> {
+  private ensureBridge(state: SessionState, registry: unknown): Promise<DurableBridge | undefined> {
     if (this.bridgeOff) return Promise.resolve(undefined);
     if (!(registry instanceof Object)) {
       this.bridgeOff = true;
       return Promise.resolve(undefined);
     }
-    this.bridge ??= DurableBridge.open(stateDir, new RegistryModels(registry as never), intercomDir(stateDir)).then(
+    this.bridge ??= DurableBridge.open(state, new RegistryModels(registry as never)).then(
       (bridge) => {
         if (bridge === undefined) this.bridgeOff = true;
         else bridge.onReport((report) => this.onDurableReport(report));
@@ -615,7 +572,7 @@ export class AgentRunner {
     const state = this.owned(to);
     const { id } = state.record.agent;
     if (state.kind === "durable") {
-      const bridge = await this.ensureBridge(dirname(state.record.agent.sessionDir), this.latestRegistry);
+      const bridge = await this.ensureBridge(SessionState.fromSessionDir(state.record.agent.sessionDir), this.latestRegistry);
       if (bridge === undefined) throw new Error(`Agent ${id}'s durable bridge is unavailable; the rpc fallback cannot be messaged mid-run.`);
       const { steered } = await bridge.send(id, message);
       if (!steered) {
@@ -643,7 +600,7 @@ export class AgentRunner {
     // relaunch (spec D6). Without a bridge, fall back to a fresh rpc run.
     const ended = this.agents.get(id);
     if (ended?.kind === "ended" && ended.record.agent.durable) {
-      const bridge = await this.ensureBridge(dirname(ended.record.agent.sessionDir), this.latestRegistry);
+      const bridge = await this.ensureBridge(SessionState.fromSessionDir(ended.record.agent.sessionDir), this.latestRegistry);
       if (bridge !== undefined) {
         let settleResolve!: (record: EndedRecord) => void;
         const settle = new Promise<EndedRecord>((resolve) => (settleResolve = resolve));
@@ -668,7 +625,7 @@ export class AgentRunner {
     if (state.kind === "ended") return state.record;
     if (state.kind === "durable") {
       state.ending = state.ending === "teardown" ? "teardown" : ending;
-      const bridge = await this.ensureBridge(dirname(state.record.agent.sessionDir), this.latestRegistry);
+      const bridge = await this.ensureBridge(SessionState.fromSessionDir(state.record.agent.sessionDir), this.latestRegistry);
       if (bridge !== undefined) {
         await bridge.stop(state.record.agent.id);
         await bridge.waitIdle(state.record.agent.id);
@@ -721,18 +678,11 @@ export class AgentRunner {
     if (fate === "kept" && state.kind === "remote") return state;
     if (fate !== "gone") {
       if (state.kind === "interrupted") return state;
-      const restored: AgentState = {
-        kind: fate === "orphan" ? "interrupted" : "unverified",
-        record,
-      };
+      // An interrupted orphan waits only to be seen again: nothing here ends
+      // it (only a live parent with a session behind it may stop anything),
+      // so the unverified flip is this read's own business.
+      const restored: AgentState = { kind: "unverified", record };
       this.agents.set(record.agent.id, restored);
-      if (restored.kind === "interrupted") {
-        void reapOrphan(record, this.settings.killGraceMs).then(() => {
-          if (this.agents.get(record.agent.id) === restored) {
-            this.agents.set(record.agent.id, { kind: "unverified", record });
-          }
-        });
-      }
       return restored;
     }
     const stopped: EndedRecord = {
@@ -755,7 +705,7 @@ export class AgentRunner {
   // is delivered now, once (spec D6).
   private async reattachDurable(state: DurableAgent, registry?: unknown): Promise<void> {
     const { agent } = state.record;
-    const bridge = await this.ensureBridge(dirname(agent.sessionDir), registry);
+    const bridge = await this.ensureBridge(SessionState.fromSessionDir(agent.sessionDir), registry);
     if (bridge === undefined) {
       if (this.agents.get(agent.id) === state) {
         this.finalizeDurable(state, "stopped", "(durable bridge unavailable after restore)");

@@ -15,7 +15,8 @@ import { join } from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 
-import { STATE_DIR, type Settings } from "./config.ts";
+import type { Settings } from "./config.ts";
+import { SessionState } from "./session-state.ts";
 
 export type Notify = (message: Parameters<ExtensionAPI["sendMessage"]>[0]) => void;
 
@@ -37,10 +38,6 @@ export interface IntercomRequest {
 }
 
 const ID_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$/;
-
-export function intercomDir(stateDir: string): string {
-  return join(stateDir, "intercom");
-}
 
 function requestPath(dir: string, id: string): string {
   if (!ID_PATTERN.test(id)) throw new Error(`Invalid intercom request id "${id}".`);
@@ -142,7 +139,7 @@ export function registerAskParent(pi: ExtensionAPI, channel: string): void {
 
 /** The parent-side answer tool: reply to one pending request of this session's channel. */
 export function registerAnswerChild(pi: ExtensionAPI, settings: Settings): void {
-  const channelOf = (ctx: ExtensionContext) => intercomDir(join(settings.agentDir, STATE_DIR, ctx.sessionManager.getSessionId()));
+  const channelOf = (ctx: ExtensionContext) => new SessionState(settings.agentDir, ctx.sessionManager.getSessionId()).intercom;
   pi.registerTool({
     name: "answer_child",
     label: "Answer child",

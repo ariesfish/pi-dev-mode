@@ -5,13 +5,13 @@ import { join } from "node:path";
 
 import {
   ASK_PARENT_TIMEOUT_MS,
-  intercomDir,
   type IntercomRequest,
   pendingRequests,
   readReply,
   writeReply,
   writeRequest,
 } from "./intercom.ts";
+import { SessionState } from "./session-state.ts";
 
 let dir: string;
 beforeEach(() => {
@@ -35,8 +35,8 @@ function req(over: Partial<IntercomRequest> = {}): IntercomRequest {
 }
 
 describe("channel layout", () => {
-  test("intercom dir lands beside artifacts under the session state", () => {
-    expect(intercomDir(join("s", "state"))).toBe(join("s", "state", "intercom"));
+  test("intercom dir is the session state's intercom child (pinned in session-state.test.ts)", () => {
+    expect(new SessionState("s", "state").intercom).toBe(join("s", "pi-dev", "state", "intercom"));
   });
 });
 
