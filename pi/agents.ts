@@ -365,7 +365,33 @@ export class AgentRunner {
       });
     })();
     const record: RunningRecord = { agent: identity, status: "running", parentPid: process.pid, background: true };
-    const entry: DurableAgent = { kind: "durable", record, spawn: spawn.catch(() => {}), settle };
+    // A spawn leg that dies without launching anything (bridge threw, rpc
+    // launch threw) must end honestly, not vanish: the tool already showed
+    // the agent id, so the record and a failure notice are owed.
+    const entry: DurableAgent = {
+      kind: "durable",
+      record,
+      spawn: spawn.catch(() => {
+        if (this.agents.get(id)?.kind !== "durable") return;
+        const failed: EndedRecord = {
+          agent: identity,
+          status: "failed",
+          exitCode: null,
+          endedAt: now(),
+          artifactFile: identity.artifactFile,
+          background: true,
+          ...saveOutput(identity, "(durable spawn failed before it ran; the rpc fallback did not start either)"),
+        };
+        ensureArtifact(failed);
+        this.durableSettles.get(id)?.(failed);
+        this.durableSettles.delete(id);
+        this.agents.set(id, { kind: "ended", record: failed });
+        this.persist(failed);
+        this.notify(noticeOf(failed), true);
+        this.persist({ ...failed, artifactDelivered: true });
+      }),
+      settle,
+    };
     this.durableSettles.set(id, settleResolve);
     this.agents.set(id, entry);
     this.persist(record);
