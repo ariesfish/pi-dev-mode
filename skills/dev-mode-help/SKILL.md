@@ -13,7 +13,7 @@ Skill catalog, not a second router. When in doubt, say what you want in plain wo
 
 ```text
 setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ proto ─→ spec ─→
- constraints ─→ tickets ─→ triage-issue ─→ implement / implement-all ─→ review ─… doubt / benchmark-checklist / retro cut across
+ constraints ─→ tickets ─→ triage-issue ─→ implement / implement-all ─→ review ─… doubt / benchmark-checklist / show-me / retro cut across
  code-review ─→ diagnose ─→ refact … scout above it all
 ```
 
@@ -43,6 +43,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ pro
 | `retro` | session retrospective: findings routed to checks/types/docs/skill edits |
 | `refact` | deepen shallow modules — seams, locality, leverage |
 | `scout` | chart decision tickets until the destination is visible (charting, not charging) |
+| `show-me` | make the reply land: plain words, compact visuals in chat, one HTML page for heavy deliverables |
 | `create-verification-skill` | generate the project's verify-<app> skill + feature map, proven by running |
 | `maintain-verification-skill` | keep the verify skill's feature map honest: parallel readers + live pass |
 | `pi-dev-mode` | the router: stage × shape × fog; owns the routing table |

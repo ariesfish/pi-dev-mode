@@ -37,6 +37,7 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Review a diff / PR / branch (single two-axis pass) | `code-review` |
 | Gate a merge / ship | `review` (four lenses in parallel readonly reviewers, one aggregated verdict; high-stakes merges add an independent adjudicator — a fresh agent on a different model writes its own verdict file under `.dev/audit/evidence/`) |
 | A measured number is about to be claimed | `benchmark-checklist` before the number leaves the room |
+| The reply must land: user lost in the terms, asks to explain / draw / see, or a dense deliverable is about to be handed over | `show-me` (plain words + compact Markdown visuals in chat; one HTML page for the key artifact) |
 | Non-trivial decision mid-flight, high stakes | `doubt` (fresh adversarial reviewer, bounded loop) |
 | Session ending / before handoff | `retro` |
 | A skill/description change about to land | `eval` (trigger regression over evals/, or variant A/B) — retro routes its substantive edits here |

@@ -28,7 +28,7 @@ addyosmani  →升级包 生命周期与质量合同  SPEC CONSTRAINTS 三类验
 2. 显式技能直调:`/skill:spec` `/skill:implement-all`(auto / parallel 模式)`/skill:code-review` …(独立执行技能无生命周期命令层,直接用具名技能)
 3. 单点:`/skill:grill-me`、`/skill:benchmark-checklist`、`/skill:constraints`……任何技能独立跑,靠工件在场咬合,不在场就降级
 
-**技能构成:P6.6 后 26 件** = 基座 14 在任(P6 裁撤 prd;改名族:issues→tasks→tickets、wayfinder→scout、align→grill-me、use-the-stack→dev-mode-help)+ 新增 12:spec/constraints/pi-dev-mode/dev-mode-help(P1)、doubt/retro/code-review/benchmark-checklist/eval(P2 系)、create/maintain-verification-skill(P3)+ agents×2(code-reviewer/security-auditor)+ references + evals/ 用例库(11 例)。
+**技能构成:27 件** = 基座 14 在任(P6 裁撤 prd;改名族:issues→tasks→tickets、wayfinder→scout、align→grill-me、use-the-stack→dev-mode-help)+ 新增 13:spec/constraints/pi-dev-mode/dev-mode-help(P1)、doubt/retro/code-review/benchmark-checklist/eval(P2 系)、create/maintain-verification-skill(P3)、show-me(2026-10-21,回复可读性:讲人话+对话内 Markdown 图+重产出单页 HTML)+ agents×2(code-reviewer/security-auditor)+ references + evals/ 用例库(13 例)。
 (散件说明:`~/.agents/skills/` 里留下的 `handoff` 等散件按引用归类,不重复收编。旧 dev-* 原件备份在 `~/.agents/dev-skills-backup-2026-10-15/`。)
 
 **工件布局(P6 统一,2026-10-18 用户拍板):**
@@ -50,7 +50,7 @@ pi-dev-mode/
   references/           pi-host.md 宿主映射(批/互通/富 ask/工场路径单一权威层)
   models.json           家族别名解析表(anthropic/openai/openai-codex)
   agents/               code-reviewer/security-auditor persona——经 pi/config.ts 注册为 pi-dev:* subagent 类型,可显式 spawn;review 四镜头走内联 brief,不经过这两个 persona
-  skills/               26 件(基座 14 + 新增 12)
+  skills/               27 件(基座 14 + 新增 13)
   adapters/control-web/ (P3)browser-harness fork
   gates/(opt-in)        (P5)
   docs/                 五份文档 + 证据目录
