@@ -7,6 +7,7 @@ import { type Static, Type } from "typebox";
 import { Value } from "typebox/value";
 
 import { ensureArtifact, planArtifact, synthesizeFromArtifact } from "./artifacts.ts";
+import { intercomDir, INTERCOM_FLAG } from "./intercom.ts";
 import { noticeOf, OUTPUT_CAP_BYTES, truncateUtf8 } from "./agent-text.ts";
 import type { AgentParams } from "./agent-tools.ts";
 import { alive, type ChildExit, PiChild } from "./child.ts";
@@ -133,7 +134,7 @@ function settle(worktree: Worktree): { kept: boolean; note: string } {
   }
 }
 
-function childArgs(identity: AgentIdentity, depth: number, identityFile?: string): string[] {
+function childArgs(identity: AgentIdentity, depth: number, identityFile?: string, channel?: string): string[] {
   const args = ["--mode", "rpc", "--session-id", identity.sessionId, "--session-dir", identity.sessionDir];
   // inherit the parent's no-extensions isolation: a parent started with
   // --no-extensions -e … (dev smoke, staged deploys) must not let children
@@ -147,6 +148,7 @@ function childArgs(identity: AgentIdentity, depth: number, identityFile?: string
     args.push(`--${ARTIFACT_FLAG}`, identity.artifactFile);
     args.push(`--${IDENTITY_FLAG}`, identityFile);
   }
+  if (channel) args.push(`--${INTERCOM_FLAG}`, channel);
   args.push(`--${DEPTH_FLAG}`, String(depth + 1));
   const excluded = [...(identity.readonly ? ["edit", "write"] : []), ...(depth + 1 >= MAX_SPAWN_DEPTH ? ["agent"] : [])];
   if (excluded.length) args.push("--exclude-tools", excluded.join(","));
@@ -261,10 +263,13 @@ export class AgentRunner {
     }
     const { command, args } = this.settings.pi;
     const identityFile = identity.artifactFile ? this.ensureIdentityFile(identity) : undefined;
+    // The intercom channel sits in the parent session's own state directory.
+    const channel = intercomDir(dirname(identity.sessionDir));
+    const env = { PI_DEV_AGENT_ID: identity.id, PI_DEV_AGENT_DESCRIPTION: identity.description };
     const child = new PiChild(
       command,
-      [...args, "--extension", join(this.settings.pluginRoot, "pi", "index.ts"), "--skill", join(this.settings.pluginRoot, "skills"), ...childArgs(identity, this.settings.depth, identityFile)],
-      { cwd: identity.cwd, exitGraceMs: this.settings.exitGraceMs },
+      [...args, "--extension", join(this.settings.pluginRoot, "pi", "index.ts"), "--skill", join(this.settings.pluginRoot, "skills"), ...childArgs(identity, this.settings.depth, identityFile, channel)],
+      { cwd: identity.cwd, exitGraceMs: this.settings.exitGraceMs, env },
       prompt,
     );
     const pidStart = child.pid === undefined ? undefined : inspect(child.pid)?.start;

@@ -22,7 +22,9 @@ cat > "$tsconfig" <<EOF
   "compilerOptions": {
     "paths": {
       "@earendil-works/*": ["$pi_nm/@earendil-works/*"],
-      "typebox": ["$pi_nm/typebox"]
+      "typebox": ["$pi_nm/typebox/build/index.mjs"],
+      "typebox/value": ["$pi_nm/typebox/build/value/index.mjs"],
+      "typebox/compile": ["$pi_nm/typebox/build/compile/index.mjs"]
     }
   }
 }

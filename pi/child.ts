@@ -68,9 +68,9 @@ export class PiChild {
   private errorMessage = "";
   private stderr = "";
 
-  constructor(command: string, args: string[], opts: { cwd: string; exitGraceMs: number }, prompt: string) {
+  constructor(command: string, args: string[], opts: { cwd: string; exitGraceMs: number; env?: Record<string, string> }, prompt: string) {
     this.exitGraceMs = opts.exitGraceMs;
-    this.proc = spawn(command, args, { cwd: opts.cwd, detached: true, stdio: ["pipe", "pipe", "pipe"] });
+    this.proc = spawn(command, args, { cwd: opts.cwd, detached: true, stdio: ["pipe", "pipe", "pipe"], env: opts.env ? { ...process.env, ...opts.env } : process.env });
     this.pid = this.proc.pid;
     this.proc.stdin.on("error", () => {});
     const stdout = lineSplitter((line) => this.onLine(line));
