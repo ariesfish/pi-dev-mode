@@ -40,6 +40,10 @@
   新增 `tests/` 缝测试(`node --test "adapters/control-web/tests/*.test.mjs"`,
     红灯先行:视口外点击/慢渲染/pageErrors/fill 清空/严格模式/coords-only
     等在旧引擎红,十二测在新引擎全绿;Node 26 起 --test 不收目录参数)。
+  同日修订:playwright-core 依赖自本目录嵌套包**提升至包根 dependencies**
+    (嵌套包在 pi 的 git/npm 源安装下不会被安装,三种安装方式均不自洽;
+    根依赖在 git/npm 源下由 pi 统一安装,local 源由作者包根 npm install),
+    本目录 package.json/package-lock.json 删除,安装提示与依赖面同步改写。
   批准人:ariesfish——2026-10-22 会话批准("好的,换吧,用更强大的工具武装自己")。
 
 - 2026-10-18:观察不动手——cleanup 后 chrome_crashpad 可能重建
@@ -87,15 +91,15 @@ shot?}`——aria 走 getByLabel 子串匹配,selector 是 CSS 选择器,text �
 
 ## 依赖面
 
-- launch / doctor / cleanup:零 npm 依赖——Node ≥ 22(原生 WebSocket;本机
-  Node 26)+ chrome/chromium(`google-chrome-stable` 优先,`CHROME_BIN` 可覆写)。
+依赖声明在**包根** `package.json`(`@earendil-works/chord`、
+`@earendil-works/pi-durable`、`playwright-core`,均 npm registry 正式发布),
+不在本目录——pi 以 git/npm 源安装本包时按根清单统一安装,本 harness 随包可用;
+
+- launch / doctor / cleanup:零 npm 依赖——Node ≥ 22(原生 WebSocket)+
+  chrome/chromium(`google-chrome-stable` 优先,`CHROME_BIN` 可覆写)。
 - drive(引擎):playwright-core 14MB,零浏览器二进制下载——`connectOverCDP`
-  连到 launch 自起的系统 Chrome 隔离实例。一次性安装:
-
-  ```bash
-  cd adapters/control-web && npm install
-  ```
-
-- 缝测试:`node --test "adapters/control-web/tests/*.test.mjs"`(本机 chrome +
-  已 npm install;无需网络,data: URL 驱动;package-lock.json 随仓库提交,
-  安装确定可复现)。
+  连到 launch 自起的系统 Chrome 隔离实例。engine 的 import 自本包根
+  node_modules 向上解析。local 路径安装不装依赖(pi 的作者责任制):
+  包根 `npm install` 一次即可,根 `package-lock.json` 随仓库提交。
+- 缝测试:`node --test "adapters/control-web/tests/*.test.mjs"`(包根已
+  npm install;无需网络,data: URL 驱动)。

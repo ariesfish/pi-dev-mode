@@ -165,7 +165,7 @@ async function connect(port, timeoutMs) {
 	try {
 		pw = await import("playwright-core");
 	} catch {
-		fail("drive needs playwright-core: cd adapters/control-web && npm install (see README 依赖面)");
+		fail("drive needs playwright-core: run npm install at this package's root (see adapters/control-web/README.md 依赖面)");
 	}
 	const browser = await pw.chromium.connectOverCDP(`http://127.0.0.1:${port}`);
 	const ctx = browser.contexts()[0] ?? (await browser.newContext());
