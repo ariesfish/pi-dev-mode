@@ -72,6 +72,38 @@ except ImportError:  # local fallback: minimal parser for this repo's frontmatte
 # renamed, add its old name here (KILLS below is derived from the dirs).
 RETIRED = {"issues", "tasks", "wayfinder", "align", "use-the-stack", "prd"}
 
+
+def retired_hit(text: str, mm: "re.Match[str]", n: str) -> bool:
+    """True when a backticked name is a retired-skill reference.
+
+    `tasks` beside the agent tool is its batch parameter (one `agent` call
+    carrying tasks), not the retired skill of the same name — sentence
+    context decides: agent may sit on the previous line (wrapped prose).
+    """
+    if n not in RETIRED:
+        return False
+    if n == "tasks":
+        before = text[: mm.start()]
+        window = " ".join(before.rsplit("\n", 2)[-2:] + [text[mm.start() :].split("\n", 1)[0]])
+        if re.search(r"\bagent\b", window):
+            return False
+    return True
+
+
+def _retired_selftest() -> None:
+    """Four asserts over this session's real misses (2026-10-21):
+    bare `tasks` must fail; the parameter usage must pass both when agent
+    sits on the previous line and in a single-line file (the IndexError
+    regression); a real retired name must always fail."""
+
+    def hits(sample: str, word: str) -> bool:
+        return any(retired_hit(sample, m, m.group(1)) for m in re.finditer(r"`([a-z][a-z0-9-]*)`", sample) if m.group(1) == word)
+
+    assert hits("use `tasks` alone\n", "tasks"), "bare `tasks` must stay a failure"
+    assert not hits("Call the `agent` tool\nwith `tasks` for the batch\n", "tasks"), "cross-line parameter usage must pass (session miss #1)"
+    assert not hits("`agent` carries `tasks`\n", "tasks"), "single-line-file parameter usage must pass (IndexError regression)"
+    assert hits("see `wayfinder` there\n", "wayfinder"), "real retired name must fail"
+
 # Words a candidate-facing eval prompt must never carry: they leak the meta.
 META_WORDS = re.compile(r"\b(skill|skills|principle|principles|rubric|judge|grader|score|compare|experiment|pi-dev-mode)\b|SKILL\.md", re.I)
 
@@ -99,6 +131,8 @@ def pointer_missing(tok: str, bases: list[Path]) -> bool:
 
 
 def main() -> int:
+    _retired_selftest()  # guards the retired-scan precision;
+    # a failing assert here means the scan regressed on one of its known cases
     root = Path(__file__).resolve().parent.parent
     failures: list[str] = []
 
@@ -170,13 +204,7 @@ def main() -> int:
         text = f.read_text()
         for mm in re.finditer(r"`([a-z][a-z0-9-]*)`", text):
             n = mm.group(1)
-            if n in RETIRED:
-                # `tasks` beside the agent tool is its batch parameter, not the
-                # retired skill of the same name (sentence context decides).
-                before = text[: mm.start()]
-                window = " ".join(before.rsplit("\n", 2)[-2:] + [text[mm.start() :].split("\n", 1)[0]])
-                if n == "tasks" and re.search(r"\bagent\b", window):
-                    continue
+            if retired_hit(text, mm, n):
                 failures.append(f"{rel}: reference to retired skill name `{n}`")
 
     # per-skill structural checks (H1, duplicate paragraphs, pointer paths)
