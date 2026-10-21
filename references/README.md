@@ -15,6 +15,11 @@
 | constraints(-driven) | `constraints` |
 | spec-driven-development | `spec` |
 | shipping-and-launch | `/ship` 生命周期命令(P4;独立 ship 技能未落地) |
+| `security-and-hardening` | 不落地;清单挂 security-checklist(`code-review` Standards 轴) |
+| `frontend-ui-engineering` | 不落地;清单挂 accessibility-checklist(同轴) |
+| `performance-optimization` | 不落地;清单挂 performance-checklist(`constraints` 维度素材) |
+| `observability-and-instrumentation` | 不落地;清单挂 observability-checklist(`constraints` 维度素材) |
+| `test-driven-development` | `tdd`(testing-patterns 为其示例库) |
 
 各清单的挂靠(2026-10-20 通电,均为已接线实态):
 - security-checklist / accessibility-checklist → `code-review` Standards 轴(域命中时审)

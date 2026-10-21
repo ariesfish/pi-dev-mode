@@ -24,7 +24,7 @@ When an interview surfaces a question that is best answered by building rather t
 1. Inspect the codebase and existing docs before asking questions when the answer may already be present.
 2. Look for `docs/GLOSSARY.md` and `docs/GLOSSARY-MAP.md`, and `docs/adr/`.
 3. Interview the user one decision at a time until the plan is precise enough to act on.
-4. Use the ask_user skill/tool for each question; ask exactly one focused question per turn and wait for the answer before continuing. Word each question so "yes" accepts your recommended answer.
+4. Use the `ask_user_question` tool for each question; ask exactly one focused question per turn and wait for the answer before continuing. Word each question so "yes" accepts your recommended answer.
 5. For each question, include your recommended answer.
 6. Ask in the same language as the user's request.
 7. Update docs inline as decisions become stable. Do not batch all documentation at the end.

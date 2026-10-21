@@ -15,8 +15,9 @@ Validated, in order:
      one in grill-me riding as tokens on every firing
   6. cross-references on every authored surface (skills, agents, package
      README, references/, hooks/, gates/): a backtick `skill-name` token
-     must resolve to an existing skill directory, and must never be a
-     RETIRED name (died in the P5.2/P6 rename waves: issues, tasks,
+     directly adjacent to "skill/技能" must resolve to an existing skill
+     directory or be a mounted upstream name (see check 8), and must never
+     be a RETIRED name (died in the P5.2/P6 rename waves: issues, tasks,
      wayfinder, align, use-the-stack, prd). references/README.md once
      mapped `spec → issues` for weeks because the scan stopped at skills/.
   7. pointer files in skill bodies: backticked or md-linked paths under this
@@ -24,6 +25,17 @@ Validated, in order:
      adapters/ hooks/ pi/ evals/) resolve from the skill's own directory or
      the package root. Target-repo placeholders (docs/GLOSSARY.md, .dev/*,
      .pi/*) are deliberately out of scope — those name the USER's repo.
+  8. phantom agents (the drift class of 2026-10-22's audit, caught alive:
+     skills taught `ask_user` (real tool: ask_user_question) and a `viewer`
+     agent type this package never registers (it ships image-reader)):
+     - a backticked token directly adjacent to "skill/技能" must be an
+       existing skill dir, or an upstream name MOUNTED in references/
+       README.md (the provenance table is the mounting authority);
+     - a backticked token directly adjacent to "agent/agents" ("the `X`
+       agent", "`X` agent type") must be a persona dir, a skill, pi's
+       `general-purpose`, or a `pi-dev:*` package persona;
+     - a backticked token directly adjacent to "tool/工具" must be a tool
+       registered by pi/*.ts registerTool calls or a pi core tool.
 
 Skill history lives in git log and docs/03 landing records, not in the files
   (P6.4: changelog blocks removed — they rode as tokens every time a skill
@@ -117,6 +129,53 @@ PATH_TOKEN = (r"(?:(?:\.{1,2}/)+)?(?:" + "|".join(PACKAGE_ROOTS) + r")/"
 
 H1_STOPWORDS = {"a", "an", "the"}
 
+# pi core tools (this package's own come from pi/*.ts registerTool calls).
+# pi's built-ins a skill body may name beside the word "tool".
+CORE_TOOLS = {"bash", "read", "edit", "write", "ls", "glob", "grep", "find",
+              "mcp", "ask_user_question"}
+
+
+def mounted_vocab(readme: str) -> set[str]:
+    """Upstream names the references/README.md provenance table mounts."""
+    return set(re.findall(r"[a-z][a-z0-9-]+", readme))
+
+
+def registered_tools(pi_root: Path) -> set[str]:
+    """Tool names this package registers (pi/*.ts registerTool name: "x").
+    registerCommand names are not tools — the lifecycle COMMANDS array
+    (name: "spec", "build", …) must not widen this set."""
+    out: set[str] = set()
+    for f in sorted(pi_root.glob("*.ts")):
+        for chunk in f.read_text().split("registerTool(")[1:]:
+            m = re.search(r'name:\s*"([a-z][a-z0-9_]+)"', chunk[:400])
+            if m:
+                out.add(m.group(1))
+    return out
+
+
+# Label vocabulary: single-source read from docs/agents/triage-labels.md so
+# `ready-for-agent` (an AFK agent label, not a persona claim) never flags.
+def label_vocab(labels_doc: Path) -> set[str]:
+    try:
+        return set(re.findall(r"`([a-z][a-z0-9-]+)`", labels_doc.read_text()))
+    except OSError:
+        return set()
+
+
+def _adjacent(after_text: str, kind: re.Pattern[str], span: int) -> bool:
+    """`kind` word sits within `span` chars with no other backticked token in
+    between — "the `X` skill", "the `X` and `Y` agents" flags Y, not X."""
+    window = after_text[:span]
+    m = kind.search(window)
+    if not m:
+        return False
+    return "`" not in window[:m.start()]
+
+
+SKILL_WORD = re.compile(r"\bskills?\b|\b技能\b", re.I)
+AGENT_WORD = re.compile(r"\bagents?\b", re.I)
+TOOL_WORD = re.compile(r"\btools?\b|\b工具\b", re.I)
+
 
 def norm_name(s: str) -> str:
     return re.sub(r"[^a-z0-9]", "", s.lower())
@@ -199,13 +258,31 @@ def main() -> int:
 
     # retired names and (for skills/agents) dangling references — checked on the
     # wide set so the map layer (references/README.md etc.) cannot go stale again
+    readme_mounts = mounted_vocab((root / "references" / "README.md").read_text())
+    tools = CORE_TOOLS | registered_tools(root / "pi")
+    personas = {f"pi-dev:{f.stem}" for f in agent_files}
+    labels = label_vocab(root / "docs" / "agents" / "triage-labels.md")
     for f in wide_files:
         rel = f.relative_to(root)
         text = f.read_text()
-        for mm in re.finditer(r"`([a-z][a-z0-9-]*)`", text):
+        for mm in re.finditer(r"`([a-z][A-Za-z0-9:_-]*)`", text):
             n = mm.group(1)
             if retired_hit(text, mm, n):
                 failures.append(f"{rel}: reference to retired skill name `{n}`")
+        # phantom agents (check 8): direct-adjacency only, lowercase-first tokens —
+        # `customerid` beside "skill" two sentences away stays legal, a label
+        # (`ready-for-agent`, from docs/agents/triage-labels.md) is no persona claim,
+        # and a real skill may describe its own agents ("the `research` agent")
+        for mm in re.finditer(r"`([a-z][A-Za-z0-9:_-]*)`", text):
+            n = mm.group(1)
+            low = n.lower()
+            after = text[mm.end():]
+            if _adjacent(after, SKILL_WORD, 25) and low not in names and low not in readme_mounts and low not in tools:
+                failures.append(f"{rel}: `{n}` cites a skill this package does not ship — real skill, or mount it in references/README.md")
+            if _adjacent(after, AGENT_WORD, 8) and low not in labels and low not in names and low not in personas and low != "general-purpose" and not low.startswith("pi-dev:") and low not in {a.stem for a in agent_files}:
+                failures.append(f"{rel}: `{n}` cites an agent type this package does not register — agent personas live in agents/ (spawned as pi-dev:<name>)")
+            if _adjacent(after, TOOL_WORD, 25) and low not in tools and not low.startswith("/"):
+                failures.append(f"{rel}: `{n}` cites a tool this package does not register (registered: {', '.join(sorted(tools))})")
 
     # per-skill structural checks (H1, duplicate paragraphs, pointer paths)
     for f in skill_files:

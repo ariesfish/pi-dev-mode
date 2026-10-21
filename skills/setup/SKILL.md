@@ -20,9 +20,9 @@ This skill is prompt-driven. Inspect the repo, present findings, ask only for de
 
 ## User decisions
 
-When this skill needs user input or confirmation, use the `ask-user` skill and the `ask_user` tool. Gather repository evidence first, summarize the relevant findings, then ask exactly one focused question per decision.
+When this skill needs user input or confirmation, use the `ask_user_question` tool. Gather repository evidence first, summarize the relevant findings, then ask exactly one focused question per decision.
 
-Use `ask_user` for:
+Use `ask_user_question` for:
 
 - Choosing which agent instruction file to create when neither `CLAUDE.md` nor `AGENTS.md` exists.
 - Choosing the issue tracker when repository evidence does not clearly select GitHub or Local Markdown, or when the user may prefer a different tracker.
@@ -52,7 +52,7 @@ Use this order:
 
 1. If root `CLAUDE.md` exists, edit it.
 2. Else if root `AGENTS.md` exists, edit it.
-3. Else use `ask_user` to ask which file to create.
+3. Else use `ask_user_question` to ask which file to create.
 
 Do not create `AGENTS.md` when `CLAUDE.md` already exists, or vice versa. Update an existing `## Agent skills` section in place; do not append duplicates.
 
@@ -64,7 +64,7 @@ Default to:
 
 - **GitHub** when a remote points at GitHub. Use `references/issue-tracker-github.md` as the seed.
 - **Local files (.dev/, feature-first)** when the repo shows `.dev/<slug>/plan.md` or `.dev/inbox/`, or has no remote issue tracker, or the user prefers local files. Use `references/issue-tracker.md` as the seed: one slugged directory per feature — `spec.md` + `plan.md` + `todo.md` + `tickets/`; unattributed intake in `.dev/inbox/`; `/.dev/` is gitignored — per-developer process memory, never pushed; skills read and write through plain file edits.
-- **Other** for Jira, Linear, custom trackers, or unknown workflows. Use `ask_user` to ask for the workflow and write `docs/agents/issue-tracker.md` from scratch.
+- **Other** for Jira, Linear, custom trackers, or unknown workflows. Use `ask_user_question` to ask for the workflow and write `docs/agents/issue-tracker.md` from scratch.
 
 Do not offer or generate GitLab setup in this skill.
 
@@ -103,7 +103,7 @@ Before writing, show the user:
   - `docs/agents/triage-labels.md`
   - `docs/agents/domain.md`
 
-Use `ask_user` to collect explicit approval or requested edits before writing.
+Use `ask_user_question` to collect explicit approval or requested edits before writing.
 
 ### 7. Write files
 

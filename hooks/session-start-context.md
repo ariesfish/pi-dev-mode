@@ -48,7 +48,7 @@ A tell-me request (告诉我在哪/改哪行/别动手/point me at/no takeover/I
 
 Scope: the no-edit rule binds product and source changes. Bootstrapping this stack's own config — tracker choice, glossary seeding, CONSTRAINTS offer — is not that class; it keeps the owning skill's designed one-confirmation-then-seed flow.
 
-If the task's acceptance is visual (样式/布局/参考图对齐) and your model cannot see images (`read` says so), delegate the visual check to a multimodal viewer agent — never claim visual parity from code or pixel reconstruction alone.
+If the task's acceptance is visual (样式/布局/参考图对齐) and your model cannot see images (`read` says so), delegate the visual check to a multimodal image-reader agent (`pi-dev:image-reader`) — never claim visual parity from code or pixel reconstruction alone.
 
 High-stakes merges also earn an independent adjudicator: a fresh readonly agent on a different model, judging the diff alone and writing its own PASS|FAIL verdict file under `.dev/audit/evidence/` (`review` skill's independent-verifier section).
 

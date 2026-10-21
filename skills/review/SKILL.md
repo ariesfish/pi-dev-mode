@@ -135,6 +135,6 @@ Without it: unchanged — the verdict file itself is still mandatory.
   build/test stage and, later, the verification machinery. A verdict is about
   the diff's contents, never about "it must work".
 - A diff that changes rendering (styles, layout, screenshots): the text lenses
-  review the code; visual parity is the `viewer` agent's lane (multimodal)
+  review the code; visual parity is the `pi-dev:image-reader` agent's lane (multimodal)
   against the reference image. A visual verdict from a text-only lens is
   INCONCLUSIVE — say so instead of approving blind.
