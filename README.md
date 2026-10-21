@@ -48,7 +48,7 @@ pi-dev-mode/
   pi/index.ts +(15件)   自家扩展:agent(send_message/list_agents/stop_agent + tasks 批) / batch / ask(富 TUI) / intercom(ask_parent/answer_child) / artifacts(耐久工件) / schedule(/loop + schedule_wakeup) / settle-hold / sleep 反轮询——交互与编排设计参考 pi-ask-user / pi-subagents 同名上游,代码自家实现(零 vendor)
   hooks/session-start-context.md   路由 mandate(pi-dev 进场条件)
   references/           pi-host.md 宿主映射(批/互通/富 ask/工场路径单一权威层)
-  models.json           家族别名解析表(anthropic/openai/openai-codex)
+  models.json           家族别名解析表(fable→funai/gpt-5.6-sol、opus→cfgpu/glm-5-3、sonnet→deepseek/deepseek-flash;`*` 万用表,与父会话 provider 无关)
   agents/               code-reviewer/security-auditor persona——经 pi/config.ts 注册为 pi-dev:* subagent 类型,可显式 spawn;review 四镜头走内联 brief,不经过这两个 persona
   skills/               27 件(基座 14 + 新增 13)
   adapters/control-web/ (P3)browser-harness fork

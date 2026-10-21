@@ -1,9 +1,8 @@
 {
   "available": [
-    "opus",
     "fable",
-    "sonnet",
-    "haiku"
+    "opus",
+    "sonnet"
   ],
   "efforts": [
     "low",
@@ -13,25 +12,12 @@
     "max"
   ],
   "pi": {
-    "fallback": "anthropic",
+    "fallback": "*",
     "models": {
-      "anthropic": {
-        "opus": "anthropic/claude-opus-5-5",
-        "fable": "anthropic/claude-fable-5-1",
-        "sonnet": "anthropic/claude-sonnet-5-5",
-        "haiku": "anthropic/claude-haiku-5-5"
-      },
-      "openai": {
-        "opus": "openai/gpt-6.1-sol",
-        "fable": "openai/gpt-6-astra",
-        "sonnet": "openai/gpt-6-sol",
-        "haiku": "openai/gpt-6-luna"
-      },
-      "openai-codex": {
-        "opus": "openai-codex/gpt-6.1-sol",
-        "fable": "openai-codex/gpt-6-astra",
-        "sonnet": "openai-codex/gpt-6-sol",
-        "haiku": "openai-codex/gpt-6-luna"
+      "*": {
+        "fable": "funai/gpt-5.6-sol",
+        "opus": "cfgpu/glm-5-3",
+        "sonnet": "deepseek/deepseek-flash"
       }
     }
   }

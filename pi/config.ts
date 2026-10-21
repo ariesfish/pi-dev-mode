@@ -119,8 +119,9 @@ export function resolveModel(
     const valid = [...models.available, ...PARENT_MODEL_ALIASES, "<provider>/<model-id>"];
     throw new Error(`Unknown model "${requested}". Valid values: ${valid.join(", ")}.`);
   }
-  // Family names follow the provider the session is signed in to, so a ChatGPT
-  // subscription gets OpenAI models without any configuration.
+  // Family names resolve through the `*` wildcard table in models.json (fallback:
+  // "*"), so each alias maps to one fixed provider/id regardless of the
+  // session's own provider; the override sheet still wins when present.
   const provider = parentModel?.split("/")[0] ?? "";
   const table = models.pi.models[Object.hasOwn(models.pi.models, provider) ? provider : models.pi.fallback];
   const id = sheet?.piModels.get(requested) ?? table[requested];
