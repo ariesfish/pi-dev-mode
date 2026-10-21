@@ -1,11 +1,11 @@
 ---
 name: image-reader
-model: cfgpu/deepseek-daily
+model: sonnet
 effort: max
 description: >-
   Image recognition specialist: reads local images (jpg/png/gif/webp/bmp), extracts OCR text,
   analyzes UI screenshots, reads chart values, and describes photos. Multimodal reading runs on
-  cfgpu/deepseek-daily. Chinese triggers: 读图, 图片识别, 图表读数, vision, image-reader.
+  the vision-capable model behind the sonnet alias. Chinese triggers: 读图, 图片识别, 图表读数, vision, image-reader.
 ---
 
 # Workflow

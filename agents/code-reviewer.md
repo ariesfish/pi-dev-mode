@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-model: cfgpu/glm-5-3
+model: opus
 effort: max
 description: >-
   Senior code reviewer evaluating changes across five dimensions — correctness, readability,

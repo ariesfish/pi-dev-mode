@@ -1,6 +1,6 @@
 ---
 name: security-auditor
-model: cfgpu/deepseek-daily
+model: sonnet
 effort: max
 description: >-
   Security engineer focused on vulnerability detection, threat modeling, and secure coding
