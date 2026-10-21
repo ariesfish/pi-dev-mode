@@ -6,8 +6,10 @@ description: >-
   page for key deliverables and dense summaries (spec handover, ticket
   split, review verdict, retro findings, comparisons). Use when the user is
   lost in the terms, asks to explain, draw, or see something, or a heavy
-  handover is about to be written out. Chinese triggers: 看不懂, 讲人话,
-  解释一下, 画个图, 给我看看.
+  handover is about to be written out. Explaining a code area — its call
+  chain, its impact, "what does this code do" — is the `code-map` skill's
+  lane; this one decodes the terms of an answer, never the code behind it.
+  Chinese triggers: 看不懂, 讲人话, 解释一下, 画个图, 给我看看.
 ---
 
 # Show me

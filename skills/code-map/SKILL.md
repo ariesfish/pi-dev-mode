@@ -5,7 +5,9 @@ description: >-
   dependencies, domain concepts, and how the code fits into the bigger system.
   Use when the user is unfamiliar with a code section, asks to zoom out, needs
   orientation before changing code, or wants to understand impact and
-  surrounding context. Chinese triggers: 看懂这块代码, 解释模块, 调用链, 影响范围, 代码地图.
+  surrounding context. Decoding the jargon of an answer — 讲人话 about a
+  reply's terms — is the `show-me` skill's lane; this one maps code. Chinese
+  triggers: 看懂这块代码, 解释模块, 调用链, 影响范围, 代码地图.
 ---
 
 # Code Map
