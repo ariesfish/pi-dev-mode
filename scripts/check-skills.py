@@ -37,7 +37,7 @@ Validated, in order:
      - a backticked token directly adjacent to "tool/工具" must be a tool
        registered by pi/*.ts registerTool calls or a pi core tool.
 
-Skill history lives in git log and docs/03 landing records, not in the files
+Skill history lives in git log, not in the files
   (P6.4: changelog blocks removed — they rode as tokens every time a skill
   fired).
 

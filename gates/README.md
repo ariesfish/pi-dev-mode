@@ -1,6 +1,6 @@
 # gates/ — SDLC 账本门(P5,opt-in)
 
-账本 = 目标项目里的 `.dev/lifecycle/`,**目录在场即开启,不在场即关闭**——关闭时一切技能照旧(P1-P4 行为,零副作用,验收见 docs/evidence/p5/)。`gate.sh` 零依赖(bash + python3),从目标项目根运行。
+账本 = 目标项目里的 `.dev/lifecycle/`,**目录在场即开启,不在场即关闭**——关闭时一切技能照旧(P1-P4 行为,零副作用;P5 验收档见 git history)。`gate.sh` 零依赖(bash + python3),从目标项目根运行。
 
 ## 门的两类(规范源即本文件;技能侧条款见各 SKILL.md 的 Ledger 节,接入表见文末)
 

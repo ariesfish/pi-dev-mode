@@ -6,8 +6,8 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
  * Each command frames a user message that routes to its owning skill in
  * prose (tier-2 direct invocation is the user's /skill:name form, which
  * expandPromptTemplates would expand; these frames come pre-framed), with
- * the command's args carried through. Sources: addyosmani commands/*.toml
- * shapes + fusion semantics (docs/02 §4).
+ * the command's args carried through. Sources: addyosmani commands shapes,
+ * folded into this stack's own routing semantics.
  */
 
 interface LifecycleCommand {

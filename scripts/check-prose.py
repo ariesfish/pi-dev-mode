@@ -14,8 +14,7 @@ vs the PR base ref in CI. --all checks every line of every surface (the
 ratchet audit; only run it when you intend to fix the baseline).
 
 Surfaces (living prose): skills/*/SKILL.md, README.md, gates/README.md,
-docs/<digit>*.md at docs root. Frozen records (docs/evidence/**) and
-ported material (references/**) are out of scope by default.
+ported material (references/**) is out of scope by default.
 
 Exit: 0 clean · 1 slop found · 2 usage. Stdlib only.
 """
@@ -83,9 +82,8 @@ def is_surface(p: str) -> bool:
         return True
     if fnmatch.fnmatch(p, "skills/*/SKILL.md"):
         return True
-    m = re.match(r"^docs/([^/]+)$", p)
-    if m and p.endswith(".md") and m.group(1)[0].isdigit():
-        return True
+    if p in ("docs/CONSTRAINTS.md", "docs/dev-traps.md"):
+        return True  # living docs (the numbered process series + evidence are gone; git is the archive)
     return False
 
 

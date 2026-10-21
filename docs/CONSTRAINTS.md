@@ -7,7 +7,7 @@ Last reviewed: 2026-10-22 by the refactor-audit round (user-approved; dimensions
 ## Floor (always enforced, no setup required)
 
 - 任何检查不得为了让改动通过而被削弱、删除或绕过——包括本文件(diff watch)
-- 证据与账本 history 只追加:已记录的裁决/证据(ledger history、`docs/evidence/`、` .dev/audit/`)不得改写或删除
+- 账本 history 只追加:gates 裁决账本与 `.dev/audit/` 不得改写或删除(过程证据档已于 2026-10-22 经 owner 决定移除,归档即 git history)
 - 新增 prose 行零 slop(13 条双语黑名单,check-prose 增量执法;存量不拦、增量拦)
 - 技能/文档改动必须有 `bash scripts/check.sh` 全绿才 commit
 - 源码无 secrets
