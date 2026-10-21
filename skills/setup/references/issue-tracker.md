@@ -102,3 +102,27 @@ feature is in flight.
   surgery. `lifecycle/`, `audit/` stay.
 - If the repo later migrates to GitHub issues, `setup` rewrites this file into
   the new tracker doc; the dev dirs stay until their owner clears them.
+
+## The bootstrap oath (single source; the skill stances point here)
+
+A skill that needs the tracker config and finds it missing never sends the
+user away to run `setup`, never interrogates twice, and never invents a
+tracker the repo shows no evidence for. The stance, in full:
+
+1. Read the repo's evidence: `git remote -v` (github.com → GitHub; any other
+   remote or none → no signal), `.dev/<slug>/plan.md` or `.dev/inbox/`
+   (→ local files), incumbent conventions under `docs/`.
+2. Confirm once: a single question carrying your recommendation, options
+   labeled with the evidence you found. A confirmation the flow already owes
+   (a bundle the skill was about to ask anyway) takes it in; no separate
+   interrogation turn is opened for the tracker alone.
+3. On no signal at all, recommend local files under `.dev/`: zero service
+   dependencies, per-developer, gitignored.
+4. Seed `docs/agents/` from this skill set's (`setup`'s) references, then
+   continue the work the invoking skill was invoked for — never a detour.
+
+Skills carrying the pointer to this section: `tickets` and `implement` (the
+confirmation folds into an existing bundle when one is owed), `code-review`
+(may proceed without a tracker when the spec is locatable), `triage-issue`
+(incoming reports triage into it), `scout` (recommends local files by
+default).

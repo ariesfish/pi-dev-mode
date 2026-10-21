@@ -20,7 +20,7 @@ Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
 
 Both axes run as **parallel sub-agents** so they don't pollute each other's context, then this skill aggregates their findings.
 
-If the tracker config is missing, bootstrap it in place — one confirmation question carrying your recommendation — or, when the spec is locatable by branch name or user-named path, proceed without it: never send the user away to run `setup`.
+If the tracker config is missing, bootstrap it in place under the one-confirmation oath (single source: `skills/setup/references/issue-tracker.md`) — or, when the spec is locatable by branch name or user-named path, proceed without it: never send the user away to run `setup`.
 
 ## Process
 

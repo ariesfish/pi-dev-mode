@@ -11,29 +11,9 @@ Invoke the `pi-dev-mode` skill and follow its instructions when a task meets any
 - it is large or foggy: more than one session's worth, or the destination is not yet visible (scout-grade work)
 - it should run unattended once approved, or spans a whole task graph, or needs a quality bar written down first (constraints)
 
-pi-dev-mode routes to the right skill from there. When the intent is already specific, enter the skill directly by name:
+pi-dev-mode routes to the right skill from there; when the intent is already specific, entering that skill by name is the stack's tier-2 form. Pi injects every skill's own trigger-rich description into this session — the catalog rides there, single-sourced. Keep no hand-copied inventory here: one once drifted four skills behind the shipped set.
 
-- `grill-me` — sharpen language and decisions; write docs/GLOSSARY.md and ADRs under docs/adr/ as they crystallise
-- `research` — delegate primary-source investigation to a background agent
-- `proto` — throwaway prototype to answer a design question
-- `spec` — synthesize the conversation into the building contract (.dev/<slug>/spec.md, six decision sections, three-label acceptance criteria)
-- `constraints` — the project's quality bar, with numbers (docs/CONSTRAINTS.md)
-- `tickets` — split a plan into vertical-slice tickets (task graph + frontier)
-- `triage-issue` — route incoming bug reports / feature requests through triage labels into the same tracker
-- `implement` — one ticket, serial, TDD at the seams
-- `implement-all` — the whole task graph: auto (serial, single approval) or parallel (one implementer per frontier ticket, each in its own worktree)
-- `scout` — when the destination itself is foggy: decision tickets until the way is clear (探路/摸方向)
-- `code-review` — two-axis review (Standards / Spec) of a diff since a fixed point
-- `review` — the four-lens merge gate (two-axis + comment discipline + adversarial doubt + constraints audit)
-- `doubt` — in-flight adversarial cross-examination of a non-trivial decision
-- `benchmark-checklist` — vet a measured performance number before reporting it
-- `retro` — session retrospective routing findings to checks, types, docs, or skill edits
-- `eval` — the promotion gate for skill changes: trigger regression over the case bank, or blinded variant A/B
-- `diagnose` — feedback-loop-first debugging
-- `refact` — find deepening opportunities in seams and locality
-- `tdd` — the implementation kernel
-- `repo-map` / `code-map` — durable repo map / area-level orientation
-- `setup` — deliberate config pass (tracker, triage labels, domain docs); a dependent skill needing config bootstraps it in place with one confirmation — no detour
+Tool and host conventions: the skills occasionally name Claude Code conventions (the Skill tool, the Agent tool, AskUserQuestion) or model family names. `references/pi-host.md` is the single translation authority — read it when one appears.
 
 Headless one-shot sessions (-p / no user present): nobody will answer mid-run
 questions — an ask is terminal, not a pause. For a multi-area or whole-set task,
