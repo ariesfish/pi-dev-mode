@@ -262,16 +262,7 @@ export class DurableBridge {
 			askChannel = state.intercom;
 			mkdirSync(state.root, { recursive: true });
 			const { openNodeSqliteStorage } = await import("@earendil-works/pi-durable/storage/sqlite/node");
-			const storage = await openNodeSqliteStorage(state.durableSqlite);
-			const registry = createRegistry();
-			registry.install(ChildExtension);
-			const harness = await Harness.open(
-				storage,
-				{ models, registry, env: ({ cwd }) => new NodeExecutionEnv({ cwd: cwd ?? process.cwd() }) },
-				BACKGROUND_CONTEXT,
-			);
-			const root = await harness.root(BACKGROUND_CONTEXT);
-			return new DurableBridge(harness, root);
+			return await DurableBridge.openOver(await openNodeSqliteStorage(state.durableSqlite), models);
 		} catch {
 			// Honest degradation (spec D2): the bridge closes itself, and the
 			// caller's background spawn falls back to rpc.
@@ -279,14 +270,9 @@ export class DurableBridge {
 		}
 	}
 
-	/** The live session registers here; durable reports reach it as they settle. */
-	onReport(sink: (report: DeliverReport) => void): void {
-		reportSink = sink;
-	}
-
-	/** Opens over a caller-owned storage instance (tests; no catch, no mdiring). */
-	static async fromStorage(storage: Storage, models: Models, channel: string): Promise<DurableBridge> {
-		askChannel = channel;
+	/** The once-thrice open ceremony: registry, harness, root. The callers
+	 *  differ only in where their storage came from and what failure means. */
+	private static async openOver(storage: Storage, models: Models): Promise<DurableBridge> {
 		const registry = createRegistry();
 		registry.install(ChildExtension);
 		const harness = await Harness.open(
@@ -296,6 +282,17 @@ export class DurableBridge {
 		);
 		const root = await harness.root(BACKGROUND_CONTEXT);
 		return new DurableBridge(harness, root);
+	}
+
+	/** The live session registers here; durable reports reach it as they settle. */
+	onReport(sink: (report: DeliverReport) => void): void {
+		reportSink = sink;
+	}
+
+	/** Opens over a caller-owned storage instance (tests; no catch, no mkdir). */
+	static async fromStorage(storage: Storage, models: Models, channel: string): Promise<DurableBridge> {
+		askChannel = channel;
+		return DurableBridge.openOver(storage, models);
 	}
 
 	/** Every background agent this storage still knows (restart rep). */
@@ -415,13 +412,5 @@ export async function openTestBridge(models: Models, storage?: { new (): Storage
 	const { MemoryStorage } = await import("@earendil-works/pi-durable/storage/memory");
 	const store: Storage =
 		storage === undefined ? new MemoryStorage() : typeof storage === "function" ? new storage() : storage;
-	const registry = createRegistry();
-	registry.install(ChildExtension);
-	const harness = await Harness.open(
-		store,
-		{ models, registry, env: ({ cwd }) => new NodeExecutionEnv({ cwd: cwd ?? process.cwd() }) },
-		BACKGROUND_CONTEXT,
-	);
-	const root = await harness.root(BACKGROUND_CONTEXT);
-	return new DurableBridge(harness, root);
+	return DurableBridge.openOver(store, models);
 }
