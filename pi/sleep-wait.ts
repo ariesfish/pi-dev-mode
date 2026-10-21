@@ -11,14 +11,14 @@
 // (`sleep $N`), and a poll loop of sleeps under two seconds. Known over-blocks:
 // a sleep inside a backgrounded group (`(sleep 30; echo done) &`), a
 // backgrounded sleep with a redirection before the `&`, and
-// `timeout 5 sleep 30`. tests/pi/sleep-wait.test.mjs lists each, so changing
-// one is a visible decision.
-const MIN_WAIT_S = 2;
+// `timeout 5 sleep 30`. sleep-wait.test.ts lists each in its decision table,
+// so changing one is a visible decision.
+export const MIN_WAIT_S = 2;
 const SLEEP_UNITS: Record<string, number> = { "": 1, s: 1, m: 60, h: 3600, d: 86400 };
 
 // Seconds a literal sleep argument asks for (30, 2.5, 1m, 1m30s, infinity);
 // 0 when it is not a literal.
-function sleepSeconds(arg: string): number {
+export function sleepSeconds(arg: string): number {
   if (/^inf(inity)?$/.test(arg)) return Infinity;
   const parts = arg.match(/\d*\.?\d+[smhd]?/g);
   if (!parts || parts.join("") !== arg) return 0;
@@ -54,7 +54,7 @@ function stripQuotesAndComment(line: string): string {
 // The command text the shell would run: heredoc bodies, quoted strings, and
 // comments removed, one pass over the lines so the cost stays linear. The
 // line that opens a heredoc is kept, since commands can follow the `<<`.
-function shellText(command: string): string {
+export function shellText(command: string): string {
   const kept: string[] = [];
   let terminator: string | undefined;
   for (const line of command.split("\n")) {

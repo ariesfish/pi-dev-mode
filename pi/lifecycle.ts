@@ -3,8 +3,9 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 /**
  * Lifecycle commands (P4): /spec /build /review /ship.
  *
- * Each command expands to a skill-routed user message (the /skill: prefix is
- * the stack's tier-2 direct-invocation form, per references/pi-host.md), with
+ * Each command frames a user message that routes to its owning skill in
+ * prose (tier-2 direct invocation is the user's /skill:name form, which
+ * expandPromptTemplates would expand; these frames come pre-framed), with
  * the command's args carried through. Sources: addyosmani commands/*.toml
  * shapes + fusion semantics (docs/02 §4).
  */

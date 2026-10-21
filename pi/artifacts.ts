@@ -26,19 +26,26 @@ export function saveOutput(identity: AgentIdentity, text: string): Pick<EndedRec
   }
 }
 
-export function artifactHeader(identity: AgentIdentity, status: string, exitCode: number | null): string {
+/** The header field list every artifact writer prints — one source for both
+ *  sides (the parent's fallback record and the child's self-record). */
+function artifactHeadFields(identity: AgentIdentity, status: string, exitCodeLine: string): string[] {
   const lines = [
     `agent: ${identity.id}`,
     `description: ${identity.description}`,
     `type: ${identity.subagentType}`,
     identity.model ? `model: ${identity.model}` : undefined,
     `status: ${status}`,
-    `exit code: ${exitCode ?? "unknown"}`,
+    exitCodeLine,
     `started: ${identity.startedAt}`,
     `cwd: ${identity.cwd}`,
     identity.worktree ? `worktree: ${identity.worktree.path}` : undefined,
   ];
-  return lines.filter(Boolean).join("\n");
+  return lines.filter((l): l is string => l !== undefined);
+}
+
+/** The artifact's header: field list, one line each. */
+export function artifactHeader(identity: AgentIdentity, status: string, exitCode: number | null): string {
+  return artifactHeadFields(identity, status, `exit code: ${exitCode ?? "unknown"}`).join("\n");
 }
 
 /** The artifact's full content: metadata header, rule, then the complete final text. */
@@ -46,10 +53,22 @@ export function artifactContent(identity: AgentIdentity, status: string, exitCod
   return `${artifactHeader(identity, status, exitCode)}\n---\n${finalText}\n`;
 }
 
+/** Reads an artifact whole: header fields parsed once, payload under the rule.
+ *  The read side of the write paired in artifactContent — head lists only one
+ *  source above, and this is the only parser (the restore path's regex is gone). */
+export function readArtifact(content: string): { fields: Record<string, string>; text: string } {
+  const i = content.indexOf("\n---\n");
+  const fields: Record<string, string> = {};
+  for (const line of (i === -1 ? content : content.slice(0, i)).split("\n")) {
+    const m = /^([a-z ]+): (.*)$/.exec(line);
+    if (m) fields[m[1]] = m[2];
+  }
+  return { fields, text: i === -1 ? content : content.slice(i + 5) };
+}
+
 /** Reads only the payload under the header rule, for restored notices. */
 export function artifactText(content: string): string {
-  const i = content.indexOf("\n---\n");
-  return i === -1 ? content : content.slice(i + 5);
+  return readArtifact(content).text;
 }
 
 // If the artifact already exists, the map name is what the running session needs.
@@ -81,25 +100,22 @@ export function writeSelfArtifact(
   if (existsSync(flagValue)) return;
   const identityArgs = sidecar ?? { id: "unknown", description: "(identity sidecar missing)", subagentType: "general-purpose", startedAt: "", cwd: "" };
   const { status: outcome, text } = lastAssistantOutcome(getBranch);
-  const header = [
-    `agent: ${identityArgs.id}`,
-    `description: ${identityArgs.description}`,
-    `type: ${identityArgs.subagentType}`,
-    identityArgs.model ? `model: ${identityArgs.model}` : undefined,
-    `status: ${outcome}`,
-    `exit code: unknown (self-recorded at shutdown)`,
-    `started: ${identityArgs.startedAt}`,
-    `cwd: ${identityArgs.cwd}`,
-  ]
-    .filter(Boolean)
-    .join("\n");
   try {
-    mkdirSync(flagValue.slice(0, flagValue.lastIndexOf("/")), { recursive: true });
-    writeFileSync(flagValue, `${header}\n---\n${text}\n`);
+    writeArtifactFile(
+      flagValue,
+      artifactHeadFields(identityArgs, outcome, `exit code: unknown (self-recorded at shutdown)`),
+      text,
+    );
   } catch {
     // A failed self-record is a missing artifact, nothing more: the parent's
     // fallback or the next restore synthesizes what it can from its own side.
   }
+}
+
+/** One write ritual for both writers: mkdir, header, rule, payload. */
+function writeArtifactFile(file: string, fields: string[], text: string): void {
+  mkdirSync(file.slice(0, file.lastIndexOf("/")), { recursive: true });
+  writeFileSync(file, `${fields.join("\n")}\n---\n${text}\n`);
 }
 
 // The parent's fallback at finish(): the child writes its artifact at its own
@@ -109,8 +125,7 @@ export function ensureArtifact(record: EndedRecord): void {
   const path = record.artifactFile;
   if (!path || existsSync(path)) return;
   try {
-    mkdirSync(path.slice(0, path.lastIndexOf("/")), { recursive: true });
-    writeFileSync(path, artifactContent(record.agent, record.status, record.exitCode, record.finalText));
+    writeArtifactFile(path, artifactHeadFields(record.agent, record.status, `exit code: ${record.exitCode ?? "unknown"}`), record.finalText);
   } catch {
     // Deliberately swallowed: the notice and entry already carry the capped text.
   }
@@ -127,12 +142,11 @@ export function synthesizeFromArtifact(running: RunningRecord): EndedRecord | un
   let text = "";
   let status: EndedRecord["status"] = "completed";
   try {
-    const content = readFileSync(path, "utf8");
+    const { fields, text: payload } = readArtifact(readFileSync(path, "utf8"));
     // The child's self-recorded header carries its honest outcome; a parent
     // fallback artifact keeps the record's own status via the same header.
-    const statusLine = /^[a-z- ]*status: (\w+)$/m.exec(content);
-    if (statusLine?.[1] === "stopped" || statusLine?.[1] === "failed") status = statusLine[1];
-    text = artifactText(content).trim() || "(artifact present but empty)";
+    if (fields["status"] === "stopped" || fields["status"] === "failed") status = fields["status"];
+    text = payload.trim() || "(artifact present but empty)";
   } catch {
     return undefined;
   }
