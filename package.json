@@ -23,8 +23,7 @@
     ],
     "extensions": [
       "./pi/index.ts",
-      "./pi/lifecycle.ts",
-      "./pi/vendor/pi-ask-user/index.ts"
+      "./pi/lifecycle.ts"
     ]
   },
   "peerDependencies": {

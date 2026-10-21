@@ -1,6 +1,0 @@
-{
-  "name": "pi-ask-user",
-  "version": "0.17.0",
-  "description": "Vendored into pi-dev-mode (pi/vendor/pi-ask-user): interactive ask_user tool with searchable split-pane selection UI, multi-select, and freeform input. Runtime metadata for the vendored source; the distribution manifest lives in the repository root package.json.",
-  "private": true
-}
