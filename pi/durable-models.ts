@@ -50,6 +50,10 @@ import type { ModelRegistry } from "@earendil-works/pi-coding-agent";
 const NOT_ON_THE_BRIDGE = (what: string) =>
 	`pi-dev durable bridge: ${what} is not available through the pi model registry bridge.`;
 
+// A bare alias: pi's extension loader (jiti/babel) cannot parse the nested
+// `Promise<readonly ModelTypeMap[TType>[]>` shape directly in a method signature.
+type AvailableOfType<TType extends ModelType> = readonly ModelTypeMap[TType>[];
+
 export class RegistryModels implements Models {
 	constructor(private readonly registry: ModelRegistry) {}
 
@@ -103,7 +107,7 @@ export class RegistryModels implements Models {
 		type: TType,
 		providerId?: string,
 		_options?: AuthOperationOptions,
-	): Promise<readonly ModelTypeMap[TType>[]> {
+	): Promise<AvailableOfType<TType>> {
 		return this.getModelsOfType(type, providerId);
 	}
 
