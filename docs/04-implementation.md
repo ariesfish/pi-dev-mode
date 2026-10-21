@@ -22,7 +22,7 @@
 
 2. 三栈新增件:`spec` 工厂 F(prd 承接;mattp to-spec 作参考源)、`implement-all`(P1.1 吸收 build auto 后)F、`constraints` F、`wayfinder` C(其依赖件 research 已于 2026-10 第二轮就位)、`use-the-stack` N(dev-workflow 闭环图已含 15 件,作底)
 
-3. `docs/pi-tools.md` v0(宿主词映射:Skill→/skill:、Task→agent、AskUserQuestion→ask_user_question、Pi sessions 路径)
+3. `docs/pi-tools.md` v0(宿主词映射:Skill→/skill:、Task→agent、AskUserQuestion→ask_user_question、Pi sessions 路径;v2(2026-10-21)起唯一权威层是 references/pi-host.md,新增 tasks 批/ask_parent 互通/富 ask 参数/worktrees 路径四行;交互与编排设计参考 pi-ask-user / pi-subagents 上游,自家实现零 vendor)
 
 **验收(跑真实场景):** 挑一个真实小需求,现场走:`拷打方案`(align)问出术语落 CONTEXT.md → prd 出 PRD(验收带三类标注)→ 升级出 SPEC.md → issues 拆垂直切片(带依赖 + HITL/AFK)→ `implement-all` auto 单审批跑完,每任务一条 commit + decisions.tsv 留痕。证据存 `docs/evidence/p1/`。
 **破坏性验收:** 无 SPEC/PRD 直接 implement-all 必须拒绝;grilling 中断、CONTEXT.md 缺席时下游技能必须降级不报错;diagnose 建环后修复,commit 序列必须是"复现在前修复在后"。
