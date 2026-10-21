@@ -11,8 +11,7 @@
 // deterministic request id, so a rerun reattaches to the pending row.
 
 import { createHash, randomUUID } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdirSync } from "node:fs";
 import { BACKGROUND_CONTEXT } from "@earendil-works/chord/context";
 import type { Models } from "@earendil-works/pi-ai";
 import { Type } from "typebox";
@@ -36,6 +35,7 @@ import { createBashTool, createEditTool, createReadTool, createWriteTool } from 
 import { NodeExecutionEnv } from "@earendil-works/pi-durable/env/node";
 
 import { SessionState } from "./session-state.ts";
+import { awaitReply, PARENT_TIMEOUT_VERDICT, PROGRESS_DELIVERED, requestPath, ASK_PARENT_TIMEOUT_MS, writeRequest } from "./intercom.ts";
 
 // ─── The ledger document: one root conversation, agents keyed by id ──────────
 
@@ -174,11 +174,9 @@ let askChannel: string | undefined;
 const askId = (from: string, reason: string, message: string, options: string[] | undefined) =>
 	`d${createHash("sha256").update(`${from}\0${reason}\0${message}\0${options?.join("\0") ?? ""}`).digest("hex").slice(0, 24)}`;
 
-export const ASK_PARENT_TIMEOUT_MS = 30 * 60 * 1000;
-const INTERCOM_POLL_MS = 250;
-
-// The child side of T-026's intercom, as a durable tool: the poll loop is the
-// rpc child's, replay-safe through its deterministic request id.
+// The child side of T-026's intercom, as a durable tool: the channel protocol
+// (row shape, paths, poll loop, verdicts) is intercom.ts's; this tool adds
+// only what a durable rerun needs — the deterministic request id.
 const askParentTool = defineTool({
 	name: "ask_parent",
 	description:
@@ -205,31 +203,12 @@ const askParentTool = defineTool({
 			...(args.options ? { options: args.options } : {}),
 			createdAt: Date.now(),
 		};
-		mkdirSync(channel, { recursive: true });
-		const reqPath = join(channel, `req-${row.id}.json`);
-		const replyPath = join(channel, `reply-${row.id}.json`);
-		if (args.reason === "progress_update") {
-			if (!existsSync(reqPath)) writeFileSync(reqPath, JSON.stringify(row), { mode: 0o600 });
-			return { content: [{ type: "text" as const, text: "Progress note delivered to the parent. Continue." }] };
-		}
 		// A rerun may find its old row; never rewrite a fresher one.
-		if (!existsSync(reqPath)) writeFileSync(reqPath, JSON.stringify(row), { mode: 0o600 });
-		const deadline = row.createdAt + ASK_PARENT_TIMEOUT_MS;
-		for (;;) {
-			try {
-				const reply = JSON.parse(readFileSync(replyPath, "utf8")).message as string;
-				return { content: [{ type: "text" as const, text: `The parent answered: ${reply}` }] };
-			} catch {}
-			if (Date.now() > deadline) {
-				return {
-					content: [
-						{ type: "text" as const, text: "No parent answer within 30 minutes. Decide on your own, state that you did, and continue." },
-					],
-					isError: true,
-				};
-			}
-			await new Promise((resolve) => setTimeout(resolve, INTERCOM_POLL_MS));
-		}
+		if (!existsSync(requestPath(channel, row.id))) writeRequest(channel, row);
+		if (args.reason === "progress_update") return { content: [{ type: "text" as const, text: PROGRESS_DELIVERED }] };
+		const reply = await awaitReply(channel, row.id, row.createdAt + ASK_PARENT_TIMEOUT_MS);
+		if (reply !== undefined) return { content: [{ type: "text" as const, text: `The parent answered: ${reply}` }] };
+		return { content: [{ type: "text" as const, text: PARENT_TIMEOUT_VERDICT }], isError: true };
 	},
 });
 

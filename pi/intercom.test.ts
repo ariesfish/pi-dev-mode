@@ -9,6 +9,7 @@ import {
   pendingRequests,
   readReply,
   writeReply,
+  awaitReply,
   writeRequest,
 } from "./intercom.ts";
 import { SessionState } from "./session-state.ts";
@@ -77,5 +78,30 @@ describe("pendingRequests", () => {
   });
   test("a missing dir reads as no pending", () => {
     expect(pendingRequests(join(dir, "never"))).toEqual([]);
+  });
+});
+
+describe("awaitReply (the shared child-side poll)", () => {
+  const dirOf = mkdtempSync(join(tmpdir(), "pi-intercom-await-"));
+  const row: IntercomRequest = {
+    id: "abc",
+    from: "x",
+    fromDescription: "(child)",
+    reason: "need_decision",
+    message: "q",
+    createdAt: Date.now(),
+  };
+
+  test("delivers an answer that is already there, at once", async () => {
+    const dir = dirOf + "/await-1";
+    writeRequest(dir, row);
+    writeReply(dir, row.id, "answer");
+    expect(await awaitReply(dir, row.id, Date.now() + 1000)).toBe("answer");
+  });
+
+  test("gives up the moment its deadline has passed (the verdict text is the caller's)", async () => {
+    const dir = dirOf + "/await-2";
+    writeRequest(dir, row);
+    expect(await awaitReply(dir, row.id, Date.now() - 1)).toBe(undefined);
   });
 });

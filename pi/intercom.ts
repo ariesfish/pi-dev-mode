@@ -24,6 +24,25 @@ export const INTERCOM_FLAG = "pi-dev-intercom";
 export const ASK_PARENT_TIMEOUT_MS = 30 * 60 * 1000;
 const INTERCOM_POLL_MS = 250;
 
+/** What a delivered progress note answers with (both child tools share it). */
+export const PROGRESS_DELIVERED = "Progress note delivered to the parent. Continue.";
+/** The verdict text when no parent answers within the cap (both child tools share it). */
+export const PARENT_TIMEOUT_VERDICT = "No parent answer within 30 minutes. Decide on your own, state that you did, and continue.";
+
+/**
+ * The child side of the channel protocol, shared by both ask_parent tools
+ * (the rpc child's and the durable child's): poll the reply file until the
+ * parent answers or the deadline passes — undefined is the timeout signal.
+ */
+export async function awaitReply(channel: string, id: string, deadline: number): Promise<string | undefined> {
+  for (;;) {
+    const reply = readReply(channel, id);
+    if (reply !== undefined) return reply;
+    if (Date.now() > deadline) return undefined;
+    await new Promise((resolve) => setTimeout(resolve, INTERCOM_POLL_MS));
+  }
+}
+
 export type AskParentReason = "need_decision" | "progress_update";
 
 export interface IntercomRequest {
@@ -39,7 +58,7 @@ export interface IntercomRequest {
 
 const ID_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$/;
 
-function requestPath(dir: string, id: string): string {
+export function requestPath(dir: string, id: string): string {
   if (!ID_PATTERN.test(id)) throw new Error(`Invalid intercom request id "${id}".`);
   return join(dir, `req-${id}.json`);
 }
@@ -118,21 +137,12 @@ export function registerAskParent(pi: ExtensionAPI, channel: string): void {
       };
       if (params.reason === "progress_update") {
         writeRequest(channel, req);
-        return { content: [{ type: "text", text: "Progress note delivered to the parent. Continue." }] };
+        return { content: [{ type: "text", text: PROGRESS_DELIVERED }] };
       }
       writeRequest(channel, req);
-      const deadline = req.createdAt + ASK_PARENT_TIMEOUT_MS;
-      for (;;) {
-        const reply = readReply(channel, req.id);
-        if (reply !== undefined) return { content: [{ type: "text", text: `The parent answered: ${reply}` }] };
-        if (Date.now() > deadline) {
-          return {
-            content: [{ type: "text", text: "No parent answer within 30 minutes. Decide on your own, state that you did, and continue." }],
-            isError: true,
-          };
-        }
-        await new Promise((r) => setTimeout(r, INTERCOM_POLL_MS));
-      }
+      const reply = await awaitReply(channel, req.id, req.createdAt + ASK_PARENT_TIMEOUT_MS);
+      if (reply !== undefined) return { content: [{ type: "text", text: `The parent answered: ${reply}` }] };
+      return { content: [{ type: "text", text: PARENT_TIMEOUT_VERDICT }], isError: true };
     },
   });
 }
