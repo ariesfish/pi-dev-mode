@@ -1,6 +1,6 @@
 # Language
 
-Shared vocabulary for every suggestion this skill makes. Use these terms exactly — don't substitute "component," "service," "API," or "boundary." Consistent language is the whole point.
+Shared vocabulary for every suggestion this skill makes. The tdd skill's `references/deep-modules.md` and `references/interface-design.md` carry the same two concepts specialized to the red-green loop; this file stays the full table. Use these terms exactly — don't substitute "component," "service," "API," or "boundary." Consistent language is the whole point.
 
 ## Terms
 

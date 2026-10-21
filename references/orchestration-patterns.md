@@ -2,6 +2,8 @@
 
 Reference catalog of agent orchestration patterns this repo endorses, plus anti-patterns to avoid. Read this before adding a new slash command that coordinates multiple personas, or before introducing a new persona that "wraps" existing ones.
 
+Host mapping: the "Pi mapping" section at the end holds this package's primitives; when any text elsewhere names another host's conventions, `references/pi-host.md` is the single translation authority.
+
 The governing rule: **the user (or a slash command) is the orchestrator. Personas do not invoke other personas.** Skills are mandatory hops inside a persona's workflow.
 
 ---
@@ -21,7 +23,7 @@ user → code-reviewer → report → user
 **Examples:**
 - "Review this PR" → `code-reviewer`
 - "Find security issues in `auth.ts`" → `security-auditor`
-- "What tests are missing for the checkout flow?" → `test-engineer`
+- "What tests are missing for the checkout flow?" → a test-discipline pass (implement skill)
 
 **Cost:** one round trip. The baseline you should always compare orchestrated patterns against.
 
@@ -52,7 +54,7 @@ Multiple personas operate on the same input concurrently, each producing an inde
 ```
                     ┌─→ code-reviewer    ─┐
 /ship → fan out  ───┼─→ security-auditor ─┤→ merge → go/no-go + rollback
-                    └─→ test-engineer    ─┘
+                    └─→ (test discipline)─┘
 ```
 
 **Use when:**
@@ -110,70 +112,24 @@ main agent → research sub-agent (reads 50 files) → digest → main agent con
 
 **Cost:** one isolated sub-agent context. Worth it any time the alternative is loading hundreds of files into the main context.
 
-**On Claude Code, use the built-in `Explore` subagent** rather than defining a custom research persona. `Explore` runs on Haiku, is denied write/edit tools, and is purpose-built for this pattern. Define a custom research subagent only when `Explore` doesn't fit (e.g. you need a domain-specific system prompt the model wouldn't infer).
+On pi, spawn `general-purpose` with `readonly: true` and the research brief (the `research` skill's own dispatch shape) rather than defining a custom research persona; write/edit are simply not in the spawn. Define a custom persona only when the brief needs a domain system prompt the model wouldn't infer (this package's agents/).
 
 ---
 
-## Claude Code compatibility
+## Pi mapping (host conventions)
 
-This catalog is harness-agnostic, but most readers will run it on Claude Code. Here's how each pattern maps onto Claude Code's primitives — and where the platform enforces our rules for us.
+This catalog is harness-agnostic; the primitive it runs on here is this package's own extension (host conventions live in `references/pi-host.md`):
 
-### Where personas live
-
-Plugin subagents go in `agents/` at the plugin root. This repo is a plugin (`.claude-plugin/plugin.json`), so `agents/code-reviewer.md`, `agents/security-auditor.md`, and `agents/test-engineer.md` are auto-discovered when the plugin is enabled. No path configuration needed.
-
-### Subagents vs. Agent Teams
-
-Claude Code has two parallelism primitives. Pattern 3 (parallel fan-out with merge) maps to **subagents**. If you need teammates that talk to each other, use **Agent Teams** instead.
-
-| | Subagents | Agent Teams |
-|--|-----------|-------------|
-| Coordination | Main agent fans out, sub-agents only report back | Teammates message each other, share a task list |
-| Context | Own context window per subagent | Own context window per teammate |
-| When to use | Independent tasks producing reports | Collaborative work needing discussion |
-| Status | Stable | Experimental — requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` |
-| Cost | Lower | Higher — each teammate is a separate Claude instance |
-
-**The personas in this repo work in both modes.** When spawned as subagents (e.g. by `/ship`), they report findings to the main session. When spawned as teammates (`Spawn a teammate using the security-auditor agent type…`), they can challenge each other's findings directly. The persona definition is the same; only the spawning context changes.
-
-One subtlety: the `skills` and `mcpServers` frontmatter fields in a persona are honored when it runs as a subagent but **ignored when it runs as a teammate** — teammates load skills and MCP servers from your project and user settings, the same as a regular session. If a persona depends on a specific skill or MCP server being loaded, configure it at the session level so it's available in both modes.
-
-### Platform-enforced rules
-
-Two rules in this catalog aren't just convention — Claude Code enforces them:
-
-- **"Subagents cannot spawn other subagents"** (verbatim from the docs). Anti-pattern B (persona-calls-persona) and Anti-pattern D (deep persona trees) cannot exist on Claude Code by construction.
-- **"No nested teams"** — teammates cannot spawn their own teams. Same anti-patterns blocked at the team level.
-
-This means you can adopt the patterns in this catalog without worrying about contributors accidentally building the anti-patterns. They'll just fail to load.
-
-### Built-in subagents to know about
-
-Before defining a custom subagent, check whether one of these covers the role:
-
-| Built-in | Purpose |
-|----------|---------|
-| `Explore` | Read-only codebase search and analysis. Use this for Pattern 5 (research isolation). |
-| `Plan` | Read-only research during plan mode. |
-| `general-purpose` | Multi-step tasks needing both exploration and modification. |
-
-Don't redefine these. Layer your specialist personas (code-reviewer, security-auditor, test-engineer) on top of them.
-
-### Frontmatter restrictions for plugin agents
-
-Plugin subagents do **not** support the `hooks`, `mcpServers`, or `permissionMode` frontmatter fields — these are silently ignored. If a future persona needs any of those, the user must copy the file into `.claude/agents/` or `~/.claude/agents/` instead.
-
-The fields that DO work in plugin agents are: `name`, `description`, `tools`, `disallowedTools`, `model`, `maxTurns`, `skills`, `memory`, `background`, `effort`, `isolation`, `color`, `initialPrompt`. Use `model` per-persona if you want to optimize cost (e.g. Haiku for `test-engineer` coverage scans, Sonnet for `code-reviewer`, Opus for `security-auditor`).
-
-### Spawning multiple subagents in parallel
-
-In Claude Code, parallel fan-out (Pattern 3) requires issuing **multiple Agent tool calls in a single assistant turn**. Sequential turns serialize execution. `/ship` calls this out explicitly. Any new orchestrator command should do the same.
+- **Personas live in `agents/` at the package root** and register as `pi-dev:<file>` agent types the `agent` tool spawns (`pi-dev:code-reviewer`, `pi-dev:security-auditor`, `pi-dev:image-reader`). The test-discipline pass was folded into the implement skill's test discipline; no path configuration exists or is needed.
+- **Parallel fan-out (Pattern 3) is ONE `agent` call carrying `tasks: [...]`** (2-8 single-agent tasks; foreground returns an aggregate table, background settles silently and one notice wakes the session). Sequential one-by-one calls work but serialize execution — orchestrator commands should call out the batch shape explicitly.
+- **Subagents cannot spawn their own subagents**: the extension passes `--pi-dev-depth` down and caps it, so anti-pattern B (persona-calls-persona) and D (deep persona trees) are blocked by construction.
+- **No teammates primitive**: agents that must challenge each other's findings run through the doubt skill's reconcile loop or the review pipeline's lens aggregation — coordination stays in the parent session, which is the governing rule above.
+- **Persona frontmatter honored here**: `name`, `description` (trigger surface), `model`, `effort`. Spend/permission shaping belongs to the spawn call (`readonly: true`, `isolation: "worktree"`, per-run `model`), not the persona file.
 
 ---
+## Worked example: competing-hypothesis debugging (the reconcile loop)
 
-## Worked example: Agent Teams for competing-hypothesis debugging
-
-This example shows when to reach for **Agent Teams** instead of `/ship`'s subagent fan-out. The two patterns look similar from a distance — both spawn the same three personas — but the value comes from a different place.
+This example shows when to reach for the **reconcile loop** (batched lenses + adversarial reconciliation in the parent session) instead of a plain subagent fan-out. The two patterns look similar from a distance — both spawn the same lenses — but the value comes from a different place.
 
 ### The scenario
 
@@ -186,33 +142,23 @@ Plausible root causes (mutually exclusive, all fit the symptoms):
 3. A missing index on a query that scales with cart size
 4. A flaky third-party API where the SDK retries silently before timing out
 
-A single agent will pick the first plausible theory and stop investigating. A `/ship`-style subagent fan-out would have each persona report independently — but their reports never meet, so nothing rules out the wrong theories.
+A single agent will pick the first plausible theory and stop investigating. A plain subagent fan-out would have each lens report independently — but their reports never meet, so nothing rules out the wrong theories.
 
-This is exactly the case the Agent Teams docs describe: *"With multiple independent investigators actively trying to disprove each other, the theory that survives is much more likely to be the actual root cause."*
+This is the case the reconcile loop exists for: multiple independent investigators actively trying to disprove each other, so the theory that survives is much more likely to be the actual root cause.
 
-### Why this is *not* a `/ship` job
+### Why this is *not* a `review` job
 
-| | `/ship` (subagents) | Agent Teams |
+| | two-axis `code-review` | reconcile loop |
 |--|--------------------|-------------|
-| Sub-agents see | The same diff, different lenses | A shared task list, each other's messages |
-| Output | Three independent reports → one merge | Adversarial debate → consensus root cause |
+| Lenses see | The same diff, different axes | The same mystery, disproof-biased briefs |
+| Output | Two reports → one aggregated verdict | Adversarial reconciliation → consensus root cause |
 | Right when | You want a verdict on a known artifact | You want to *find* the artifact among hypotheses |
 
-`/ship` is a verdict; Agent Teams is an investigation.
+`review` is a verdict; the reconcile loop is an investigation.
 
-### Setup (one-time, per-environment)
+### Setup
 
-Agent Teams is experimental. In `~/.claude/settings.json`:
-
-```json
-{
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  }
-}
-```
-
-Requires Claude Code v2.1.32 or later. The personas in this repo are picked up automatically — no team-config files to author by hand.
+None: the doubt skill's reconcile loop over one batched `agent` call is the whole machinery — no experimental flags, no team config.
 
 ### The trigger prompt
 
@@ -222,60 +168,54 @@ Type into the lead session, in natural language:
 Users report checkout hangs for ~30 seconds intermittently after last
 week's release. No errors in logs.
 
-Create an agent team to debug this with competing hypotheses. Spawn
-three teammates using the existing agent types:
+Debug this with competing hypotheses. Make one batched `agent` call
+(`tasks: [...]`), three readonly lenses:
 
   - code-reviewer  — investigate race conditions and blocking calls
                      in the checkout code path
   - security-auditor — investigate auth checks, session handling,
                        and any synchronous network calls added recently
-  - test-engineer  — propose tests that would distinguish between the
+  - test-discipline pass — propose tests that would distinguish between the
                      hypotheses and check coverage gaps in checkout
 
-Have them message each other directly to challenge each other's
-theories. Update findings as consensus emerges. Only converge when
-two teammates agree they can disprove the others'.
+Then run the doubt skill's reconcile loop over the three reports:
+converge only when two lenses agree they can disprove the others'.
 ```
 
-The lead spawns three teammates referencing the existing persona names. The persona body is **appended** to each teammate's system prompt as additional instructions (on top of the team-coordination instructions the lead installs); the trigger prompt above becomes their task.
+The lead makes one batched `agent` call (foreground: one aggregate table); each child runs readonly in its own context with its lens brief, and writes its report into the run artifact the lead collects.
 
 ### What happens
 
-1. Each teammate runs in its own context window, exploring the codebase from its own lens.
-2. Teammates use `message` to send findings to each other directly. The lead doesn't have to relay.
-3. The shared task list shows who's investigating what — visible at any time with `Ctrl+T` (in-process mode) or in a tmux pane (split mode).
-4. When `code-reviewer` finds a `Promise.all` that should be sequential, it messages `security-auditor` to confirm the auth call isn't part of the race. `security-auditor` checks and replies — either confirming the race is the real issue or producing counter-evidence.
-5. `test-engineer` proposes a focused integration test for whichever theory is winning, which the team uses to verify before declaring consensus.
-6. The lead synthesizes the converged finding and presents it to you.
+1. Each lens runs in its own context window, exploring the codebase from its own view.
+2. Reports land in the parent session, which is where challenge-between-lenses lives: the reconcile loop posts each report against the others and demands disproof-shaped responses.
+3. When the code-review lens finds a `Promise.all` that should be sequential, the reconcile loop puts that to the security lens — confirm the auth call isn't part of the race, or produce counter-evidence.
+4. The test-discipline lens proposes a focused integration test for whichever theory is winning; the loop uses it to verify before declaring consensus.
+5. The lead synthesizes the converged finding and presents it to you.
 
-You can interrupt at any teammate by cycling with `Shift+Down` and typing — useful for redirecting an investigator who's gone down a wrong path.
+You can steer any still-running lens by its agentId with `send_message` — useful for redirecting an investigator who's gone down a wrong path; a finished one resumes with its context when you message it.
 
 ### When to clean up
 
-When the investigation lands on a root cause, tell the lead:
-
-```
-Clean up the team
-```
-
-Always cleanup through the lead, not a teammate (per the docs: teammates lack full team context for cleanup).
+The batch settles on its own: one aggregate table (foreground) or one notice (background). Nothing to clean up beyond the worktrees an `isolation: "worktree"` task created, which settle as their runs end.
 
 ### Cost expectation
 
-Three Sonnet teammates running for ~10–15 minutes of investigation costs noticeably more than the same three personas spawned as subagents by `/ship`. The justification is *quality of conclusion* — for production debugging where the wrong fix is expensive, the extra tokens are a bargain. For a routine PR review, stick with `/ship`.
+Three readonly lenses running for ~10–15 minutes of investigation cost noticeably more than a single-lens pass. The justification is *quality of conclusion* — for production debugging where the wrong fix is expensive, the extra tokens are a bargain. For a routine PR review, stick with the two-axis `code-review` pass.
 
 ### Anti-pattern in this scenario
 
-Do **not** rebuild this as a `/debug` slash command that fans out subagents. Subagents can't message each other — you'd lose the adversarial debate that makes the pattern work. If a workflow keeps coming up, document the trigger prompt above as a snippet rather than wrapping it in a slash command that misuses subagents.
+Do **not** rebuild this as a `/debug` slash command that just fans out agents and copies their reports into the transcript verbatim. The value is the reconcile loop — subagent reports that never meet adversarial review are three unverified opinions. If the workflow keeps coming up, document the trigger prompt above as a snippet and keep the reconcile loop as the skill-blessed middle.
 
-### When *not* to use Agent Teams
+### When *not* to use the reconcile loop
 
-- Production-bound verdict on a known diff → use `/ship` (subagents).
+- Production-bound verdict on a known diff → use `review` (four lenses + one aggregated verdict).
 - One specialist perspective on one artifact → direct persona invocation.
-- Sequential lifecycle (spec → plan → build) → user-driven slash commands (Pattern 4).
-- Read-heavy research with a small digest → built-in `Explore` subagent.
+- Sequential lifecycle (spec → plan → build) → user-driven lifecycle commands (Pattern 4).
+- Read-heavy research with a small digest → a single readonly background `agent` run.
 
-Reach for Agent Teams only when teammates **need** to challenge each other to produce the right answer.
+Reach for the reconcile loop only when the lenses **need** to challenge each other to produce the right answer.
+
+Reach for the reconcile loop only when the lenses **need** to challenge each other to produce the right answer.
 
 ---
 

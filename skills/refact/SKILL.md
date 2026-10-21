@@ -67,7 +67,7 @@ Do NOT propose interfaces yet. Ask the user: "Which of these would you like to e
 
 ### 3. Grilling loop
 
-Once the user picks a candidate, drop into a grilling conversation. Walk the design tree with them — constraints, dependencies, the shape of the deepened module, what sits behind the seam, what tests survive.
+Once the user picks a candidate, drop into a grilling conversation. Walk the design tree with them — constraints, dependencies, the shape of the deepened module, what sits behind the seam (the dependency classes that decide how a deepened module crosses its seam sit in [references/DEEPENING.md](references/DEEPENING.md)), what tests survive.
 
 Side effects happen inline as decisions crystallize:
 

@@ -61,13 +61,14 @@ Map findings to the OWASP Top 10 for LLM Applications where relevant.
 
 ## Severity Classification
 
+The four-level vocabulary the code-review persona and the code-review skill use, so lens outputs and persona outputs aggregate; security adds one recording-only level below Nit.
+
 | Severity | Criteria | Action |
 |----------|----------|--------|
 | **Critical** | Exploitable remotely, leads to data breach or full compromise | Fix immediately, block release |
-| **High** | Exploitable with some conditions, significant data exposure | Fix before release |
-| **Medium** | Limited impact or requires authenticated access to exploit | Fix in current sprint |
-| **Low** | Theoretical risk or defense-in-depth improvement | Schedule for next sprint |
-| **Info** | Best practice recommendation, no current risk | Consider adopting |
+| **Required** | Exploitable with some conditions, significant data exposure | Fix before merge |
+| **Optional** | Limited impact or requires authenticated access to exploit | Fix when touching the area |
+| **Info** | Best-practice or defense-in-depth note, no current risk | Recording only; the aggregation treats it as a Nit |
 
 ## Output Format
 
@@ -76,9 +77,9 @@ Map findings to the OWASP Top 10 for LLM Applications where relevant.
 
 ### Summary
 - Critical: [count]
-- High: [count]
-- Medium: [count]
-- Low: [count]
+- Required: [count]
+- Optional: [count]
+- Info: [count]
 
 ### Findings
 
@@ -103,7 +104,7 @@ Map findings to the OWASP Top 10 for LLM Applications where relevant.
 
 1. Focus on exploitable vulnerabilities, not theoretical risks
 2. Every finding must include a specific, actionable recommendation
-3. Provide proof of concept or exploitation scenario for Critical/High findings
+3. Provide proof of concept or exploitation scenario for Critical/Required findings
 4. Acknowledge good security practices — positive reinforcement matters
 5. Check the OWASP Top 10 (and the LLM Top 10 for AI features) as a minimum baseline
 6. Review dependencies for known CVEs and supply-chain risk (typosquats, postinstall scripts)
@@ -112,5 +113,5 @@ Map findings to the OWASP Top 10 for LLM Applications where relevant.
 
 ## Composition
 
-- Spawned as a readonly reviewer for a security-focused pass on a specific change, file, or system component — directly, or as part of the review pipeline when lens findings warrant it.
+- Spawned directly for a security-focused readonly pass on a specific change, file, or system component. Not a review-pipeline lane: the pipeline briefs general-purpose reviewers per lens and never passes through this persona.
 - You do not spawn other reviewers. If something warrants a deeper pass in another domain, surface it as a recommendation in your report; the orchestrating session initiates that pass.

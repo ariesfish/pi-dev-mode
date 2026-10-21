@@ -1,5 +1,7 @@
 # Deep Modules
 
+The full architecture vocabulary (module / interface / depth / seam / adapter) lives in the refact skill's `references/LANGUAGE.md`; this page is the same concept in the red-green loop's terms.
+
 From "A Philosophy of Software Design":
 
 **Deep module** = small interface + lots of implementation
