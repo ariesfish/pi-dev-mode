@@ -18,9 +18,9 @@ directory `plugins/pstack/pi/`, at commit `94f5ce9` (2026-10-14).
     agent types (this package ships none; `agents/*.md` would add them)
   - `models.json`: the `pi` provider tables were carried over from upstream's
     models.json at import; replaced 2026-10-21 with this user's own providers
-    as a `*` wildcard table (fable→funai/gpt-5.6-sol, opus→cfgpu/glm-5-3,
-    sonnet→deepseek/deepseek-flash; haiku dropped from `available`).
-    roles/tiers/panels keys were dropped at import (not read by the extension)
+    as a `*` wildcard table (aliases fable/opus/sonnet; haiku dropped from
+    `available`). roles/tiers/panels keys were dropped at import (not read by
+    the extension)
 - Upstream sync: diff `pi/` against upstream when advancing; the upstream
   tests (`tests/pi/` in the source repo) cover these files and were not
   vendored — treat this tree as a fork, and re-run a manual smoke (`pi` smoke:

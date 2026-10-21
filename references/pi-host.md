@@ -17,7 +17,7 @@ Skills in this package descend from Claude Code lineages (mattp, addyosmani, pst
 
 ## Model family names
 
-Skills may name models by family alias (fable, opus, sonnet). Pass the alias as the `agent` tool's `model` (top level or per task); the package-root `models.json` maps each alias to one fixed provider/id through its `*` table (`fable`→funai/gpt-5.6-sol, `opus`→cfgpu/glm-5-3, `sonnet`→deepseek/deepseek-flash). To remap: add a `pi models: <alias>=<provider>/<id>` line to `~/.pi/agent/pi-dev-models.md`.
+Skills may name models by family alias (fable, opus, sonnet). Pass the alias as the `agent` tool's `model` (top level or per task); the package-root `models.json` maps each alias to one fixed provider/id through its `*` table, regardless of the session's provider. To remap: add a `pi models: <alias>=<provider>/<id>` line to `~/.pi/agent/pi-dev-models.md`.
 
 
 ## Provider compatibility (system prompt delivery)
