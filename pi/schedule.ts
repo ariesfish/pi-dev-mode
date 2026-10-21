@@ -31,6 +31,13 @@ export class Scheduler {
   // nothing tells that run's re-arm of the old loop from any other wakeup. It
   // is refused them all, or the loop the user just ended would come back.
   sealed = false;
+  // The session the live slot belongs to. A switch or fork fires session_start,
+  // and a slot from another session is stopped there — a loop is process state,
+  // not session state, and must not keep firing into whatever session the user
+  // switched to. (A wakeup scheduled by a run of the old session inside the
+  // switch window itself can still land one elsewhere: the same class of window
+  // /loop stop accepts.)
+  private owner?: string;
   // A run is in flight: set by agent_start, cleared by agent_settled. Not
   // ctx.isIdle(), which is also false during a manual compaction.
   running = false;
@@ -43,6 +50,7 @@ export class Scheduler {
 
   scheduleWakeup(seconds: number, prompt: string, ctx: ExtensionContext): void {
     this.cancelWakeup();
+    this.owner = ctx.sessionManager.getSessionId();
     const deliver = () => {
       // Pi rejects prompts during manual compaction. Keep the wakeup pending
       // until idle, including while a run or compaction is still finishing.
@@ -65,6 +73,7 @@ export class Scheduler {
   }
 
   startLoop(seconds: number, prompt: string, ctx: ExtensionContext): void {
+    this.owner = ctx.sessionManager.getSessionId();
     // A tick that lands mid-run is dropped, so a slow iteration cannot pile up a backlog.
     this.loop = setInterval(() => ctx.isIdle() && this.fire(prompt), seconds * 1000);
     this.loop.unref();
@@ -77,8 +86,18 @@ export class Scheduler {
     return had;
   }
 
-  startSelfPaced(): void {
+  startSelfPaced(ctx: ExtensionContext): void {
+    this.owner = ctx.sessionManager.getSessionId();
     this.selfPaced = true;
+  }
+
+  // session_start reconciliation: switch, fork, and resume all fire it. A live
+  // slot owned by another session stops instead of bleeding prompts into this
+  // one; the owner's own session keeps it. Returns whether a slot was stopped.
+  reconcileTo(sessionId: string): boolean {
+    const live = this.wakeup !== undefined || this.loop !== undefined || this.selfPaced;
+    if (!live || this.owner === sessionId) return false;
+    return this.stopAll(this.running);
   }
 
   // Ends the loop and the pending wakeup. midRun says a run is in flight,
@@ -174,6 +193,11 @@ export function registerSchedule(pi: ExtensionAPI, scheduler: Scheduler, oneShot
     scheduler.sealed = false;
   });
 
+  pi.on("session_start", (_event, ctx) => {
+    if (!scheduler.reconcileTo(ctx.sessionManager.getSessionId())) return;
+    ctx.ui.notify("Stopped a loop or wakeup started in another session. Start it again here with /loop if you still want it.", "info");
+  });
+
   pi.registerCommand("loop", {
     description: "Run a prompt on an interval (/loop 5m <prompt>), self-paced (/loop <prompt>), or stop (/loop stop)",
     async handler(args, ctx) {
@@ -218,7 +242,7 @@ export function registerSchedule(pi: ExtensionAPI, scheduler: Scheduler, oneShot
         }
         case "dynamic":
           scheduler.stopAll(scheduler.running);
-          scheduler.startSelfPaced();
+          scheduler.startSelfPaced(ctx);
           await fire(dynamicPrompt(cmd.prompt));
       }
     },

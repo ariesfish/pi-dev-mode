@@ -45,7 +45,7 @@ spec 是六节决策制合同(Objective/Implementation Decisions/Out of Scope/Ac
 ```
 pi-dev-mode/
   package.json          pi 声明 skills 与 extensions(vendored @pstack-claude 94f5ce9,见 NOTICE-pi-extension.md)
-  pi/index.ts +(15件)   自家扩展:agent(send_message/list_agents/stop_agent + tasks 批) / batch / ask(富 TUI) / intercom(ask_parent/answer_child) / artifacts(耐久工件) / schedule(/loop + schedule_wakeup) / settle-hold / sleep 反轮询——交互与编排设计参考 pi-ask-user / pi-subagents 同名上游,代码自家实现(零 vendor)
+  pi/index.ts +(15件)   自家扩展:agent(send_message/list_agents/stop_agent + tasks 批) / batch / ask(富 TUI) / intercom(ask_parent/answer_child) / artifacts(耐久工件) / schedule(/loop + schedule_wakeup,切会话对账:他 session 起的 loop/wakeup 即停并提示) / settle-hold / sleep 反轮询——交互与编排设计参考 pi-ask-user / pi-subagents 同名上游,代码自家实现(零 vendor)
   hooks/session-start-context.md   路由 mandate(pi-dev 进场条件)
   references/           pi-host.md 宿主映射(批/互通/富 ask/工场路径单一权威层)
   models.json           家族别名解析表(fable/opus/sonnet → 固定 provider/id;`*` 万用表,与父会话 provider 无关)
