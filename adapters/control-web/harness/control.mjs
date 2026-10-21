@@ -2,14 +2,17 @@
 // control.mjs — CDP 驱动核对 harness(冻结接口,变更须过 README 例外审批)
 //
 // 构造约束(adapters/control-web/README.md):
-//   1. 自起隔离实例:launch 永远新 chrome + 独立 --user-data-dir + auto 端口
+//   1. 自起隔离实例:launch 永远新 chrome + 独立 --user-data-dir + auto 端口;
+//      drive 只连 launch 输出的隔离端口,绝不附着用户浏览器
 //   2. ARIA/可访问名优先,坐标兜底(显式 coords 才用,report 标记)
-//   3. 本文件属冻结 helper;零 npm 依赖(Node ≥22 原生 WebSocket)
+//   3. 本文件属冻结 helper;launch/doctor/cleanup 零 npm 依赖(Node ≥22 原生
+//      WebSocket),drive 引擎为 playwright-core(connectOverCDP,例外审批
+//      2026-10-22),自动等待/滚动到位/iframe+shadow DOM/console 取证由引擎带来
 //
 // 用法见 README。子命令:launch | doctor | drive | cleanup
 
 import { spawn } from "node:child_process";
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync, readFileSync } from "node:fs";
 import { setTimeout as delay } from "node:timers/promises";
 import { join } from "node:path";
 
@@ -37,14 +40,13 @@ async function fetchJson(url, timeoutMs = 4000) {
 	}
 }
 
-// ---------- CDP 客户端(零依赖) ----------
+// ---------- CDP 客户端(零依赖;launch 体检与 cleanup 关停用) ----------
 
 class Cdp {
 	constructor(wsUrl) {
 		this.ws = new WebSocket(wsUrl);
 		this.nextId = 1;
 		this.pending = new Map();
-		this.events = [];
 		this.ws.addEventListener("message", (ev) => {
 			const msg = JSON.parse(String(ev.data));
 			if (msg.id && this.pending.has(msg.id)) {
@@ -52,8 +54,6 @@ class Cdp {
 				this.pending.delete(msg.id);
 				if (msg.error) reject(new Error(`${msg.error.message} ${msg.error.data ?? ""}`));
 				else resolve(msg.result);
-			} else if (msg.method) {
-				this.events.push(msg);
 			}
 		});
 	}
@@ -88,7 +88,7 @@ class Cdp {
 async function cmdLaunch(args) {
 	const runId = argValue(args, "--run-id") || `run-${Date.now()}`;
 	const headless = !args.includes("--no-headless");
-	// auto 端口:绑 0 让内核分,再从 /json/version 读回来
+	// auto 端口:绑 0 让内核分,再从 DevToolsActivePort 读回
 	const chromeArgs = [
 		...(headless ? ["--headless=new"] : []),
 		`--user-data-dir=/tmp/verify-${runId}`,
@@ -102,17 +102,15 @@ async function cmdLaunch(args) {
 	const child = spawn(CHROME, chromeArgs, { stdio: "ignore", detached: true });
 	child.unref();
 	const deadline = Date.now() + 15000;
-	let version = null;
 	while (Date.now() < deadline) {
 		await delay(300);
 		if (child.exitCode !== null) fail(`chrome exited early (code ${child.exitCode})`);
 		try {
 			// DevToolsActivePort 文件由 chrome 写入 user-data-dir,含真实端口
-			const { readFileSync } = await import("node:fs");
 			const portFile = `/tmp/verify-${runId}/DevToolsActivePort`;
 			if (existsSync(portFile)) {
 				const port = Number(readFileSync(portFile, "utf8").split("\n")[0]);
-				version = await fetchJson(`http://127.0.0.1:${port}/json/version`);
+				const version = await fetchJson(`http://127.0.0.1:${port}/json/version`);
 				if (version && version.Browser) {
 					log({
 						ok: true,
@@ -159,112 +157,47 @@ async function cmdDoctor(args) {
 	log({ ok, checks });
 }
 
-// ---------- 定位:ARIA/可访问名优先,坐标兜底 ----------
+// ---------- drive:playwright-core 引擎驱动 + 取证 ----------
 
-// Runtime.evaluate 内跑的查找器;命中返回 [{ nodeId 用 CDP DOM 域拿 box }]
-// 次序:aria-label / 可访问名(textContent 近似) / selector / 文本
-const FINDER = (criteria) => {
-	const norm = (s) => String(s || "").trim().toLowerCase();
-	const aria = criteria.aria;
-	if (aria != null) {
-		const want = norm(aria);
-		const byLabel = [
-			...document.querySelectorAll(`[aria-label="${CSS.escape(aria)}"]`),
-			...document.querySelectorAll(`[aria-labelledby]`),
-			...document.querySelectorAll("button,a,[role],input,textarea"),
-		];
-		for (const el of byLabel) {
-			const name =
-				el.getAttribute("aria-label") ||
-				document.getElementById(el.getAttribute("aria-labelledby") || "")?.textContent ||
-				el.textContent;
-			if (norm(name) === want || (name && norm(name).includes(want))) {
-				return { el, via: "aria" };
-			}
-		}
+// 连接本树 launch 出来的隔离实例;引擎在 drive 才需要,缺装时给出精确指引
+async function connect(port, timeoutMs) {
+	let pw;
+	try {
+		pw = await import("playwright-core");
+	} catch {
+		fail("drive needs playwright-core: cd adapters/control-web && npm install (see README 依赖面)");
 	}
-	if (criteria.selector != null) {
-		const el = document.querySelector(criteria.selector);
-		if (el) return { el, via: "selector" };
-	}
-	if (criteria.text != null) {
-		const want = norm(criteria.text);
-		for (const el of document.querySelectorAll("*")) {
-			if (el.children.length === 0 && norm(el.textContent).includes(want)) {
-				return { el, via: "text" };
-			}
-		}
-	}
+	const browser = await pw.chromium.connectOverCDP(`http://127.0.0.1:${port}`);
+	const ctx = browser.contexts()[0] ?? (await browser.newContext());
+	ctx.setDefaultTimeout(timeoutMs);
+	const page = ctx.pages()[0] ?? (await ctx.newPage());
+	return { browser, page };
+}
+
+// 定位:aria(getByLabel)→ selector → text;coords 不建 locator(走鼠标坐标)
+function locate(page, criteria) {
+	if (criteria.aria != null) return { loc: page.getByLabel(criteria.aria), via: "aria" };
+	if (criteria.selector != null) return { loc: page.locator(criteria.selector), via: "selector" };
+	if (criteria.text != null) return { loc: page.getByText(criteria.text), via: "text" };
 	return null;
-};
-
-async function findNode(cdp, criteria) {
-	if (criteria.coords) return { via: "coords", coords: criteria.coords };
-	// 命中元素打上临时属性,再用 DOM.performSearch 稳定取得 backendNodeId
-	// (简化路径:evaluate 里直接给元素挂 data-pdm-hit,然后 querySelector 它)
-	const expr = `(() => {
-		document.querySelectorAll("[data-pdm-hit]").forEach((n) => n.removeAttribute("data-pdm-hit"));
-		const hit = (${FINDER.toString()})(${JSON.stringify(criteria)});
-		if (!hit) return null;
-		hit.el.setAttribute("data-pdm-hit", "1");
-		return { via: hit.via, tag: hit.el.tagName, text: (hit.el.textContent||"").slice(0,60) };
-	})()`;
-	const res = await cdp.call("Runtime.evaluate", { expression: expr, returnByValue: true });
-	if (res.exceptionDetails) throw new Error("finder evaluate failed: " + res.exceptionDetails.text);
-	if (!res.result.value) return null;
-	// 通过持有真实节点的事件驱动:再 evaluate 一次拿到节点的 getBoundingClientRect
-	const boxExpr = `(() => {
-		const el = document.querySelector("[data-pdm-hit]");
-		if (!el) return null;
-		const r = el.getBoundingClientRect();
-		return { x: r.x + r.width / 2, y: r.y + r.height / 2, w: r.width, h: r.height };
-	})()`;
-	const boxRes = await cdp.call("Runtime.evaluate", { expression: boxExpr, returnByValue: true });
-	const box = boxRes.result.value;
-	if (!box) return null;
-	return { ...res.result.value, box, via: res.result.value.via };
 }
-
-// ---------- 真实输入事件驱动 ----------
-
-async function clickAt(cdp, x, y) {
-	await cdp.call("Input.dispatchMouseEvent", { type: "mousePressed", x, y, button: "left", clickCount: 1 });
-	await cdp.call("Input.dispatchMouseEvent", { type: "mouseReleased", x, y, button: "left", clickCount: 1 });
-}
-
-async function typeText(cdp, text) {
-	// insertText 走输入法路径,与真实键入等价的 Input 域文本注入
-	for (const line of String(text).split("\n")) {
-		await cdp.call("Input.insertText", { text: line });
-		if (line !== String(text).split("\n").at(-1)) await keyTap(cdp, "Enter");
-	}
-}
-
-async function keyTap(cdp, key) {
-	const def = { key, code: key === "Enter" ? "Enter" : key, windowsVirtualKeyCode: key === "Enter" ? 13 : 0 };
-	await cdp.call("Input.dispatchKeyEvent", { type: "keyDown", ...def });
-	await cdp.call("Input.dispatchKeyEvent", { type: "keyUp", ...def });
-}
-
-// ---------- drive:工况 + 取证 ----------
 
 async function cmdDrive(args) {
 	const port = Number(argValue(args, "--port"));
 	const stepsFile = argValue(args, "--steps");
 	const outDir = argValue(args, "--out") || "/tmp/verify-drive";
 	if (!port || !stepsFile) fail("drive requires --port and --steps");
-	const { readFileSync } = await import("node:fs");
 	const plan = JSON.parse(readFileSync(stepsFile, "utf8"));
 	mkdirSync(outDir, { recursive: true });
 
-	const cdp = await Cdp.connect(port);
+	const { browser, page } = await connect(port, plan.timeoutMs ?? 8000);
+	const pageErrors = [];
+	page.on("pageerror", (e) => pageErrors.push(String((e && e.message) || e)));
 	const report = { ok: true, url: plan.navigate ?? null, steps: [] };
 	try {
-		await cdp.call("Page.enable");
-		await cdp.call("Runtime.enable");
 		if (plan.navigate) {
-			await cdp.call("Page.navigate", { url: plan.navigate });
-			await delay(plan.settleMs ?? 1200);
+			await page.goto(plan.navigate);
+			if (plan.settleMs) await delay(plan.settleMs);
 		}
 		let shotSeq = 0;
 		for (const [i, step] of (plan.steps || []).entries()) {
@@ -272,42 +205,41 @@ async function cmdDrive(args) {
 			try {
 				if (step.shot) {
 					const name = `${String(++shotSeq).padStart(2, "0")}-${step.shot.replace(/[^\w.-]+/g, "_")}.png`;
-					const shot = await cdp.call("Page.captureScreenshot", { format: "png" });
-					writeFileSync(join(outDir, name), Buffer.from(shot.data, "base64"));
+					await page.screenshot({ path: join(outDir, name) });
 					entry.shot = join(outDir, name);
 					entry.ok = true;
 				} else if (step.expectVisible || step.click || step.type || step.read) {
-					const found = await findNode(cdp, step.find || {});
-					if (!found) {
-						entry.ok = false;
-						entry.error = "find: no match for criteria";
+					const criteria = step.find || {};
+					if (criteria.coords) {
+						// coords 是最后兜底,只支持点击(打标记);其他动词要明确判据,不静默 ok
+						if (step.click && !step.type && !step.read && !step.expectVisible) {
+							const [x, y] = criteria.coords;
+							await page.mouse.click(x, y);
+							entry.via = "coords";
+							entry.note = "coordinate-fallback";
+							entry.ok = true;
+						} else {
+							entry.error = "coords supports click only; type/read/expectVisible need aria|selector|text";
+						}
 					} else {
-						entry.via = found.via;
-						entry.text = found.text;
-						entry.ok = true;
-						if (step.click) {
-							if (found.via === "coords") {
-								await clickAt(cdp, found.coords[0], found.coords[1]);
-								entry.note = "coordinate-fallback";
-							} else {
-								await clickAt(cdp, found.box.x, found.box.y);
+						const hit = locate(page, criteria);
+						if (!hit) {
+							entry.error = "find: no criteria (aria|selector|text|coords)";
+						} else {
+							if (step.expectVisible || step.click || step.type) {
+								await hit.loc.waitFor({ state: "visible" });
 							}
-							await delay(400);
-						}
-						if (step.type) {
-							if (found.via !== "coords") await clickAt(cdp, found.box.x, found.box.y);
-							await typeText(cdp, step.type);
-							await delay(300);
-						}
-						if (step.read) {
-							const readExpr = `document.querySelector("[data-pdm-hit]")?.textContent ?? null`;
-							const r = await cdp.call("Runtime.evaluate", { expression: readExpr, returnByValue: true });
-							entry.read = r.result.value;
+							entry.via = hit.via;
+							entry.text = String((await hit.loc.textContent()) ?? "").slice(0, 60);
+							entry.ok = true;
+							if (step.click) await hit.loc.click();
+							if (step.type) await hit.loc.fill(String(step.type));
+							if (step.read) entry.read = await hit.loc.textContent();
 						}
 					}
 				} else if (step.navigate) {
-					await cdp.call("Page.navigate", { url: step.navigate });
-					await delay(step.settleMs ?? 1200);
+					await page.goto(step.navigate);
+					if (step.settleMs) await delay(step.settleMs);
 					entry.ok = true;
 				}
 			} catch (err) {
@@ -318,10 +250,15 @@ async function cmdDrive(args) {
 			if (!entry.ok && step.required !== false) report.ok = false;
 		}
 	} finally {
-		cdp.close();
+		try {
+			await browser.close(); // connectOverCDP:只断连,chrome 由 cleanup 关停
+		} catch {
+			/* 断连失败不掩报告 */
+		}
 	}
-	writeFileSync(join(outDir, "report.json"), JSON.stringify(report, null, 2));
-	log(report);
+	const out = pageErrors.length ? { ...report, pageErrors } : report;
+	writeFileSync(join(outDir, "report.json"), JSON.stringify(out, null, 2));
+	log(out);
 }
 
 // ---------- cleanup:只杀自己起的,证据永不删 ----------

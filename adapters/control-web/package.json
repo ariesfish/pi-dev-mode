@@ -1,0 +1,9 @@
+{
+  "name": "pi-dev-adapters-control-web",
+  "private": true,
+  "type": "module",
+  "description": "pi-dev-mode verification-domain browser harness (drive engine: playwright-core over CDP to the isolated instance this tree launches)",
+  "dependencies": {
+    "playwright-core": "^1.64.1"
+  }
+}
