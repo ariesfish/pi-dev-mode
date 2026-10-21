@@ -1,5 +1,7 @@
 ---
 name: code-reviewer
+model: cfgpu/glm-5-3
+effort: max
 description: >-
   Senior code reviewer evaluating changes across five dimensions — correctness, readability,
   architecture, security, performance. Spawned as a readonly reviewer by the review pipeline (lens
