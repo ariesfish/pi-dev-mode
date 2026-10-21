@@ -2,6 +2,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { type Static, Type } from "typebox";
 
 import { listing, resultText } from "./agent-text.ts";
+import { aggregateResultText, batchNotice, MAX_TASKS, runBatch, taskSchema, toSpecs, type BatchDrive, type BatchSpec } from "./batch.ts";
 import type { AgentRunner } from "./agents.ts";
 import { isForegroundWait } from "./sleep-wait.ts";
 
@@ -24,10 +25,19 @@ const agentParams = Type.Object(
     run_in_background: Type.Optional(Type.Boolean({ description: "Return at once; a completion notice arrives when the agent exits." })),
     isolation: Type.Optional(Type.Unsafe<"worktree">({ type: "string", enum: ["worktree"], description: "Run the agent in its own git worktree." })),
     readonly: Type.Optional(Type.Boolean({ description: "Run the agent without the edit and write tools." })),
+    tasks: Type.Optional(
+      Type.Array(taskSchema, {
+        minItems: 2,
+        maxItems: MAX_TASKS,
+        description:
+          "Batch mode: submit several single-agent tasks in one call. Per-task fields win over the top-level ones; top-level description/prompt are ignored. Foreground returns an aggregate table; background settles silently and one aggregate notice wakes the session when every task ends (per-child notices suppressed; steer children by agentId via send_message).",
+      }),
+    ),
   },
   { additionalProperties: false },
 );
 export type AgentParams = Static<typeof agentParams>;
+type BatchParams = AgentParams & { tasks: NonNullable<AgentParams["tasks"]> };
 
 const sendParams = Type.Object(
   {
@@ -46,6 +56,75 @@ const BACKGROUND_NOTE =
 const SLEEP_BLOCKED =
   "Blocked: a background agent is still running, and its completion notice arrives on its own. Do not sleep or poll for it. Continue other work, or end your turn. The notice starts your next one.";
 
+const BATCH_NOTE =
+  "The batch is running in the background. One aggregate notice arrives when every task has ended; per-child notices are suppressed. Do not sleep or poll for it — continue other work or end your turn. Steer any child by its agentId via send_message.";
+
+// Batch mode: one tool call, N single-agent children. Children launch with
+// background=false so the runner stays silent per child; the batch owns the
+// aggregate notice (background) or the aggregate table (foreground). A
+// foreground batch abort stops the children it started; a background batch
+// survives the turn ending.
+async function executeBatch(runner: AgentRunner, params: BatchParams, signal: AbortSignal | undefined, ctx: Parameters<AgentRunner["start"]>[1]) {
+  const specs: BatchSpec[] = toSpecs(params.tasks!); // duplicate keys throw before anything starts
+  const texts = new Map<string, string>();
+  const startedIds: string[] = [];
+  const onAbort = () => {
+    for (const id of startedIds) void runner.stop(id).catch(() => {}); // stop on an ended agent is a no-op record
+  };
+  const drive: BatchDrive = {
+    start: (spec) => {
+      const { agent } = runner.start(singleParams(spec), ctx);
+      startedIds.push(agent.id);
+      return agent.id;
+    },
+    wait: async (id) => {
+      const record = await runner.wait(id);
+      texts.set(id, resultText(record));
+      return record;
+    },
+  };
+  if (params.run_in_background) {
+    const started: string[] = [];
+    try {
+      for (const spec of specs) started.push(drive.start(spec));
+    } catch (e) {
+      await Promise.allSettled(started.map((id) => runner.stop(id)));
+      throw e;
+    }
+    void runBatch(specs, drive, started)
+      .then(({ rows }) => runner.notify(batchNotice(rows)))
+      .catch((e: Error) =>
+        runner.notify({ customType: "pi-dev-agent-batch", content: `pi-dev agent batch notice failed: ${e.message}`, display: true, details: { batch: true, error: true } }),
+      );
+    return {
+      content: [{ type: "text", text: `${JSON.stringify(specs.map((s, i) => ({ key: s.key, agentId: started[i] })), null, 2)}\n\n${BATCH_NOTE}` }],
+      details: { batch: true, agentIds: started },
+    };
+  }
+  signal?.addEventListener("abort", onAbort, { once: true });
+  try {
+    const { rows, allCompleted } = await runBatch(specs, drive);
+    return {
+      content: [{ type: "text", text: aggregateResultText(rows, (id) => texts.get(id) ?? "") }],
+      details: { batch: true, rows: rows.map((r) => ({ key: r.key, agentId: r.agentId, status: r.status, attempts: r.attempts })) },
+      isError: !allCompleted,
+    };
+  } finally {
+    signal?.removeEventListener("abort", onAbort);
+  }
+}
+
+function singleParams(spec: BatchSpec): AgentParams {
+  return {
+    description: spec.description,
+    prompt: spec.prompt,
+    ...(spec.subagent_type ? { subagent_type: spec.subagent_type } : {}),
+    ...(spec.model ? { model: spec.model } : {}),
+    ...(spec.isolation ? { isolation: spec.isolation } : {}),
+    ...(spec.readonly ? { readonly: true } : {}),
+  };
+}
+
 // model-only exposure keeps every tool declared to the model even under
 // codemode.mode "only", which would otherwise reach them only through scripts.
 export function registerAgentTools(pi: ExtensionAPI, runner: AgentRunner): void {
@@ -61,10 +140,13 @@ export function registerAgentTools(pi: ExtensionAPI, runner: AgentRunner): void 
     label: "Agent",
     exposure: "model-only",
     description:
-      "Launch a subagent: a separate pi process with its own context. Foreground (default) waits and returns its final text; run_in_background returns an agentId at once and a completion notice arrives when it exits. Use send_message to steer a running agent or continue a finished one, stop_agent to stop one, list_agents to see them.",
+      "Launch a subagent: a separate pi process with its own context. Foreground (default) waits and returns its final text; run_in_background returns an agentId at once and a completion notice arrives when it exits. tasks submits a parallel batch of single-agent runs (per-task model/worktree/readonly/retry) with one aggregate result or notice. Use send_message to steer a running agent or continue a finished one, stop_agent to stop one, list_agents to see them.",
     promptSnippet: "Launch a subagent (foreground or background, optional worktree isolation)",
     parameters: agentParams,
     async execute(_id, params, signal, _onUpdate, ctx) {
+      if (params.tasks && params.tasks.length >= 2) {
+        return await executeBatch(runner, params as BatchParams, signal, ctx);
+      }
       const started = runner.start(params, ctx);
       if (params.run_in_background) {
         return {

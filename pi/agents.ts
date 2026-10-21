@@ -120,6 +120,11 @@ function settle(worktree: Worktree): { kept: boolean; note: string } {
 
 function childArgs(identity: AgentIdentity, depth: number): string[] {
   const args = ["--mode", "rpc", "--session-id", identity.sessionId, "--session-dir", identity.sessionDir];
+  // inherit the parent's no-extensions isolation: a parent started with
+  // --no-extensions -e … (dev smoke, staged deploys) must not let children
+  // auto-discover packages and double-register the same tools
+  const parentArgs = process.argv.slice(2);
+  if (parentArgs.some((a) => a === "--no-extensions" || a === "-ne")) args.push("--no-extensions");
   if (identity.model) args.push("--model", identity.model);
   if (identity.thinking) args.push("--thinking", identity.thinking);
   if (identity.systemPromptFile) args.push("--append-system-prompt", identity.systemPromptFile);
@@ -257,6 +262,13 @@ export class AgentRunner {
     writeFileSync(file, body, { mode: 0o600 });
   }
 
+  // Delivers a custom message into this session: background completions and
+  // batch notices go through here. triggerTurn starts the next run; a stop
+  // notice joins without one.
+  notify(text: Parameters<ExtensionAPI["sendMessage"]>[0], triggerTurn = true): void {
+    this.pi.sendMessage(text, triggerTurn ? { triggerTurn: true, deliverAs: "steer" } : { triggerTurn: false });
+  }
+
   private finish(identity: AgentIdentity, run: Run, exit: ChildExit): EndedRecord {
     const { status, finalText } = outcomeOf(exit, run.ending !== undefined);
     const worktree = identity.worktree && settle(identity.worktree);
@@ -274,7 +286,7 @@ export class AgentRunner {
     // The model that called stop_agent already has the result, so a stop's
     // notice joins the context without starting another turn.
     if (run.background && run.ending !== "teardown") {
-      this.pi.sendMessage(noticeOf(record), status !== "stopped" ? { triggerTurn: true, deliverAs: "steer" } : { triggerTurn: false });
+      this.notify(noticeOf(record), status !== "stopped");
     }
     return record;
   }
