@@ -18,7 +18,7 @@ export function planWorktree(cwd: string, agentId: string): Worktree {
   const repo = git(cwd, ["rev-parse", "--show-toplevel"]);
   return {
     repo,
-    path: join(repo, ".claude", "worktrees", `agent-${agentId}`),
+    path: join(repo, ".dev", "worktrees", `agent-${agentId}`),
     branch: `worktree-agent-${agentId}`,
     base: git(repo, ["rev-parse", "HEAD"]),
   };
