@@ -14,8 +14,8 @@ Every serious project needs a scripted way to drive the real app and prove
 behavior: launch it, exercise a feature the way a user would, capture evidence.
 This skill generates that as a project-local skill, tailored to the repo.
 Map platform vocabulary differences through `references/pi-host.md`; dispatch
-subagents with the lowercase `agent` tool (foreground to await results, or
-`run_in_background` for a completion notice). You write the generator's output
+subagents with the `agent` tool (foreground/background semantics single-sourced
+in references/pi-host.md). You write the generator's output
 for the next agent, not for a human: it will be read cold, mid-task, by an agent
 that has never seen the app.
 

@@ -67,7 +67,7 @@ your conclusions. Decompose anything a reviewer cannot hold in one read.
 
 ### 3. DOUBT — the reviewer
 
-Launch a readonly background agent with the `agent` tool (lowercase, pi-dev's own — not another package's `Agent`). The prompt **must be adversarial**:
+Launch a readonly background agent with the `agent` tool. The prompt **must be adversarial**:
 
 ```
 Adversarial review. Find what is wrong with this artifact.

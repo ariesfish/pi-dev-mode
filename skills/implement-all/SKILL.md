@@ -133,8 +133,8 @@ Orchestration discipline first: the session running this skill is the orchestrat
      pre-agreed seams);
    - merges the integration branch tip into its own branch before reporting
      done.
-   Launch implementers as background agents with the `agent` tool (lowercase,
-   pi-dev's own), at most one per frontier ticket,
+   Launch implementers as background agents with the `agent` tool, at most one
+   per frontier ticket,
    subagent prompts sparse and self-contained (task file, AC labels, pointers
    — not pasted spec text).
 5. As each implementer completes, a **merger subagent** merges its work into

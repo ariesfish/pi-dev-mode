@@ -67,7 +67,7 @@ Each smell reads *what it is* → *how to fix*; match it against the diff:
 - **Middle Man**: a class or function that mostly just delegates onward. → cut it, call the real target direct.
 - **Refused Bequest**: a subclass or implementer that ignores or overrides most of what it inherits. → drop the inheritance, use composition.
 
-### 4. Spawn both axes in parallel (one `agent` call, `tasks` with two readonly sub-agents — pi-dev's own, not another package's `Agent`)
+### 4. Spawn both axes in parallel (one `agent` call, `tasks` with two readonly sub-agents)
 
 Issue both axes as two readonly tasks of one foreground `agent` batch call and aggregate the reports it returns.
 

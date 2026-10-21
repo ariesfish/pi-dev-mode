@@ -9,7 +9,7 @@ description: >-
 
 # Research
 
-Spin up a **background agent** with the `agent` tool (lowercase, pi-dev's own — `run_in_background: true`) to do the research, so you keep working while it reads.
+Spin up a **background agent** with the `agent` tool — `run_in_background: true` — so you keep working while it reads.
 
 Its job:
 

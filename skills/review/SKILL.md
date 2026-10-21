@@ -25,7 +25,7 @@ spawning anything.
 
 ## The four lenses (parallel readonly reviewers)
 
-Spawn all four with this package's `agent` tool — one call carrying four readonly `tasks` (one per lens, keyed standards/spec/doubt/constraints), pi-dev's own and **not** another package's `Agent` (its reports land outside this session and are lost) — with the diff
+Spawn all four with this package's `agent` tool — one call carrying four readonly `tasks` (one per lens, keyed standards/spec/doubt/constraints) — with the diff
 command + commit list, skill pointers instead of pasted payloads where a
 pointer reaches:
 
