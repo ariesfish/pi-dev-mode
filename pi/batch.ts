@@ -28,6 +28,7 @@ export const taskSchema = Type.Object(
     model: Type.Optional(Type.String({ description: "Model for this task (family name or provider/id)" })),
     isolation: Type.Optional(Type.Unsafe<"worktree">({ type: "string", enum: ["worktree"], description: "Run this task in its own git worktree" })),
     readonly: Type.Optional(Type.Boolean({ description: "Run this task without the edit and write tools" })),
+    output: Type.Optional(Type.String({ description: "Bind this task's durable artifact to this path (relative to the session cwd)" })),
     retry: Type.Optional(Type.Number({ description: `Re-run this task on failure; 0-${MAX_RETRY}, default 0` })),
   },
   { additionalProperties: false },
@@ -42,6 +43,7 @@ export interface BatchSpec {
   model?: string;
   isolation?: "worktree";
   readonly?: boolean;
+  output?: string;
   retry: number;
 }
 
@@ -88,6 +90,7 @@ export function toSpecs(tasks: BatchTask[]): BatchSpec[] {
       model: t.model,
       isolation: t.isolation,
       readonly: t.readonly,
+      output: t.output,
       retry: clampRetry(t.retry),
     };
   });

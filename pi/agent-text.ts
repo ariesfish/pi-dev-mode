@@ -17,6 +17,7 @@ export function truncateUtf8(text: string, cap: number): string {
 
 function header({ agent, ...record }: EndedRecord): string {
   const lines = [`agentId: ${agent.id}`, `description: ${agent.description}`, `status: ${record.status}`, `exit code: ${record.exitCode}`];
+  if (record.artifactFile) lines.push(`artifact: ${record.artifactFile}`);
   if (agent.worktree) {
     const state = record.worktreeKept === false ? "no changes; removed" : `branch ${agent.worktree.branch}`;
     lines.push(`worktree: ${agent.worktree.path} (${state})`);

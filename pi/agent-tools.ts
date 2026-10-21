@@ -25,6 +25,7 @@ const agentParams = Type.Object(
     run_in_background: Type.Optional(Type.Boolean({ description: "Return at once; a completion notice arrives when the agent exits." })),
     isolation: Type.Optional(Type.Unsafe<"worktree">({ type: "string", enum: ["worktree"], description: "Run the agent in its own git worktree." })),
     readonly: Type.Optional(Type.Boolean({ description: "Run the agent without the edit and write tools." })),
+    output: Type.Optional(Type.String({ description: "Bind this run's durable artifact to this path (relative to the session cwd); replaces the default artifacts/<id>.md location." })),
     tasks: Type.Optional(
       Type.Array(taskSchema, {
         minItems: 2,
@@ -122,6 +123,7 @@ function singleParams(spec: BatchSpec): AgentParams {
     ...(spec.model ? { model: spec.model } : {}),
     ...(spec.isolation ? { isolation: spec.isolation } : {}),
     ...(spec.readonly ? { readonly: true } : {}),
+    ...(spec.output ? { output: spec.output } : {}),
   };
 }
 

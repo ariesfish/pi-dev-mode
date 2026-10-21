@@ -6,10 +6,11 @@ import type { ExtensionAPI, ExtensionContext, SessionEntry } from "@earendil-wor
 import { type Static, Type } from "typebox";
 import { Value } from "typebox/value";
 
+import { ensureArtifact, planArtifact, synthesizeFromArtifact } from "./artifacts.ts";
 import { noticeOf, OUTPUT_CAP_BYTES, truncateUtf8 } from "./agent-text.ts";
 import type { AgentParams } from "./agent-tools.ts";
-import { alive, type ChildExit, PiChild, terminateGroup } from "./child.ts";
-import { DEPTH_FLAG, GENERAL_PURPOSE, loadAgentTypes, STATE_DIR, readSheet, resolveModel, type Settings } from "./config.ts";
+import { alive, type ChildExit, PiChild } from "./child.ts";
+import { ARTIFACT_FLAG, DEPTH_FLAG, GENERAL_PURPOSE, IDENTITY_FLAG, loadAgentTypes, STATE_DIR, readSheet, resolveModel, type Settings } from "./config.ts";
 import { ensureWorktree, planWorktree, settleWorktree, type Worktree, worktreeSchema } from "./worktree.ts";
 
 const ENTRY_TYPE = "pi-dev-agents";
@@ -36,12 +37,18 @@ const identitySchema = Type.Object({
   systemPromptFile: Type.Optional(Type.String()),
   cwd: Type.String(),
   worktree: Type.Optional(worktreeSchema),
+  // Where this run's durable artifact lands; the child writes it at its own
+  // shutdown, the parent only falls back when the child died first.
+  artifactFile: Type.Optional(Type.String()),
   startedAt: Type.String(),
 });
 const runningSchema = Type.Object({
   agent: identitySchema,
   status: Type.Literal("running"),
   pid: Type.Optional(Type.Number()),
+  // Restores re-notify only background runs: the flag rides the running
+  // record too, because the parent may die before the run ever finishes.
+  background: Type.Optional(Type.Boolean()),
   // When that pid started, as the system reports it. A pid can be reused; a
   // pid with its start time names one process. Absent when it could not be
   // read, and on a record an earlier version wrote.
@@ -57,6 +64,14 @@ const endedSchema = Type.Object({
   endedAt: Type.String(),
   finalText: Type.String(),
   outputFile: Type.Optional(Type.String()),
+  artifactFile: Type.Optional(Type.String()),
+  // The background notice has been delivered into a live session.
+  artifactDelivered: Type.Optional(Type.Boolean()),
+  // Restores synthesized this end from an on-disk artifact the child wrote
+  // after its parent went away.
+  restoredFromArtifact: Type.Optional(Type.Boolean()),
+  // How the run was launched: only background runs re-notify on restore.
+  background: Type.Optional(Type.Boolean()),
   worktreeKept: Type.Optional(Type.Boolean()),
 });
 // Persisted as a session entry, last write per agent id wins.
@@ -118,7 +133,7 @@ function settle(worktree: Worktree): { kept: boolean; note: string } {
   }
 }
 
-function childArgs(identity: AgentIdentity, depth: number): string[] {
+function childArgs(identity: AgentIdentity, depth: number, identityFile?: string): string[] {
   const args = ["--mode", "rpc", "--session-id", identity.sessionId, "--session-dir", identity.sessionDir];
   // inherit the parent's no-extensions isolation: a parent started with
   // --no-extensions -e … (dev smoke, staged deploys) must not let children
@@ -128,6 +143,10 @@ function childArgs(identity: AgentIdentity, depth: number): string[] {
   if (identity.model) args.push("--model", identity.model);
   if (identity.thinking) args.push("--thinking", identity.thinking);
   if (identity.systemPromptFile) args.push("--append-system-prompt", identity.systemPromptFile);
+  if (identity.artifactFile && identityFile) {
+    args.push(`--${ARTIFACT_FLAG}`, identity.artifactFile);
+    args.push(`--${IDENTITY_FLAG}`, identityFile);
+  }
   args.push(`--${DEPTH_FLAG}`, String(depth + 1));
   const excluded = [...(identity.readonly ? ["edit", "write"] : []), ...(depth + 1 >= MAX_SPAWN_DEPTH ? ["agent"] : [])];
   if (excluded.length) args.push("--exclude-tools", excluded.join(","));
@@ -174,10 +193,12 @@ function fateOf(record: RunningRecord): Fate {
   return info && info.start === pidStart ? "orphan" : "unknown";
 }
 
-// Stops an orphan, by its group so the bash command it has running goes too.
-// No other fate is signalled: a pid that may have been reused is not ours to hit.
-function reapOrphan(record: RunningRecord, killGraceMs: number): Promise<void> {
-  return record.pid === undefined ? Promise.resolve() : terminateGroup(record.pid, () => fateOf(record) === "orphan", killGraceMs);
+// An orphan keeps running by design (T-025): detached in its own process
+// group, it finishes, self-writes its artifact, and the next session that
+// restores its records discovers the artifact and delivers the notice. Only
+// a live parent with a session behind it may stop anything.
+function reapOrphan(_record: RunningRecord, _killGraceMs: number): Promise<void> {
+  return Promise.resolve();
 }
 
 const now = () => new Date().toISOString();
@@ -220,6 +241,7 @@ export class AgentRunner {
       systemPromptFile,
       cwd: worktree?.path ?? ctx.cwd,
       worktree,
+      artifactFile: planArtifact(sessionDir, id, params.output),
       startedAt: now(),
     };
     return this.launch(identity, params.prompt, params.run_in_background === true);
@@ -238,14 +260,15 @@ export class AgentRunner {
       throw e;
     }
     const { command, args } = this.settings.pi;
+    const identityFile = identity.artifactFile ? this.ensureIdentityFile(identity) : undefined;
     const child = new PiChild(
       command,
-      [...args, "--extension", join(this.settings.pluginRoot, "pi", "index.ts"), "--skill", join(this.settings.pluginRoot, "skills"), ...childArgs(identity, this.settings.depth)],
+      [...args, "--extension", join(this.settings.pluginRoot, "pi", "index.ts"), "--skill", join(this.settings.pluginRoot, "skills"), ...childArgs(identity, this.settings.depth, identityFile)],
       { cwd: identity.cwd, exitGraceMs: this.settings.exitGraceMs },
       prompt,
     );
     const pidStart = child.pid === undefined ? undefined : inspect(child.pid)?.start;
-    const record: RunningRecord = { agent: identity, status: "running", pid: child.pid, pidStart, parentPid: process.pid };
+    const record: RunningRecord = { agent: identity, status: "running", pid: child.pid, pidStart, parentPid: process.pid, background: background || undefined };
     const run: Run = { child, background, done: child.exited.then((exit) => this.finish(identity, run, exit)) };
     this.agents.set(identity.id, { kind: "local", record, run });
     this.persist(record);
@@ -262,6 +285,24 @@ export class AgentRunner {
     writeFileSync(file, body, { mode: 0o600 });
   }
 
+  private ensureIdentityFile(identity: AgentIdentity): string {
+    const file = join(dirname(identity.sessionDir), "identities", `${identity.id}.json`);
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(
+      file,
+      JSON.stringify({
+        id: identity.id,
+        description: identity.description,
+        subagentType: identity.subagentType,
+        model: identity.model,
+        startedAt: identity.startedAt,
+        cwd: identity.cwd,
+      }),
+      { mode: 0o600 },
+    );
+    return file;
+  }
+
   // Delivers a custom message into this session: background completions and
   // batch notices go through here. triggerTurn starts the next run; a stop
   // notice joins without one.
@@ -272,6 +313,7 @@ export class AgentRunner {
   private finish(identity: AgentIdentity, run: Run, exit: ChildExit): EndedRecord {
     const { status, finalText } = outcomeOf(exit, run.ending !== undefined);
     const worktree = identity.worktree && settle(identity.worktree);
+    // Run.background rides the record: restores re-notify only background runs.
     const record: EndedRecord = {
       agent: identity,
       status,
@@ -279,14 +321,18 @@ export class AgentRunner {
       exitCode: exit.exitCode,
       endedAt: now(),
       worktreeKept: worktree?.kept,
+      artifactFile: identity.artifactFile,
+      background: run.background || undefined,
       ...saveOutput(identity, finalText + (worktree?.note ?? "")),
     };
+    ensureArtifact(record);
     this.agents.set(identity.id, { kind: "ended", record });
     this.persist(record);
     // The model that called stop_agent already has the result, so a stop's
     // notice joins the context without starting another turn.
     if (run.background && run.ending !== "teardown") {
       this.notify(noticeOf(record), status !== "stopped");
+      this.persist({ ...record, artifactDelivered: true });
     }
     return record;
   }
@@ -415,6 +461,7 @@ export class AgentRunner {
       exitCode: null,
       endedAt: now(),
       finalText: "(interrupted: the session that started it ended)",
+      background: record.background,
     };
     const ended: AgentState = { kind: "ended", record: stopped };
     this.agents.set(record.agent.id, ended);
@@ -432,5 +479,30 @@ export class AgentRunner {
       this.agents.set(id, entry.data.status === "running" ? { kind: "remote", record: entry.data } : { kind: "ended", record: entry.data });
     }
     for (const state of this.agents.values()) this.refreshRestored(state);
+    // Discovery (T-025): every restored record that a live session never
+    // delivered gets its notice now — a running record whose artifact exists
+    // means the child finished after its parent went away; an ended record
+    // the interrupts marked "stopped" gets upgraded by its artifact's honest
+    // status and text before its one delivery.
+    for (const [id, state] of [...this.agents.entries()]) {
+      if (state.kind === "local") continue;
+      if (state.kind === "remote" || state.kind === "unverified" || state.kind === "interrupted") {
+        const synthesized = synthesizeFromArtifact(state.record);
+        if (!synthesized) continue;
+        this.agents.set(id, { kind: "ended", record: synthesized });
+        this.persist(synthesized);
+        this.notify(noticeOf(synthesized), synthesized.status !== "stopped");
+        this.persist({ ...synthesized, artifactDelivered: true });
+        continue;
+      }
+      const record = state.record;
+      if (record.background && !record.artifactDelivered && !record.restoredFromArtifact) {
+        const upgraded = synthesizeFromArtifact(record as RunningRecord) ?? record;
+        this.notify(noticeOf(upgraded), upgraded.status !== "stopped");
+        const delivered = { ...upgraded, artifactDelivered: true };
+        this.agents.set(id, { kind: "ended", record: delivered });
+        this.persist(delivered);
+      }
+    }
   }
 }

@@ -9,6 +9,12 @@ const PARENT_MODEL_ALIASES = ["inherit-parent", "auto"];
 
 // A parent passes it to each agent it starts, so the agent knows its depth.
 export const DEPTH_FLAG = "pi-dev-depth";
+// Where the child's durable artifact lands; the child writes it at its own
+// shutdown (T-025), so the run's output survives a parent that exits first.
+export const ARTIFACT_FLAG = "pi-dev-artifact";
+// Sidecar with the identity fields the child's self-written artifact quotes;
+// the parent writes it before spawning, the child reads it at shutdown.
+export const IDENTITY_FLAG = "pi-dev-identity";
 // Under agentDir, holds each session's agent sessions and prompts.
 export const STATE_DIR = "pi-dev";
 
