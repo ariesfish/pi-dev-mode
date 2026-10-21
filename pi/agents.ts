@@ -243,6 +243,9 @@ export class AgentRunner {
   // One live settle resolver per durable agent: reports, stops, and
   // teardown all release the waiting side through here.
   private readonly durableSettles = new Map<string, (record: EndedRecord) => void>();
+  // The newest registry any context handed this runner; bridge opens after a
+  // restore use it when spawn did not open one first.
+  private latestRegistry: unknown;
 
   constructor(
     private readonly pi: ExtensionAPI,
@@ -260,9 +263,10 @@ export class AgentRunner {
     const background = params.run_in_background === true || hint?.background === true;
     // Spec D2: background runs behind the durable bridge when it can open —
     // depth 0 only; children of children stay rpc.
+    this.latestRegistry = ctx.modelRegistry ?? this.latestRegistry;
     if (background && this.settings.depth === 0 && !this.closed) {
       const state = join(this.settings.agentDir, STATE_DIR, ctx.sessionManager.getSessionId());
-      const begun = this.beginDurable(state, { params, def, model, background });
+      const begun = this.beginDurable(state, { params, def, model, background }, ctx.modelRegistry);
       if (begun) return begun;
     }
 
@@ -297,6 +301,7 @@ export class AgentRunner {
   private beginDurable(
     state: string,
     spec: { params: AgentParams; def: { model?: string; body?: string; effort?: string }; model: string; background: boolean },
+    registry: unknown,
   ): RunningRecord | undefined {
     if (this.bridgeOff) return undefined;
     const { params, def, model, background } = spec;
@@ -336,7 +341,7 @@ export class AgentRunner {
     let settleResolve!: (record: EndedRecord) => void;
     const settle = new Promise<EndedRecord>((resolve) => (settleResolve = resolve));
     const spawn = (async () => {
-      const bridge = await this.ensureBridge(state);
+      const bridge = await this.ensureBridge(state, registry);
       if (bridge === undefined) {
         // Honest fallback (spec D2): launch() replaces this entry with a
         // local rpc run under the same id, so the settle promise resolves
@@ -437,9 +442,15 @@ export class AgentRunner {
 
   // One bridge per session over the parent session's state directory; a
   // failed open never retries, so a broken dependency costs one attempt.
-  private ensureBridge(stateDir: string): Promise<DurableBridge | undefined> {
+  // The registry rides the caller's ExtensionContext (the ExtensionAPI
+  // itself exposes none; T-030 live probe).
+  private ensureBridge(stateDir: string, registry: unknown): Promise<DurableBridge | undefined> {
     if (this.bridgeOff) return Promise.resolve(undefined);
-    this.bridge ??= DurableBridge.open(stateDir, new RegistryModels(this.pi.modelRegistry), intercomDir(stateDir)).then(
+    if (!(registry instanceof Object)) {
+      this.bridgeOff = true;
+      return Promise.resolve(undefined);
+    }
+    this.bridge ??= DurableBridge.open(stateDir, new RegistryModels(registry as never), intercomDir(stateDir)).then(
       (bridge) => {
         if (bridge === undefined) this.bridgeOff = true;
         else bridge.onReport((report) => this.onDurableReport(report));
@@ -578,7 +589,7 @@ export class AgentRunner {
     const state = this.owned(to);
     const { id } = state.record.agent;
     if (state.kind === "durable") {
-      const bridge = await this.ensureBridge(dirname(state.record.agent.sessionDir));
+      const bridge = await this.ensureBridge(dirname(state.record.agent.sessionDir), this.latestRegistry);
       if (bridge === undefined) throw new Error(`Agent ${id}'s durable bridge is unavailable; the rpc fallback cannot be messaged mid-run.`);
       const { steered } = await bridge.send(id, message);
       if (!steered) {
@@ -606,7 +617,7 @@ export class AgentRunner {
     // relaunch (spec D6). Without a bridge, fall back to a fresh rpc run.
     const ended = this.agents.get(id);
     if (ended?.kind === "ended" && ended.record.agent.durable) {
-      const bridge = await this.ensureBridge(dirname(ended.record.agent.sessionDir));
+      const bridge = await this.ensureBridge(dirname(ended.record.agent.sessionDir), this.latestRegistry);
       if (bridge !== undefined) {
         let settleResolve!: (record: EndedRecord) => void;
         const settle = new Promise<EndedRecord>((resolve) => (settleResolve = resolve));
@@ -631,7 +642,7 @@ export class AgentRunner {
     if (state.kind === "ended") return state.record;
     if (state.kind === "durable") {
       state.ending = state.ending === "teardown" ? "teardown" : ending;
-      const bridge = await this.ensureBridge(dirname(state.record.agent.sessionDir));
+      const bridge = await this.ensureBridge(dirname(state.record.agent.sessionDir), this.latestRegistry);
       if (bridge !== undefined) {
         await bridge.stop(state.record.agent.id);
         await bridge.waitIdle(state.record.agent.id);
@@ -716,9 +727,9 @@ export class AgentRunner {
   // A restore reattaches a durable agent to the reopened bridge: its
   // storage is the truth, and any answer that settled while nobody watched
   // is delivered now, once (spec D6).
-  private async reattachDurable(state: DurableAgent): Promise<void> {
+  private async reattachDurable(state: DurableAgent, registry?: unknown): Promise<void> {
     const { agent } = state.record;
-    const bridge = await this.ensureBridge(dirname(agent.sessionDir));
+    const bridge = await this.ensureBridge(dirname(agent.sessionDir), registry);
     if (bridge === undefined) {
       if (this.agents.get(agent.id) === state) {
         this.finalizeDurable(state, "stopped", "(durable bridge unavailable after restore)");
@@ -741,7 +752,7 @@ export class AgentRunner {
     const answer = (await bridge.lastAnswer(agent.id).catch(() => undefined)) ?? "(stopped while its parent was away)";
     this.finalizeDurable(state, "completed", answer);
   }
-  restore(entries: readonly SessionEntry[]): void {
+  restore(entries: readonly SessionEntry[], registry?: unknown): void {
     for (const entry of entries) {
       if (entry.type !== "custom" || entry.customType !== ENTRY_TYPE || !Value.Check(recordSchema, entry.data)) continue;
       const { id } = entry.data.agent;
@@ -755,7 +766,7 @@ export class AgentRunner {
         const state: DurableAgent = { kind: "durable", record: entry.data.status === "running" ? entry.data : { ...entry.data, status: "running" }, spawn: Promise.resolve(), settle };
         this.durableSettles.set(id, settleResolve);
         this.agents.set(id, state);
-        void this.reattachDurable(state);
+        void this.reattachDurable(state, registry);
         continue;
       }
       this.agents.set(id, entry.data.status === "running" ? { kind: "remote", record: entry.data } : { kind: "ended", record: entry.data });
