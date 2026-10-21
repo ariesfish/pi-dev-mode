@@ -54,6 +54,12 @@ const stopParams = Type.Object({ id: Type.String({ description: "agentId (or des
 const BACKGROUND_NOTE =
   "The agent is working in the background. You will be notified automatically when it completes. You know nothing about its results until that notification arrives — do not report, assume, or predict them; continue other work or respond to the user in the meantime.\nDo not duplicate this agent's work — avoid working with the same files or topics it is using.";
 
+// Durable note rides the tool result once the background runs behind the
+// session's durable bridge (T-030): the work survives even this session's
+// exit, and a reopened session picks it up and delivers the answer.
+const DURABLE_NOTE =
+  "This run is durable: its work is checkpointed in the session's storage and survives exits and crashes; a session that reopens it (pi --continue) resumes the run and delivers the answer.";
+
 const SLEEP_BLOCKED =
   "Blocked: a background agent is still running, and its completion notice arrives on its own. Do not sleep or poll for it. Continue other work, or end your turn. The notice starts your next one.";
 
@@ -74,7 +80,10 @@ async function executeBatch(runner: AgentRunner, params: BatchParams, signal: Ab
   };
   const drive: BatchDrive = {
     start: (spec) => {
-      const { agent } = runner.start(singleParams(spec), ctx);
+      // The batch owns the aggregate notice, so children launch runner-silent
+      // (no run_in_background on params) — the hint still marks batch
+      // children of a background batch durable (T-030).
+      const { agent } = runner.start(singleParams(spec), ctx, { background: params.run_in_background === true });
       startedIds.push(agent.id);
       return agent.id;
     },
@@ -151,8 +160,9 @@ export function registerAgentTools(pi: ExtensionAPI, runner: AgentRunner): void 
       }
       const started = runner.start(params, ctx);
       if (params.run_in_background) {
+        const note = started.agent.durable ? `${DURABLE_NOTE}\n${BACKGROUND_NOTE}` : BACKGROUND_NOTE;
         return {
-          content: [{ type: "text", text: `${JSON.stringify({ agentId: started.agent.id, status: "running" })}\n\n${BACKGROUND_NOTE}` }],
+          content: [{ type: "text", text: `${JSON.stringify({ agentId: started.agent.id, status: "running" })}\n\n${note}` }],
           details: { agentId: started.agent.id, status: "running" },
         };
       }

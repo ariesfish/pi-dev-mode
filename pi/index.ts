@@ -53,7 +53,10 @@ export function install(pi: ExtensionAPI, settings: Settings): void {
     scheduler.stopAll();
     // Children are detached in their own process groups: they keep running,
     // self-write their artifacts, and the next session discovers and delivers
-    // — T-025's detached-survive semantics. No stopAll here.
+    // — T-025's detached-survive semantics. No stopAll here. Durable children
+    // park their storage instead (T-030): in-flight work is written back
+    // pending, and the session that reopens their sqlite resumes it.
+    runner.parkDurable();
   });
 }
 

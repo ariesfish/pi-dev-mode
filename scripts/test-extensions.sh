@@ -21,6 +21,14 @@ cat > "$tsconfig" <<EOF
 {
   "compilerOptions": {
     "paths": {
+      "@earendil-works/chord": ["./node_modules/@earendil-works/chord/dist/index.js"],
+      "@earendil-works/chord/context": ["./node_modules/@earendil-works/chord/dist/context.js"],
+      "@earendil-works/pi-durable": ["./node_modules/@earendil-works/pi-durable/dist/index.js"],
+      "@earendil-works/pi-durable/tools": ["./node_modules/@earendil-works/pi-durable/dist/tools/index.js"],
+      "@earendil-works/pi-durable/env": ["./node_modules/@earendil-works/pi-durable/dist/env/index.js"],
+      "@earendil-works/pi-durable/env/node": ["./node_modules/@earendil-works/pi-durable/dist/env/node.js"],
+      "@earendil-works/pi-durable/storage/memory": ["./node_modules/@earendil-works/pi-durable/dist/storage/memory/index.js"],
+      "@earendil-works/pi-durable/storage/sqlite/node": ["./node_modules/@earendil-works/pi-durable/dist/storage/sqlite/node/index.js"],
       "@earendil-works/*": ["$pi_nm/@earendil-works/*"],
       "typebox": ["$pi_nm/typebox/build/index.mjs"],
       "typebox/value": ["$pi_nm/typebox/build/value/index.mjs"],

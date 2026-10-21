@@ -12,6 +12,8 @@ import { noticeOf, OUTPUT_CAP_BYTES, truncateUtf8 } from "./agent-text.ts";
 import type { AgentParams } from "./agent-tools.ts";
 import { alive, type ChildExit, PiChild } from "./child.ts";
 import { ARTIFACT_FLAG, DEPTH_FLAG, GENERAL_PURPOSE, IDENTITY_FLAG, loadAgentTypes, STATE_DIR, readSheet, resolveModel, type Settings } from "./config.ts";
+import { DurableBridge, type DeliverReport, newDurableAgentId } from "./durable.ts";
+import { RegistryModels } from "./durable-models.ts";
 import { ensureWorktree, planWorktree, settleWorktree, type Worktree, worktreeSchema } from "./worktree.ts";
 
 const ENTRY_TYPE = "pi-dev-agents";
@@ -42,6 +44,14 @@ const identitySchema = Type.Object({
   // shutdown, the parent only falls back when the child died first.
   artifactFile: Type.Optional(Type.String()),
   startedAt: Type.String(),
+  // T-030: this run lives in the session's durable bridge (pi-durable
+  // conversation), not an rpc child process — set on every durable record.
+  durable: Type.Optional(Type.Literal(true)),
+  // The durable conversation this agent is; lets a send after its end reuse
+  // the same conversation instead of relaunching a fresh rpc child.
+  durableConversation: Type.Optional(Type.String()),
+  // The lean prompt a durable child runs with (spec D4).
+  instructions: Type.Optional(Type.String()),
 });
 const runningSchema = Type.Object({
   agent: identitySchema,
@@ -94,8 +104,23 @@ interface Run {
 
 // A remote agent runs under the live pi process that restore left it to.
 type LocalAgent = { kind: "local"; record: RunningRecord; run: Run };
+// A durable agent runs as a pi-durable conversation behind the session
+// bridge (T-030): no child pid, its lifetime is the storage's, and every
+// process that reopens the storage can act on it.
+interface DurableAgent {
+  kind: "durable";
+  record: RunningRecord;
+  // Resolves once the spawn attempt committed (or fell back to rpc, which
+  // swaps this state for a local one under the same agent id).
+  spawn: Promise<void>;
+  // Resolves with the EndedRecord when the run settles; durable settles and
+  // stop/stopAll resolve it.
+  settle: Promise<EndedRecord>;
+  ending?: "stopped" | "teardown";
+}
 // Unverified restores retry identity checks; interrupted ones await termination.
 type AgentState = LocalAgent
+  | DurableAgent
   | { kind: "remote"; record: RunningRecord }
   | { kind: "unverified"; record: RunningRecord }
   | { kind: "interrupted"; record: RunningRecord }
@@ -210,19 +235,36 @@ export class AgentRunner {
   // Set once the session tears its agents down; a launch after that would
   // start a child nothing stops.
   private closed = false;
+  // The session's durable bridge (T-030): one open attempt; a failed one
+  // turns the bridge off for the session and background spawns fall back
+  // to rpc children.
+  private bridge?: Promise<DurableBridge | undefined>;
+  private bridgeOff = false;
+  // One live settle resolver per durable agent: reports, stops, and
+  // teardown all release the waiting side through here.
+  private readonly durableSettles = new Map<string, (record: EndedRecord) => void>();
 
   constructor(
     private readonly pi: ExtensionAPI,
     private readonly settings: Settings,
   ) {}
 
-  start(params: AgentParams, ctx: ExtensionContext): RunningRecord {
+  start(params: AgentParams, ctx: ExtensionContext, hint?: { background: boolean }): RunningRecord {
     const type = params.subagent_type || GENERAL_PURPOSE;
     const types = loadAgentTypes(this.settings);
     const def = types.get(type);
     if (!def) throw new Error(`Unknown subagent_type "${type}". Valid types: ${[...types.keys()].join(", ")}.`);
     const parentModel = ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined;
     const model = resolveModel(params.model ?? def.model, this.settings, readSheet(this.settings.agentDir), parentModel);
+
+    const background = params.run_in_background === true || hint?.background === true;
+    // Spec D2: background runs behind the durable bridge when it can open —
+    // depth 0 only; children of children stay rpc.
+    if (background && this.settings.depth === 0 && !this.closed) {
+      const state = join(this.settings.agentDir, STATE_DIR, ctx.sessionManager.getSessionId());
+      const begun = this.beginDurable(state, { params, def, model, background });
+      if (begun) return begun;
+    }
 
     const id = `a${randomBytes(8).toString("hex")}`;
     const state = join(this.settings.agentDir, STATE_DIR, ctx.sessionManager.getSessionId());
@@ -246,7 +288,83 @@ export class AgentRunner {
       artifactFile: planArtifact(sessionDir, id, params.output),
       startedAt: now(),
     };
-    return this.launch(identity, params.prompt, params.run_in_background === true);
+    return this.launch(identity, params.prompt, background);
+  }
+
+  // The durable leg of start (T-030): records the running intent first — the
+  // tool sees its agent id at once — then tries the bridge; a bridge that
+  // cannot open swaps itself for an rpc launch under the same id.
+  private beginDurable(
+    state: string,
+    spec: { params: AgentParams; def: { model?: string; body?: string; effort?: string }; model: string; background: boolean },
+  ): RunningRecord | undefined {
+    if (this.bridgeOff) return undefined;
+    const { params, def, model, background } = spec;
+    const id = newDurableAgentId();
+    const sessionDir = join(state, "agents");
+    mkdirSync(sessionDir, { recursive: true });
+    let worktree;
+    try {
+      worktree = params.isolation === "worktree" ? planWorktree(process.cwd(), id) : undefined;
+      if (worktree) ensureWorktree(worktree);
+    } catch {
+      return undefined; // the rpc leg reports plan/ensure failures honestly
+    }
+    // The lean prompt (spec D4): the agent-type body plus the child contract.
+    const instructions = [
+      def.body || "You are a background child agent of a pi coding session: work the task yourself, then reply.",
+      "You work durably: your conversation survives restarts. You may call ask_parent once for the one decision that blocks you; otherwise decide on your own and say so. Reply concisely in the user's language when the task is done; your final reply is what the parent reads.",
+    ].join("\n\n");
+    const identity: AgentIdentity = {
+      id,
+      description: params.description,
+      subagentType: params.subagent_type || GENERAL_PURPOSE,
+      model,
+      thinking: def.effort ?? this.pi.getThinkingLevel(),
+      readonly: params.readonly || undefined,
+      // The durable conversation is the real session; this field only has to
+      // satisfy the session-id shape the records share with rpc runs.
+      sessionId: randomUUID(),
+      sessionDir,
+      cwd: worktree?.path ?? process.cwd(),
+      worktree,
+      artifactFile: planArtifact(sessionDir, id, params.output),
+      startedAt: now(),
+      durable: true,
+      instructions,
+    };
+    let settleResolve!: (record: EndedRecord) => void;
+    const settle = new Promise<EndedRecord>((resolve) => (settleResolve = resolve));
+    const spawn = (async () => {
+      const bridge = await this.ensureBridge(state);
+      if (bridge === undefined) {
+        // Honest fallback (spec D2): launch() replaces this entry with a
+        // local rpc run under the same id, so the settle promise resolves
+        // through the rpc legs instead.
+        const local = this.launch({ ...identity, durable: undefined }, params.prompt!, background);
+        const run = (this.agents.get(id) as LocalAgent | undefined)?.run;
+        if (run) {
+          void run.done.then((record) => settleResolve(record));
+        }
+        return;
+      }
+      await bridge.spawn({
+        agentId: id,
+        description: params.description,
+        model,
+        readonly: params.readonly === true,
+        instructions,
+        prompt: params.prompt!,
+        cwd: identity.cwd,
+        worktreePath: worktree?.path,
+      });
+    })();
+    const record: RunningRecord = { agent: identity, status: "running", parentPid: process.pid, background: true };
+    const entry: DurableAgent = { kind: "durable", record, spawn: spawn.catch(() => {}), settle };
+    this.durableSettles.set(id, settleResolve);
+    this.agents.set(id, entry);
+    this.persist(record);
+    return record;
   }
 
   private launch(identity: AgentIdentity, prompt: string, background: boolean): RunningRecord {
@@ -315,6 +433,63 @@ export class AgentRunner {
     this.pi.sendMessage(text, triggerTurn ? { triggerTurn: true, deliverAs: "steer" } : { triggerTurn: false });
   }
 
+  // ── durable legs (T-030) ───────────────────────────────────────────────
+
+  // One bridge per session over the parent session's state directory; a
+  // failed open never retries, so a broken dependency costs one attempt.
+  private ensureBridge(stateDir: string): Promise<DurableBridge | undefined> {
+    if (this.bridgeOff) return Promise.resolve(undefined);
+    this.bridge ??= DurableBridge.open(stateDir, new RegistryModels(this.pi.modelRegistry), intercomDir(stateDir)).then(
+      (bridge) => {
+        if (bridge === undefined) this.bridgeOff = true;
+        else bridge.onReport((report) => this.onDurableReport(report));
+        return bridge;
+      },
+      () => {
+        this.bridgeOff = true;
+        return undefined;
+      },
+    );
+    return this.bridge;
+  }
+
+  // A durable run settled: record it, artifact it, and notice it unless this
+  // process asked for the end itself.
+  private onDurableReport(report: DeliverReport): void {
+    const state = this.agents.get(report.agentId);
+    if (state?.kind !== "durable") return;
+    this.finalizeDurable(state, report.status, report.text);
+  }
+
+  private finalizeDurable(state: DurableAgent, status: EndedStatus, text: string): void {
+    const identity = state.record.agent;
+    const record: EndedRecord = {
+      agent: identity,
+      status,
+      exitCode: null,
+      endedAt: now(),
+      artifactFile: identity.artifactFile,
+      background: true,
+      ...(status === "stopped" && identity.worktree ? settle(identity.worktree) : {}),
+      ...saveOutput(identity, text),
+    };
+    ensureArtifact(record);
+    this.durableSettles.get(identity.id)?.(record);
+    this.durableSettles.delete(identity.id);
+    this.agents.set(identity.id, { kind: "ended", record });
+    this.persist(record);
+    if ((state.ending ?? "stopped") !== "stopped" || status !== "stopped") {
+      this.notify(noticeOf(record), status !== "stopped");
+      this.persist({ ...record, artifactDelivered: true });
+    }
+  }
+
+  // Session teardown parks the bridge: work in flight is written back
+  // pending, uncounted as crashes, and a reopened session resumes it.
+  parkDurable(): void {
+    void this.bridge?.then((bridge) => void bridge?.close());
+  }
+
   private finish(identity: AgentIdentity, run: Run, exit: ChildExit): EndedRecord {
     const { status, finalText } = outcomeOf(exit, run.ending !== undefined);
     const worktree = identity.worktree && settle(identity.worktree);
@@ -345,7 +520,15 @@ export class AgentRunner {
   // The end of the agent's run in flight, or its record when it has ended.
   async wait(id: string): Promise<EndedRecord> {
     const state = this.owned(id);
-    return state.kind === "local" ? state.run.done : state.record;
+    if (state.kind === "local") return state.run.done;
+    if (state.kind === "durable") {
+      await state.spawn;
+      // A fallback swapped the state for a local run; its done drives on.
+      const after = this.agents.get(id);
+      if (after?.kind === "local") return after.run.done;
+      return state.settle;
+    }
+    return state.record;
   }
 
   private locals(): LocalAgent[] {
@@ -355,7 +538,6 @@ export class AgentRunner {
   get busy(): boolean {
     return this.locals().length > 0;
   }
-
   // Resolves once the first running agent exits, at once when none is running.
   async nextExit(): Promise<void> {
     const locals = this.locals();
@@ -390,9 +572,26 @@ export class AgentRunner {
 
   // A running agent takes the message as a steer, after its current tool calls.
   // A finished one, or one that has settled and is exiting, resumes with it,
-  // including one that settled just before the steer reached it.
+  // including one that settled just before the steer reached it. A durable
+  // run never relaunches: the same conversation takes the next turn (T-030).
   async send(to: string, message: string): Promise<{ record: AgentRecord; running: boolean }> {
-    const { id } = this.owned(to).record.agent;
+    const state = this.owned(to);
+    const { id } = state.record.agent;
+    if (state.kind === "durable") {
+      const bridge = await this.ensureBridge(dirname(state.record.agent.sessionDir));
+      if (bridge === undefined) throw new Error(`Agent ${id}'s durable bridge is unavailable; the rpc fallback cannot be messaged mid-run.`);
+      const { steered } = await bridge.send(id, message);
+      if (!steered) {
+        // A new turn on the same conversation: back to a running record.
+        let settleResolve!: (record: EndedRecord) => void;
+        const settle = new Promise<EndedRecord>((resolve) => (settleResolve = resolve));
+        const fresh: DurableAgent = { kind: "durable", record: state.record, spawn: Promise.resolve(), settle };
+        this.durableSettles.set(id, settleResolve);
+        this.agents.set(id, fresh);
+        this.persist(fresh.record);
+      }
+      return { record: this.find(id).record, running: true };
+    }
     // Another send may have launched a run while this one awaited, so the state
     // is read again after every wait and the launch follows the last read.
     for (let state = this.agents.get(id); state?.kind === "local"; state = this.agents.get(id)) {
@@ -403,12 +602,50 @@ export class AgentRunner {
       await run.done;
       if (run.ending) throw new Error(`Agent ${id} was stopped before it read the message; it was not delivered.`);
     }
+    // A durable agent that ended keeps its conversation: send reuse beats
+    // relaunch (spec D6). Without a bridge, fall back to a fresh rpc run.
+    const ended = this.agents.get(id);
+    if (ended?.kind === "ended" && ended.record.agent.durable) {
+      const bridge = await this.ensureBridge(dirname(ended.record.agent.sessionDir));
+      if (bridge !== undefined) {
+        let settleResolve!: (record: EndedRecord) => void;
+        const settle = new Promise<EndedRecord>((resolve) => (settleResolve = resolve));
+        await bridge.send(id, message);
+        const running: DurableAgent = {
+          kind: "durable",
+          record: { agent: { ...ended.record.agent }, status: "running", parentPid: process.pid, background: true },
+          spawn: Promise.resolve(),
+          settle,
+        };
+        this.durableSettles.set(id, settleResolve);
+        this.agents.set(id, running);
+        this.persist(running.record);
+        return { record: running.record, running: true };
+      }
+    }
     return { record: this.launch(this.find(id).record.agent, message, true), running: false };
   }
 
   async stop(to: string, ending: NonNullable<Run["ending"]> = "stopped"): Promise<EndedRecord> {
     const state = this.owned(to);
     if (state.kind === "ended") return state.record;
+    if (state.kind === "durable") {
+      state.ending = state.ending === "teardown" ? "teardown" : ending;
+      const bridge = await this.ensureBridge(dirname(state.record.agent.sessionDir));
+      if (bridge !== undefined) {
+        await bridge.stop(state.record.agent.id);
+        await bridge.waitIdle(state.record.agent.id);
+        const answer = (await bridge.lastAnswer(state.record.agent.id)) ?? "(stopped before it replied)";
+        // The abort handler ends the Deliver task without a report phase;
+        // this process owns the end, so no notice follows for "stopped".
+        const after = this.agents.get(state.record.agent.id);
+        if (after?.kind === "durable") this.finalizeDurable(after, "stopped", answer);
+        return (this.agents.get(state.record.agent.id) as { record: EndedRecord }).record;
+      }
+      // No bridge and no report: an honest stopped record from what is known.
+      this.finalizeDurable(state, "stopped", "(stopped; its durable bridge is unavailable)");
+      return (this.agents.get(state.record.agent.id) as { record: EndedRecord }).record;
+    }
     const { run } = state;
     if (run.ending !== "teardown") run.ending = ending;
     void run.child.command({ type: "abort" });
@@ -439,7 +676,9 @@ export class AgentRunner {
   }
 
   private refreshRestored(state: AgentState): AgentState {
-    if (state.kind === "local" || state.kind === "ended") return state;
+    // A durable run is the storage's, not a pid's: nothing to inspect, and
+    // the bridge's reattach wake (restore) is its authority.
+    if (state.kind === "durable" || state.kind === "local" || state.kind === "ended") return state;
     const { record } = state;
     const fate = fateOf(record);
     if (fate === "kept" && state.kind === "remote") return state;
@@ -474,13 +713,51 @@ export class AgentRunner {
     return ended;
   }
 
-  // A restored process stays unavailable until its exit is confirmed. Only a
-  // process whose identity matches the record can be signalled.
+  // A restore reattaches a durable agent to the reopened bridge: its
+  // storage is the truth, and any answer that settled while nobody watched
+  // is delivered now, once (spec D6).
+  private async reattachDurable(state: DurableAgent): Promise<void> {
+    const { agent } = state.record;
+    const bridge = await this.ensureBridge(dirname(agent.sessionDir));
+    if (bridge === undefined) {
+      if (this.agents.get(agent.id) === state) {
+        this.finalizeDurable(state, "stopped", "(durable bridge unavailable after restore)");
+      }
+      return;
+    }
+    const info = (await bridge.agents().catch(() => undefined))?.[agent.id];
+    if (info === undefined) {
+      if (this.agents.get(agent.id) === state) {
+        this.finalizeDurable(state, "stopped", "(no durable record of this agent in the session storage)");
+      }
+      return;
+    }
+    state.record = { ...state.record, agent: { ...agent, durableConversation: info.conversationId } };
+    bridge.resume();
+    if (this.agents.get(agent.id) !== state) return;
+    if (await bridge.busy(agent.id).catch(() => false)) return; // still running: its Deliver reports when it settles
+    // Idle with the record still running: the answer settled while this
+    // process was away. Re-deliver it once from the ledger.
+    const answer = (await bridge.lastAnswer(agent.id).catch(() => undefined)) ?? "(stopped while its parent was away)";
+    this.finalizeDurable(state, "completed", answer);
+  }
   restore(entries: readonly SessionEntry[]): void {
     for (const entry of entries) {
       if (entry.type !== "custom" || entry.customType !== ENTRY_TYPE || !Value.Check(recordSchema, entry.data)) continue;
       const { id } = entry.data.agent;
       if (this.agents.get(id)?.kind === "local") continue;
+      // A durable run never had a process to re-inspect: reattach to the
+      // bridge (or close honestly when the bridge cannot open).
+      if (entry.data.agent.durable === true) {
+        if (this.agents.get(id)?.kind === "durable") continue;
+        let settleResolve!: (record: EndedRecord) => void;
+        const settle = new Promise<EndedRecord>((resolve) => (settleResolve = resolve));
+        const state: DurableAgent = { kind: "durable", record: entry.data.status === "running" ? entry.data : { ...entry.data, status: "running" }, spawn: Promise.resolve(), settle };
+        this.durableSettles.set(id, settleResolve);
+        this.agents.set(id, state);
+        void this.reattachDurable(state);
+        continue;
+      }
       this.agents.set(id, entry.data.status === "running" ? { kind: "remote", record: entry.data } : { kind: "ended", record: entry.data });
     }
     for (const state of this.agents.values()) this.refreshRestored(state);
@@ -490,7 +767,7 @@ export class AgentRunner {
     // the interrupts marked "stopped" gets upgraded by its artifact's honest
     // status and text before its one delivery.
     for (const [id, state] of [...this.agents.entries()]) {
-      if (state.kind === "local") continue;
+      if (state.kind === "local" || state.kind === "durable") continue;
       if (state.kind === "remote" || state.kind === "unverified" || state.kind === "interrupted") {
         const synthesized = synthesizeFromArtifact(state.record);
         if (!synthesized) continue;
