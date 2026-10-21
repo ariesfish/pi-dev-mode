@@ -99,8 +99,8 @@ For high-stakes merges (auth, migration, public API, data loss) — and whenever
 the user asks for an independent verdict or a second judge — spawn one more
 reader **after** the four lens reports: a fresh readonly `agent` on a
 **different model** than this session (single-provider setups use the other
-tier — e.g. deepseek-flash under a v4-pro session; a multimodal verifier can
-view drive screenshots as evidence). It sees **the diff and the evidence
+tier — pass the other family alias (e.g. `sonnet` under a `fable` session); a
+multimodal verifier can view drive screenshots as evidence). It sees **the diff and the evidence
 pointers, never the lens outputs** — independence is the point. It adjudicates
 on its own reading — Critical/Required findings of its own — and **writes its
 verdict file itself** to `.dev/audit/evidence/review-<slug>/verdict.json`:
