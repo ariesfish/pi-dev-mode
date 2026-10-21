@@ -1,6 +1,6 @@
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
 import { type Static, Type } from "typebox";
-import { fuzzyFilter, Input, Key, matchesKey, SelectList, type SelectListTheme, Text, type SelectItem, type TUI, type Theme } from "@earendil-works/pi-tui";
+import { fuzzyFilter, Input, Key, matchesKey, SelectList, type SelectListTheme, Text, truncateToWidth, type SelectItem, type TUI } from "@earendil-works/pi-tui";
 
 import type { OneShot } from "./one-shot.ts";
 
@@ -12,6 +12,9 @@ import type { OneShot } from "./one-shot.ts";
 // - freeform: "Other (type an answer)" row -> typing mode, enter submits
 // - per-question context block, collapsed past a threshold, ctrl+x expands
 // - optional per-question timeout with live countdown in the header
+// The panel renders inline in the editor dock (full-width box, pi-ask-user
+// style) at its natural height; the host's overlay path is size-constrained
+// and clipped the panel (incomplete + tiny).
 // Headless sessions (no UI, print mode, RPC children) refuse in plain text.
 
 export interface AskOption {
@@ -119,6 +122,22 @@ export function formatAnswers(outcomes: (AskOutcome | null)[]): {
   const text = answered.map((a) => `"${a.question}"="${a.answer}${a.freeform ? " (freeform answer)" : ""}"`).join(", ");
   return { text, allAnswered: answered.length === outcomes.length && outcomes.length > 0 };
 }
+
+/** Inline box frame (pi-ask-user style): top border with optional title. */
+export function boxTopBorder(width: number, title?: string): string {
+  const inner = Math.max(0, width - 2);
+  if (!title || inner < title.length + 4) return `╭${"─".repeat(inner)}╮`;
+  const label = ` ${title} `;
+  return `╭─${label}${"─".repeat(Math.max(0, inner - label.length - 1))}╮`;
+}
+
+export function boxBottomBorder(width: number): string {
+  return `╰${"─".repeat(Math.max(0, width - 2))}╯`;
+}
+
+export const BOX_BORDER_LEFT = "│ ";
+export const BOX_BORDER_RIGHT = " │";
+export const BOX_BORDER_OVERHEAD = BOX_BORDER_LEFT.length + BOX_BORDER_RIGHT.length;
 
 // --- dialog ---------------------------------------------------------------
 
@@ -238,31 +257,37 @@ function askPanel({ q, tui, theme, signal, done }: Args) {
     set focused(v: boolean) {
       search.focused = v; // IME: the visible input owns the cursor
     },
+    invalidate,
     render(width: number) {
-      const w = Math.min(width - 2, 78);
+      // Inline panel spans the editor dock: box at full width, content inset
+      // by the side borders (pi-ask-user inline layout).
+      const box = Math.max(20, width - 2);
+      const w = Math.max(16, box - BOX_BORDER_OVERHEAD);
+      const border = (s: string) => theme.fg("border", s);
+      const frame = (line: string) => `${border(BOX_BORDER_LEFT)}${truncateToWidth(line, w, "", true)}${border(BOX_BORDER_RIGHT)}`;
       const lines: string[] = [];
-      lines.push(theme.fg("border", "─".repeat(w)));
-      lines.push(...questionText.render(w));
+      lines.push(border(boxTopBorder(box, "ask_user")));
+      lines.push(...questionText.render(w).map(frame));
       const cl = ctxLines(w);
       if (q.context) {
-        lines.push(...cl.map((l) => theme.fg("muted", l)));
+        lines.push(...cl.map((l) => frame(theme.fg("muted", l))));
         if (cl.length < contextPreview(new Text(q.context).render(w), COLLAPSE_THRESHOLD, true).length) {
-          lines.push(theme.fg("muted", expanded ? "(ctrl+x collapse context)" : "(ctrl+x expand context)"));
+          lines.push(frame(theme.fg("muted", expanded ? "(ctrl+x collapse context)" : "(ctrl+x expand context)")));
         }
       }
-      lines.push("");
+      lines.push(frame(""));
       if (mode === "typing") {
-        lines.push(...search.render(w));
-        lines.push("");
-        lines.push(footer);
+        lines.push(...search.render(w).map(frame));
+        lines.push(frame(""));
+        lines.push(frame(footer));
       } else {
-        lines.push(...search.render(w));
-        lines.push(...select.render(w));
-        if (multi && picked.size > 0) lines.push(theme.fg("success", `${picked.size} selected`));
-        lines.push("");
-        lines.push(footer);
+        lines.push(...search.render(w).map(frame));
+        lines.push(...select.render(w).map(frame));
+        if (multi && picked.size > 0) lines.push(frame(theme.fg("success", `${picked.size} selected`)));
+        lines.push(frame(""));
+        lines.push(frame(footer));
       }
-      lines.push(theme.fg("border", "─".repeat(w)));
+      lines.push(border(boxBottomBorder(box)));
       return lines;
     },
     handleInput(data: string) {
@@ -351,9 +376,12 @@ function selectTheme(theme: Theme): SelectListTheme {
 }
 
 async function askOne(ui: Ui, q: AskQuestion, signal: AbortSignal | undefined): Promise<AskOutcome> {
+  // Inline (no overlay options): the host swaps the component into the editor
+  // dock at its natural height, so the whole panel is visible. The overlay
+  // path is size-constrained in the host TUI and clips the panel.
   return await ui.custom<AskOutcome>((tui, theme, _kb, done) => {
     return askPanel({ q, tui, theme, signal, done });
-  }, { overlay: true });
+  });
 }
 
 // model-only exposure keeps the tool declared under codemode.mode "only".

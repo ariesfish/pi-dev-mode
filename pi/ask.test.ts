@@ -1,6 +1,9 @@
 import { describe, expect, test } from "bun:test";
 
 import {
+  BOX_BORDER_OVERHEAD,
+  boxBottomBorder,
+  boxTopBorder,
   buildItems,
   contextPreview,
   countdownText,
@@ -97,6 +100,21 @@ describe("withSubmitRow", () => {
     const got = withSubmitRow(items, true, 2);
     expect(got.at(-1)?.value).toBe(SUBMIT_VALUE);
     expect(got.at(-1)?.label).toContain("2 selected");
+  });
+});
+
+describe("box borders", () => {
+  test("top border with a title embeds it, without falls back to plain", () => {
+    expect(boxTopBorder(14, "ask_user")).toBe("╭─ ask_user ─╮");
+    expect(boxTopBorder(12)).toBe("╭──────────╮");
+    expect(boxTopBorder(4, "longer title than width")).toBe("╭──╮");
+  });
+  test("bottom border matches width", () => {
+    expect(boxBottomBorder(12)).toBe("╰──────────╯");
+    expect(boxBottomBorder(2)).toBe("╰╯");
+  });
+  test("overhead is the two side borders", () => {
+    expect(BOX_BORDER_OVERHEAD).toBe(4);
   });
 });
 
