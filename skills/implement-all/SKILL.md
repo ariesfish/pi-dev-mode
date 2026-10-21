@@ -41,8 +41,10 @@ set that can be worked right now.
 - **auto (serial, default)**: you (this session) run the tickets yourself, in
   dependency order, one at a time, after a single approval. Choose for deep
   dependency chains, small graphs, or a run the user will watch live.
-- **parallel**: an integration branch, and background implementer subagents
-  work the frontier concurrently, each in its own worktree. Choose when the
+- **parallel**: an integration branch, and background implementer agents work
+  the frontier concurrently — one `agent` call whose `tasks` carry the ready
+  tickets (each task `isolation: "worktree"`, one writer per worktree); the
+  aggregate notice lands every ticket's result at once. Choose when the
   frontier is wider than a ticket or two of genuinely independent work.
 
 If unsure, say both numbers aloud ("frontier is 4 wide, 2 deep") and pick

@@ -171,6 +171,12 @@ def main() -> int:
         for mm in re.finditer(r"`([a-z][a-z0-9-]*)`", text):
             n = mm.group(1)
             if n in RETIRED:
+                # `tasks` beside the agent tool is its batch parameter, not the
+                # retired skill of the same name (sentence context decides).
+                before = text[: mm.start()]
+                window = " ".join(before.rsplit("\n", 2)[-2:] + [text[mm.start() :].split("\n", 1)[0]])
+                if n == "tasks" and re.search(r"\bagent\b", window):
+                    continue
                 failures.append(f"{rel}: reference to retired skill name `{n}`")
 
     # per-skill structural checks (H1, duplicate paragraphs, pointer paths)

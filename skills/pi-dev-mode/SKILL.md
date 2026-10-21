@@ -59,7 +59,11 @@ work, more unknowns than tasks, "which direction is still undecided"), that is
 - One focused decision per question when a human must be asked; every question
   carries your recommended answer.
 - Delegations go to background agents via the `agent` tool (lowercase, pi-dev's
-  own), one writer per worktree, context pointers over pasted payloads.
+  own), one writer per worktree, context pointers over pasted payloads. A
+  parallel delegation — N independent reviewers/implementers — is ONE `agent`
+  call with `tasks` (per-task model/worktree/readonly/retry), not N calls: the
+  aggregate notice names every child. A child that must ask calls `ask_parent`;
+  the answer_child notice rides the next turn.
 - Small tasks (one file, obvious check) skip the mode entirely: work directly,
   verify, done.
 

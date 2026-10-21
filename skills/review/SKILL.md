@@ -25,7 +25,7 @@ spawning anything.
 
 ## The four lenses (parallel readonly reviewers)
 
-Spawn all four with this package's `agent` tool — the lowercase `agent` from the pi-dev extension, **not** another package's `Agent` (its reports land outside this session and are lost) — four calls in **one message**, each `run_in_background: true`, `readonly: true`, with the diff
+Spawn all four with this package's `agent` tool — one call carrying four readonly `tasks` (one per lens, keyed standards/spec/doubt/constraints), pi-dev's own and **not** another package's `Agent` (its reports land outside this session and are lost) — with the diff
 command + commit list, skill pointers instead of pasted payloads where a
 pointer reaches:
 
@@ -123,10 +123,11 @@ Without it: unchanged — the verdict file itself is still mandatory.
 
 ## Composition notes
 
-- Reviewers are readonly background agents spawned with the `agent` tool;
-  launch all four in one message (the parallel-calls rule rides the system
-  prompt). Fresh context is the point — never review your own implementation
-  through lens 3 in-session; that's what the spawn is for.
+- Reviewers are readonly agents of one `agent` call carrying `tasks` (four
+  readonly tasks, one per lens, run_in_background together): the aggregate
+  notice returns every lens report at once. Fresh context is the point — never
+  review your own implementation through lens 3 in-session; that's what the
+  spawn is for.
 - High-stakes merges (auth, migration, public API): say so up front and offer
   `doubt`'s cross-model option for lens 3 — a second adversarial reviewer on
   a different model family.

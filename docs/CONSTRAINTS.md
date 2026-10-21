@@ -36,4 +36,5 @@ Last reviewed: 2026-10-20 by the SDLC wiring round (user-approved; dimensions an
 
 | ID | Rule | Path | Reason | Owner | Expires |
 |----|------|------|--------|-------|---------|
+| XP-01 | Skill-tree integrity(CHECK 十字:中文触发词/H1/清录一致性) | `skills/show-me/**` 及其对 pi-dev-mode / dev-mode-help 清录的两处波及 | 所有者自建 WIP,性质 disable-model-invocation 的自助技能;未完成前不动(用户指令 2026-10-21);check-skills 红全部由此起 | ariesfish | show-me 完成时(补中文触发词/H1/清录两行) |
 | — | — | — | 空表:新例外必须有日期行、理由、owner、到期(correct 的例外四要素) | — | — |
