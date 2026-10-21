@@ -13,6 +13,19 @@ import { join } from "node:path";
 import type { AgentIdentity, EndedRecord, RunningRecord } from "./agents.ts";
 import { OUTPUT_CAP_BYTES, truncateUtf8 } from "./agent-text.ts";
 
+/** The text a record keeps: capped, with the full copy on disk when it was cut. */
+export function saveOutput(identity: AgentIdentity, text: string): Pick<EndedRecord, "finalText" | "outputFile"> {
+  const capped = truncateUtf8(text, OUTPUT_CAP_BYTES);
+  if (capped === text) return { finalText: text };
+  const outputFile = join(identity.sessionDir, `${identity.id}.${Date.now()}.out.md`);
+  try {
+    writeFileSync(outputFile, text);
+    return { finalText: capped, outputFile };
+  } catch (e) {
+    return { finalText: `${capped}\n\n(full output not saved: ${(e as Error).message})` };
+  }
+}
+
 export function artifactHeader(identity: AgentIdentity, status: string, exitCode: number | null): string {
   const lines = [
     `agent: ${identity.id}`,

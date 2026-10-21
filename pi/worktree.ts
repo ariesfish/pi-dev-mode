@@ -71,3 +71,12 @@ export function settleWorktree(wt: Worktree): boolean {
   git(wt.repo, ["branch", "-D", wt.branch]);
   return false;
 }
+
+/** settleWorktree with a guard: a cleanup failure keeps the worktree and returns its note. */
+export function settleGuarded(worktree: Worktree): { kept: boolean; note: string } {
+  try {
+    return { kept: settleWorktree(worktree), note: "" };
+  } catch (e) {
+    return { kept: true, note: `\n\n(worktree cleanup failed: ${(e as Error).message})` };
+  }
+}
