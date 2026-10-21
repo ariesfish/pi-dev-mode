@@ -40,7 +40,9 @@ describe("fateOf (decision table)", () => {
 
   // unknown: a process is there, and nothing says whether it is the agent's.
   test("inspect silent, launcher dead → unknown", () => {
-    expect(fateOf({ pid: 5, parentPid: 100 }, { isAlive: () => true, inspect: () => undefined, self: 10 })).toBe("unknown");
+    // the probe pid is alive, its launcher (100) is gone, and the system
+    // cannot say what owns pid 5 — keep the record, mark it unverifiable
+    expect(fateOf({ pid: 5, parentPid: 100 }, { isAlive: (pid) => pid === 5, inspect: () => undefined, self: 10 })).toBe("unknown");
   });
   test("no start on record, inspect present, launcher dead → unknown", () => {
     expect(fateOf({ pid: 5, parentPid: 100 }, { isAlive: () => true, inspect: looks(1, "t0"), self: 10 })).toBe("unknown");
