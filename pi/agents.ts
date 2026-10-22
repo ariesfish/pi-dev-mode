@@ -168,6 +168,10 @@ const now = () => new Date().toISOString();
 
 export class AgentRunner {
   private readonly agents = new Map<string, AgentState>();
+  // pi/status.ts's live-redraw hook (T-102): persist is the funnel every state
+  // change that reaches the session passes through, so the footer sees a
+  // spawn or a settle the moment it is recorded.
+  onChange?: () => void;
   // Set once the session tears its agents down; a launch after that would
   // start a child nothing stops.
   private closed = false;
@@ -465,6 +469,7 @@ export class AgentRunner {
 
   private persist(record: AgentRecord): void {
     this.pi.appendEntry(ENTRY_TYPE, record);
+    this.onChange?.();
   }
 
   private refreshRestored(state: AgentState): AgentState {

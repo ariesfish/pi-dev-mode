@@ -11,6 +11,7 @@ import { registerOneShot } from "./one-shot.ts";
 import { registerPathSkills } from "./path-skills.ts";
 import { registerPromptSections } from "./prompt.ts";
 import { registerSchedule, Scheduler } from "./schedule.ts";
+import { registerStatusFooter } from "./status.ts";
 
 export function install(pi: ExtensionAPI, settings: Settings): void {
   const runner = new AgentRunner(pi, settings);
@@ -21,6 +22,9 @@ export function install(pi: ExtensionAPI, settings: Settings): void {
   registerSchedule(pi, scheduler, oneShot);
   registerPromptSections(pi, settings);
   registerPathSkills(pi, settings);
+  // The status footer (T-102) goes last: its session_start handler runs after
+  // the restore handler, so the first agents line sees post-restore records.
+  registerStatusFooter(pi, runner, settings);
   // T-026: the intercom lives in the parent session — answer_child plus one
   // notice per pending ask_parent request. Children register ask_parent
   // themselves from the channel flag this process passes them.

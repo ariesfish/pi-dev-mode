@@ -20,7 +20,7 @@ Last reviewed: 2026-10-22 by the ADR-hygiene round (user-approved; dimensions an
 | Gates semantics | test-gates 全断言绿(当前 23) | `bash scripts/test-gates.sh` | task end + CI(check.sh) |
 | Prose(deslop) | 新增行 slop 命中 = 0 | `python3 scripts/check-prose.py`(增量,环境感知 base) | task end + CI(check.sh) |
 | Full acceptance | 一条命令全绿:skills/gates/prose/ADR checker selftest + adapters 12 件缝测试 + pi 扩展套件(在场时)+ numbers sync | `bash scripts/check.sh` | task end + CI |
-| pi 扩展套件 | bun test 82/82(10 文件) | `bash scripts/check.sh` 第 6 级:pi 运行时 + bun 在场时执行,缺场**可见 SKIP**(CI 无 pi 运行时——证据层不是静默通过);bun 由 devDependencies 提供(`node_modules/.bin`,仓库根 `npm install` 一次) | task end(本机满装时) |
+| pi 扩展套件 | bun test 100/100(11 文件) | `bash scripts/check.sh` 第 6 级:pi 运行时 + bun 在场时执行,缺场**可见 SKIP**(CI 无 pi 运行时——证据层不是静默通过);bun 由 devDependencies 提供(`node_modules/.bin`,仓库根 `npm install` 一次) | task end(本机满装时) |
 | Trigger surface | description/触发词改动须经 eval 门(触发回归) | `eval` 技能 × `evals/` 用例库 | 技能 frontmatter/description 变更时 |
 | Install parity | 落地后安装面与 origin/main 一致 | local-path 安装(现行):加载即仓库本体,零漂移天然成立;git/npm 源安装(未来):`pi update --extensions` reconcile 后 `pi list` 核对 | 落地收尾 |
 
@@ -30,7 +30,7 @@ Last reviewed: 2026-10-22 by the ADR-hygiene round (user-approved; dimensions an
 |--------|-------|-----------|
 | test-gates 断言数 | 23 | must not fall(降 = 逃逸) |
 | adapters 缝测试 | 12/12 | must not fall |
-| pi 扩展测试 | 82/82 | must not fall |
+| pi 扩展测试 | 100/100 | must not fall |
 | 账本 D 门首过率 | 0.56 | 观察(RED-first 纪律刻意压低,非事故) |
 | blocked items / verdict flips | 0 / 0 | 0 |
 | skip-test 率(`.dev/audit/*.tsv`) | 0 | 0 |
