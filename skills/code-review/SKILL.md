@@ -8,7 +8,7 @@ description: >-
   them side by side. Use when the user wants to review a branch, a PR,
   work-in-progress changes, or asks to "review since X". This is the QUICK
   lane — a single two-axis pass, no gate ceremony; merging or shipping asks
-  for the `review` skill's four lenses instead. Chinese triggers: 代码评审, 审查 diff, 审查这个 PR, standards 检查.
+  for the `review` skill's five lenses instead. Chinese triggers: 代码评审, 审查 diff, 审查这个 PR, standards 检查.
 ---
 
 # Code Review

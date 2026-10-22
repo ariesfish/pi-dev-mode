@@ -15,7 +15,7 @@ setup
   -> triage-issue    # route incoming issues through labels and agent briefs
   -> implement       # one ticket, serial, TDD at the seams
   -> implement-all  # the whole ticket graph: auto (serial, single approval) or parallel (multi-agent worktrees)
-  -> review          # merge gate: four lenses (two-axis, comments, doubt, constraints) in parallel
+  -> review          # merge gate: five lenses (two-axis, comments, doubt, constraints, design) in parallel
   -> benchmark-checklist  # vet a measured number before it is reported
   -> doubt            # in-flight adversarial cross-exam of a non-trivial decision
   -> retro            # session retrospective: findings routed to the highest enforcing level
@@ -53,7 +53,7 @@ pi-dev-mode          # the router that picks between all of these
 - If no quality bar is written down, `constraints` before an autonomous run.
 - If the work starts as an issue, use `triage-issue`; send ready work to implementation.
 - One ticket in hand: `implement`. Whole ticket graph: `implement-all` — auto for an unattended serial run, parallel when the frontier is wide.
-- After implementation, before merging: `review` (the four-lens merge gate); `code-review` alone for a single two-axis pass.
+- After implementation, before merging: `review` (the five-lens merge gate); `code-review` alone for a single two-axis pass.
 - About to commit non-trivial code or take a high-stakes step: `doubt` mid-flight, before the merge gate.
 - A measured number is about to be reported: `benchmark-checklist` first; a number without its limiter is not a result.
 - Session over, before handoff: `retro`; its skill edits feed this stack itself.

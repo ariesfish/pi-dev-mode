@@ -36,7 +36,7 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Something is broken or slow | `diagnose` (its perf branch passes `benchmark-checklist` before a number is claimed) |
 | The repo has no scripted way to prove UI/CLI/service behavior on the real app | `create-verification-skill` (generate one) / `maintain-verification-skill` (keep its feature map honest) |
 | Review a diff / PR / branch (single two-axis pass) | `code-review` |
-| Gate a merge / ship | `review` (four lenses in parallel readonly reviewers, one aggregated verdict; high-stakes merges add an independent adjudicator — a fresh agent on a different model writes its own verdict file under `.dev/audit/evidence/`) |
+| Gate a merge / ship | `review` (five lenses in parallel readonly reviewers, one aggregated verdict; high-stakes merges add an independent adjudicator — a fresh agent on a different model writes its own verdict file under `.dev/audit/evidence/`) |
 | A measured number is about to be claimed | `benchmark-checklist` before the number leaves the room |
 | The reply must land: user lost in the terms, asks to explain / draw / see, or a dense deliverable is about to be handed over | `show-me` (plain words + compact Markdown visuals in chat; one HTML page for the key artifact) |
 | Non-trivial decision mid-flight, high stakes | `doubt` (fresh adversarial reviewer, bounded loop) |
@@ -96,7 +96,7 @@ Named by need; each names its owning skill — follow the skill body, not this s
 
 **Verify**
 7. **Find what's broken**: `diagnose` — reproduce BEFORE fixing, evidence first (UI surfaces reproduce via the project's verify skill / control-web, never "must work"); commit order = repro before fix; perf symptoms pass `benchmark-checklist` before any number is claimed.
-8. **The gate**: `code-review` (two-axis single pass) / `review` (four lenses + aggregate; high-stakes adds the independent verifier verdict file); numbers leave the room only after `benchmark-checklist`.
+8. **The gate**: `code-review` (two-axis single pass) / `review` (five lenses + aggregate, design axis included; high-stakes adds the independent verifier verdict file); numbers leave the room only after `benchmark-checklist`.
 
 **Ship**
 9. **Ship**: `review` gate first (APPROVE or informed accept), then land: one primary number (per the benchmark seven questions), release notes, post-ship verify pass, evidence archived (`.dev/audit/evidence/`, survives cleanup). Ledger on: the merge read-back rides as the `land` gate — close only after it passes.

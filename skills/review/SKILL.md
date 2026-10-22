@@ -88,6 +88,10 @@ UI-bearing changes, design axis n/a" and nothing else.
   DESIGN.md tokens: a color/size/spacing not in the contract is a finding,
   citing both the file:line and the DESIGN.md section it violates (no
   DESIGN.md → say so, the way lens 1 says "no spec available").
+- **Guidelines tier**: judge the diff's UI craft against the vendored Vercel
+  web interface guidelines at `skills/ui-design/references/web-guidelines.md`
+  (layout, typography, color, motion, accessibility) — a violation cites the
+  guideline and the file:line.
 - **Visual tier**: any claim about how things LOOK must come from the
   `pi-dev:image-reader` agent — spawn it with `subagent_type:
   pi-dev:image-reader` (capture-based: it reads the rendered screenshot,

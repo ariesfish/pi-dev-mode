@@ -37,7 +37,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ pro
 | `implement-all` | the whole graph: auto (serial single-approval) or parallel (integration branch + worktrees) |
 | `diagnose` | feedback loop first; RED-then-GREEN commits; freezes loops that prove themselves |
 | `code-review` | quick lane: Standards + Spec two-axis pass on a diff |
-| `review` | the merge gate: four lenses in parallel, one aggregated verdict |
+| `review` | the merge gate: five lenses in parallel, one aggregated verdict (design axis included) |
 | `doubt` | in-flight adversarial cross-examination of a decision, bounded cycles |
 | `benchmark-checklist` | the seven questions before any performance number leaves the room |
 | `eval` | the promotion gate for skill changes: trigger regression / variant A/B |

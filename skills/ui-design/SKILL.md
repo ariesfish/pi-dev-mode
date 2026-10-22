@@ -76,12 +76,6 @@ X has a folder in `references/library/` → that DESIGN.md is the first evidence
 
 Output = a DESIGN.md per the template (reference values may sit outside the brief vocabulary — each carried with provenance) plus the Keep/Change/Do-not-copy table, one row per claim, confidence label attached. The closing report names every reference, which decisions each drove, and what a live capture would upgrade.
 
-## Guardrails
-
-- Brief resolves only through craft.md tables; the reference and extract modes carry observed evidence instead, so their values may sit outside the vocabulary — with provenance.
-- Adjectives ("premium", "clean") are mapping questions, not answers.
-- A redesign edits DESIGN.md as decisions: what changes, why, version bumped — never a silent restyle.
-
 ## Mode: extract
 
 Reverse an existing interface into DESIGN.md; the artifact is the audit baseline a later redesign diffs against, not a style endorsement.
@@ -99,3 +93,9 @@ Audit first; a redesign without an audit is a silent restyle with extra steps.
 2. Diff the baseline against the live UI and list every mismatch before proposing anything.
 3. Propose changes as explicit decisions: what moves, why, and the cost; bump the DESIGN.md version with every accepted change.
 4. Silent restyles are findings, not merges: an unexplained visual change lands on the mismatch list as drift, waiting for a decision, never absorbed quietly.
+
+## Guardrails
+
+- Brief resolves only through craft.md tables; the reference and extract modes carry observed evidence instead, so their values may sit outside the vocabulary — with provenance.
+- Adjectives ("premium", "clean") are mapping questions, not answers.
+- A redesign edits DESIGN.md as decisions: what changes, why, version bumped — never a silent restyle.

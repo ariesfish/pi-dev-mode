@@ -11,7 +11,7 @@
 | 阶段 | 技能 | 做什么 |
 |---|---|---|
 | 探路 | scout / research / proto | 方向不明时先调研、做原型, 把关键决策定下来再动手 |
-| 立项 | spec / grill-me / constraints | 把想法写成带验收标准的规格, 接受方案拷问, 定下质量门槛 |
+| 立项 | spec / grill-me / constraints / ui-design | 把想法写成带验收标准的规格, 接受方案拷问, 定下质量门槛; UI 承重工作先落 DESIGN.md 设计契约 |
 | 拆票 | tickets / triage-issue | 规格拆成可独立实现的工单, Issue 分诊进状态机 |
 | 实现 | implement / implement-all / tdd | 按工单实现, 支持测试先行与自主批处理 |
 | 把关 | review / code-review / doubt / benchmark-checklist / eval | 合并发布前的代码评审、对抗审查、性能数据核查、盲评实验 |

@@ -5,7 +5,7 @@ effort: max
 description: >-
   Senior code reviewer evaluating changes across five dimensions — correctness, readability,
   architecture, security, performance. Spawned directly for a thorough persona-led pass on a specific
-  change. Not a review-pipeline lane: the four-lens pipeline briefs a general-purpose reviewer on the
+  change. Not a review-pipeline lane: the five-lens pipeline briefs a general-purpose reviewer on the
   code-review skill instead and never passes through this persona. Chinese triggers: 严格评审, 五维评审,
   资深评审员, 深度审查这个改动, 高级工程师视角.
 ---
