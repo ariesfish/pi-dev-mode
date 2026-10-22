@@ -28,6 +28,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ pro
 | `grill-me` | sharpen a fuzzy idea one question at a time; GLOSSARY/ADR written inline |
 | `proto` | throwaway artifact answers the design question before implementation |
 | `spec` | the building contract: six decision sections, three-label acceptance |
+| `ui-design` | the design contract: DESIGN.md lifecycle — brief / reference / extract / redesign for UI-bearing work |
 | `constraints` | the quality bar with numbers — floor, enforced rows, diff watch |
 | `tickets` | slice the plan into tracer-bullet tickets (graph + frontier) |
 | `triage-issue` | route inbound reports through the triage-label state machine |
@@ -36,7 +37,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ pro
 | `implement-all` | the whole graph: auto (serial single-approval) or parallel (integration branch + worktrees) |
 | `diagnose` | feedback loop first; RED-then-GREEN commits; freezes loops that prove themselves |
 | `code-review` | quick lane: Standards + Spec two-axis pass on a diff |
-| `review` | the merge gate: four lenses in parallel, one aggregated verdict |
+| `review` | the merge gate: five lenses in parallel, one aggregated verdict (design axis included) |
 | `doubt` | in-flight adversarial cross-examination of a decision, bounded cycles |
 | `benchmark-checklist` | the seven questions before any performance number leaves the room |
 | `eval` | the promotion gate for skill changes: trigger regression / variant A/B |
@@ -52,6 +53,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ pro
 ## How they chain
 
 - **Intent chain**: grill-me → (proto) → spec → tickets → implement-family.
+- **Design contract**: `ui-design` pins DESIGN.md (repo root, mirrors AGENTS.md) for UI-bearing work; specs carry its status line.
 - **Knowledge base (always-on)**: docs/GLOSSARY.md + docs/adr/ from `grill-me`/`refact`; every skill reads them and speaks the project's language.
 - **Quality contract**: docs/CONSTRAINTS.md from `constraints`; `code-review` watches the diff against it; `implement-all` treats rows as gates.
 - **Verification**: every build ends on the real artifact; `diagnose` freezes proven repro loops for the verification machinery (`create-verification-skill`).

@@ -28,6 +28,11 @@ Run typechecking regularly, single test files regularly, and the full test suite
 
 ## Visual acceptance
 
+Before building a UI-bearing ticket: read the repo-root DESIGN.md if present
+and build inside it — a spec whose status row says absent routes through the
+`ui-design` skill before UI work; and pre-flight the diff against the
+pre-flight checklist in `skills/ui-design/references/taste.md`.
+
 If the ticket's criteria are visual — layout, styling, reference-image parity — never self-assess on a model that cannot see. `read` the reference image or a screenshot once: a "model does not support images" reply is the signal to delegate, not to fall back to code archaeology. Spawn the `agent` tool with `subagent_type: pi-dev:image-reader` (multimodal, pinned to a fast model), the reference path, and your captures, in the foreground so its report returns to this session. If your agent tool doesn't resolve that type, fall back: spawn `general-purpose` with the image-reading brief, `model` on a multimodal fast model, `readonly: true`, foreground. Its report is your evidence — quote it in the ticket trail as `[evidence: image-reader report]`, never paraphrase visual claims as your own.
 
 Ladder, in order:

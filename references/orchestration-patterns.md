@@ -208,7 +208,7 @@ Do **not** rebuild this as a `/debug` slash command that just fans out agents an
 
 ### When *not* to use the reconcile loop
 
-- Production-bound verdict on a known diff → use `review` (four lenses + one aggregated verdict).
+- Production-bound verdict on a known diff → use `review` (five lenses + one aggregated verdict, design axis included).
 - One specialist perspective on one artifact → direct persona invocation.
 - Sequential lifecycle (spec → plan → build) → user-driven lifecycle commands (Pattern 4).
 - Read-heavy research with a small digest → a single readonly background `agent` run.

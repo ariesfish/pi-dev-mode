@@ -93,9 +93,13 @@ one breath, user language.]
 a note on what a test there catches and misses), stack changes (a new
 dependency is also an Ask First trigger), schema/API contracts, interaction
 decisions, prototype-sourced decision snippets trimmed to the decision-rich
-parts (note they came from a prototype). No file paths as promises, no
-working code. A "when in doubt" item is not a decision — it is an Open
-Question.]
+parts (note they came from a prototype). A UI-bearing spec adds one
+DESIGN.md status row here: "DESIGN.md: exists — repo root, this spec's work
+stays inside it" / "DESIGN.md: absent — this ticket creates it via the
+`ui-design` skill before UI work" / "DESIGN.md: exempt — <one-line why>"; a
+UI-bearing spec without that row is a finding at review. No file paths as
+promises, no working code. A "when in doubt" item is not a decision — it is
+an Open Question.]
 
 ## Out of Scope
 [What this work deliberately does not do.]
