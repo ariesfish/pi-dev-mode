@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# task.sh <name> [base] — 开任务先开树:任务级 worktree 隔离
+# task.sh <name> [base] — 并行任务才开树:任务级 worktree 隔离
 # 背景:多个任务共用主树 HEAD 会互相切走现场(2026-10-22 事故)。
-# 纪律:主树 = 合并台(单 actor);任务体 = 自己的 worktree。
+# 纪律(owner 2026-10-22 定则):单任务直跑主树;两个以上大任务并行时,
+# 各自开 worktree;主树 = 合并台(单 actor)。
 
 set -euo pipefail
 name="${1:?usage: task.sh <task-name> [base-branch-or-commit]}"
