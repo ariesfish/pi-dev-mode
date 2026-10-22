@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# test-extensions.sh — pi/ 扩展模块的本地证据闸(evidence 闸,不进 check.sh:CI 无 pi 运行时)
+# test-extensions.sh — pi/ 扩展模块的本地证据闸(evidence 闸,check.sh 第 6 级的执行体:
+# 本地 pi 运行时 + bun 在场才执行,缺场走 check.sh 的可见 SKIP——CI 无 pi 运行时,永不静默通过)
 #
 # 机制:按 pi 启动器同款逻辑定位活体 pi 运行时 node_modules,生成临时 tsconfig
 # (paths 把 @earendil-works/* 与 typebox 指向运行时),bun test 以

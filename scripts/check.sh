@@ -15,9 +15,10 @@
 # 5. adapters seam tests   (control-web, node-only: playwright-core from the
 #                           package-root node_modules — needs `npm install` once)
 # 6. pi extension suite    (bun test via test-extensions.sh — the pi runtime
-#                           and bun are local-dev fixtures, not CI ones: it
-#                           runs when both are present and visible-SKIPs
-#                           otherwise; never a silent pass)
+#                           is a local-dev fixture, not a CI one: it runs when
+#                           present and visible-SKIPs otherwise; never a silent
+#                           pass. bun is devDependencies-managed: devDependencies'
+#                           node_modules/.bin shadows any system bun)
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
@@ -26,8 +27,14 @@ bash scripts/test-gates.sh
 python3 scripts/check-prose.py
 python3 scripts/check-adrs.py --selftest
 node --test "adapters/control-web/tests/*.test.mjs"
+# bun resolves project-first: devDependencies' bun (from the package-root
+# `npm install`) shadows any system bun; test-extensions.sh calls bare `bun`,
+# so PATH has to carry it in.
+if [ -x node_modules/.bin/bun ]; then
+  PATH="$PWD/node_modules/.bin:$PATH"
+fi
 if command -v pi >/dev/null 2>&1 && command -v bun >/dev/null 2>&1; then
   bash scripts/test-extensions.sh
 else
-  echo "test-extensions: SKIP (no local pi runtime + bun on PATH — evidence tier, docs/CONSTRAINTS.md)"
+  echo "test-extensions: SKIP (no local pi runtime + bun (node_modules/.bin or PATH) — evidence tier, docs/CONSTRAINTS.md)"
 fi
