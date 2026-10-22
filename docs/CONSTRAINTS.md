@@ -20,7 +20,7 @@ Last reviewed: 2026-10-22 by the ADR-hygiene round (user-approved; dimensions an
 | Gates semantics | test-gates 全断言绿(当前 23) | `bash scripts/test-gates.sh` | task end + CI(check.sh) |
 | Prose(deslop) | 新增行 slop 命中 = 0 | `python3 scripts/check-prose.py`(增量,环境感知 base) | task end + CI(check.sh) |
 | Full acceptance | 一条命令全绿:skills/gates/prose/ADR checker selftest + adapters 12 件缝测试 + pi 扩展套件(在场时)+ numbers sync + pi typecheck + tsv 证据指针 | `bash scripts/check.sh` | task end + CI |
-| pi 扩展套件 | bun test 116/116(11 文件) | `bash scripts/check.sh` 第 6 级:pi 运行时 + bun 在场时执行,缺场**可见 SKIP**(CI 无 pi 运行时——证据层不是静默通过);bun 由 devDependencies 提供(`node_modules/.bin`,仓库根 `npm install` 一次) | task end(本机满装时) |
+| pi 扩展套件 | bun test 120/120(11 文件) | `bash scripts/check.sh` 第 6 级:pi 运行时 + bun 在场时执行,缺场**可见 SKIP**(CI 无 pi 运行时——证据层不是静默通过);bun 由 devDependencies 提供(`node_modules/.bin`,仓库根 `npm install` 一次) | task end(本机满装时) |
 | pi 类型闸 | pi/ 源码未定义标识符类(TS2304/TS2552)= 0——imports 缺口即运行时炸弹(2026-10-22 事故类:dirname/inspect 未导入致前台 spawn 崩溃) | `bash scripts/check-types.sh`(check.sh 第 8 级;tsc 来自 devDependencies,缺场可见 SKIP) | task end + CI(装依赖后) |
 | tsv 证据指针 | `.dev/audit/*.tsv` 的 evidence/show 指针可达且目录非空(照写不照验 = T-034 事故形状;已移除的历史档显式豁免清单) | `python3 scripts/check-evidence.py`(check.sh 第 8 级;无 .dev 环境 no-op) | task end + feature 收尾 |
 | Trigger surface | description/触发词改动须经 eval 门(触发回归) | `eval` 技能 × `evals/` 用例库 | 技能 frontmatter/description 变更时 |
@@ -32,7 +32,7 @@ Last reviewed: 2026-10-22 by the ADR-hygiene round (user-approved; dimensions an
 |--------|-------|-----------|
 | test-gates 断言数 | 23 | must not fall(降 = 逃逸) |
 | adapters 缝测试 | 12/12 | must not fall |
-| pi 扩展测试 | 116/116 | must not fall |
+| pi 扩展测试 | 120/120 | must not fall |
 | pi 类型精确化噪音(tsc 错误实例,非行数) | 45 | ratchet 向下(增量严化,不走一次性清零) |
 | 账本 D 门首过率 | 0.56 | 观察(RED-first 纪律刻意压低,非事故) |
 | blocked items / verdict flips | 0 / 0 | 0 |

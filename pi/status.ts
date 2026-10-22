@@ -264,15 +264,31 @@ export interface AgentsSummary {
   more: number;
 }
 
-/** Running oldest first, ended newest first, both capped; `more` counts the clipped. */
-export function agentsSummary(records: readonly AgentRecord[]): AgentsSummary | undefined {
+/** The timestamp that opens the current turn: the last user message's own.
+ * Agents spawned before it belong to earlier turns, so their finished
+ * siblings drop out of the line; a run that is still going stays counted
+ * ("how many are running now" is a live fact, not this turn's history). */
+export function turnStart(entries: readonly SessionEntry[]): string | undefined {
+  for (let i = entries.length - 1; i >= 0; i--) {
+    const entry = entries[i];
+    if (entry.type === "message" && entry.message.role === "user") return entry.timestamp;
+  }
+  return undefined;
+}
+
+/** Running oldest first, ended newest first, both capped; `more` counts the clipped.
+ * With `since`, only agents started in this turn contribute to `ended` — the
+ * line answers "this turn's work", not the whole conversation's agent history. */
+export function agentsSummary(records: readonly AgentRecord[], since?: string): AgentsSummary | undefined {
   if (records.length === 0) return undefined;
   const running = records
     .filter((r): r is Extract<AgentRecord, { status: "running" }> => r.status === "running")
     .sort((a, b) => a.agent.startedAt.localeCompare(b.agent.startedAt));
   const ended = records
     .filter((r): r is Extract<AgentRecord, { status: "completed" | "failed" | "stopped" }> => r.status !== "running")
+    .filter((r) => since === undefined || r.agent.startedAt >= since)
     .sort((a, b) => b.endedAt.localeCompare(a.endedAt));
+  if (running.length === 0 && ended.length === 0) return undefined;
   const items: AgentItem[] = [
     ...running.slice(0, RUNNING_MAX).map((r) => ({ id: r.agent.id, description: r.agent.description, status: "running" as const, startedAt: r.agent.startedAt })),
     ...ended.slice(0, ENDED_MAX).map((r) => ({ id: r.agent.id, description: r.agent.description, status: r.status })),
@@ -290,14 +306,15 @@ export interface AgentSegment {
   color: "dim" | "accent" | "success" | "error";
 }
 
-/** The agents line as color-named segments: prefix, items, +more. */
+/** The agents line as color-named segments: prefix (how many running, how
+ * many done this turn), items, +more. */
 export function agentSegments(summary: AgentsSummary, now: number): AgentSegment[] {
   const prefix =
     summary.running > 0
       ? summary.ended > 0
-        ? `agents ${summary.running}/${summary.running + summary.ended} running`
+        ? `agents ${summary.running} running · ${summary.ended} done`
         : `agents ${summary.running} running`
-      : `agents ${summary.ended} ended`;
+      : `agents ${summary.ended} done`;
   const segments: AgentSegment[] = [{ text: prefix, color: "dim" }];
   for (const item of summary.items) {
     if (item.status === "running")
@@ -413,6 +430,9 @@ export function registerStatusBar(pi: ExtensionAPI, runner: StatusSource, settin
       (tui, theme) => {
         let dirty = true;
         let agents: AgentsSummary | undefined;
+        // The turn boundary is re-read only when the entry count moves: a new
+        // user message opens a turn, and every later append keeps the same one.
+        let turn: { count: number; since: string | undefined } | undefined;
         const invalidate = () => {
           dirty = true;
           tui.requestRender();
@@ -426,8 +446,15 @@ export function registerStatusBar(pi: ExtensionAPI, runner: StatusSource, settin
           },
           invalidate,
           render(width: number): string[] {
+            // ReadonlySessionManager omits getEntryCount from its Pick; the
+            // method exists and avoids the getEntries() copy per frame.
+            const count = (ctx.sessionManager as unknown as { getEntryCount(): number }).getEntryCount();
+            if (turn?.count !== count) {
+              turn = { count, since: turnStart(ctx.sessionManager.getEntries()) };
+              dirty = true;
+            }
             if (dirty) {
-              agents = agentsSummary(runner.list());
+              agents = agentsSummary(runner.list(), turn?.since);
               dirty = false;
             }
             if (!agents || agents.running + agents.ended === 0) return [];

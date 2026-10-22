@@ -21,6 +21,7 @@ import {
   pathSegments,
   statusSegments,
   summarizeUsage,
+  turnStart,
   usageSegments,
   type StatusTheme,
 } from "./status.ts";
@@ -47,9 +48,15 @@ function running(id: string, description: string, startedAt: string): AgentRecor
   } as unknown as AgentRecord;
 }
 
-function ended(id: string, description: string, status: "completed" | "failed" | "stopped", endedAt: string): AgentRecord {
+function ended(
+  id: string,
+  description: string,
+  status: "completed" | "failed" | "stopped",
+  endedAt: string,
+  startedAt = "2020-01-01T00:00:00.000Z",
+): AgentRecord {
   return {
-    agent: { id, description, subagentType: "general-purpose", sessionId: "s", sessionDir: "/x", cwd: "/x", startedAt: "2020-01-01T00:00:00.000Z" },
+    agent: { id, description, subagentType: "general-purpose", sessionId: "s", sessionDir: "/x", cwd: "/x", startedAt },
     status,
     exitCode: 0,
     endedAt,
@@ -306,6 +313,26 @@ describe("elapsed", () => {
 
 // ─── the agents line ────────────────────────────────────────────────────────
 
+const sessionEntry = (role: string, timestamp: string) =>
+  ({ type: "message", message: { role }, timestamp }) as unknown as SessionEntry;
+
+describe("turnStart", () => {
+  test("the last user message opens the turn", () => {
+    const entries = [
+      sessionEntry("user", "2026-10-22T09:00:00.000Z"),
+      sessionEntry("assistant", "2026-10-22T09:00:05.000Z"),
+      sessionEntry("user", "2026-10-22T10:00:00.000Z"),
+      sessionEntry("assistant", "2026-10-22T10:00:09.000Z"),
+    ];
+    expect(turnStart(entries)).toBe("2026-10-22T10:00:00.000Z");
+  });
+
+  test("no user message yet: no boundary, nothing is filtered out", () => {
+    expect(turnStart([sessionEntry("assistant", "2026-10-22T10:00:09.000Z")])).toBeUndefined();
+    expect(turnStart([])).toBeUndefined();
+  });
+});
+
 describe("agentsSummary", () => {
   test("empty is undefined", () => {
     expect(agentsSummary([])).toBeUndefined();
@@ -327,12 +354,29 @@ describe("agentsSummary", () => {
     expect(summary.items.map((i) => i.id)).toEqual(["a1", "a2", "e4", "e2", "e3"]); // a1 older than a2
     expect(summary.more).toBe(1);
   });
+
+  test("a turn boundary drops earlier turns' finished agents but keeps their live runs", () => {
+    const records = [
+      ended("old1", "previous turn done", "completed", "2026-10-22T09:30:00.000Z", "2026-10-22T09:20:00.000Z"),
+      running("live", "still going from last turn", "2026-10-22T09:35:00.000Z"),
+      ended("new1", "this turn done", "completed", "2026-10-22T10:00:30.000Z", "2026-10-22T10:00:05.000Z"),
+    ];
+    const scoped = agentsSummary(records, "2026-10-22T10:00:00.000Z")!;
+    expect(scoped.running).toBe(1);
+    expect(scoped.ended).toBe(1); // old1 dropped, new1 kept
+    expect(scoped.items.map((i) => i.id)).toEqual(["live", "new1"]);
+  });
+
+  test("nothing left in this turn: undefined, the line hides", () => {
+    const stale = [ended("old", "a", "completed", "2026-10-22T09:00:00.000Z", "2026-10-22T08:00:00.000Z")];
+    expect(agentsSummary(stale, "2026-10-22T10:00:00.000Z")).toBeUndefined();
+  });
 });
 
 describe("agentSegments", () => {
   const now = Date.parse("2026-10-22T10:00:00.000Z");
 
-  test("mixed: ratio prefix, running with elapsed, nerd marks, +more", () => {
+  test("mixed: running and done counts, running with elapsed, nerd marks, +more", () => {
     const summary = agentsSummary(
       [
         running("a1", "review ui diff", "2026-10-22T09:48:00.000Z"),
@@ -343,7 +387,7 @@ describe("agentSegments", () => {
       ],
     )!;
     const segments = agentSegments(summary, now);
-    expect(segments[0]).toEqual({ text: "agents 1/5 running", color: "dim" }); // 1 running of 5 total
+    expect(segments[0]).toEqual({ text: "agents 1 running · 4 done", color: "dim" });
     expect(segments).toContainEqual({ text: `${ICONS.running} review ui diff (12m)`, color: "accent" });
     expect(segments).toContainEqual({ text: `${ICONS.failed} build site`, color: "error" });
     expect(segments).toContainEqual({ text: `${ICONS.done} t040 cleanup`, color: "success" });
@@ -358,10 +402,10 @@ describe("agentSegments", () => {
     expect(segments).toContainEqual({ text: `${ICONS.running} one (1m)`, color: "accent" });
   });
 
-  test("all ended: ended prefix, no running items", () => {
+  test("all ended: done prefix, no running items", () => {
     const summary = agentsSummary([ended("e1", "a", "completed", "2026-10-22T09:58:00.000Z"), ended("e2", "b", "stopped", "2026-10-22T09:55:00.000Z")])!;
     const segments = agentSegments(summary, now);
-    expect(segments[0]).toEqual({ text: "agents 2 ended", color: "dim" });
+    expect(segments[0]).toEqual({ text: "agents 2 done", color: "dim" });
     expect(segments.find((s) => s.color === "accent")).toBeUndefined();
   });
 });
