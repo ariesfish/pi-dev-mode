@@ -1,9 +1,10 @@
 ---
 name: review
 description: >-
-  The merge/ship gate: assemble four lenses over a diff — two-axis
-  code-review (Standards + Spec), comment discipline, adversarial doubt, and
-  a constraints audit — as parallel readonly reviewers, then aggregate into
+  The merge/ship gate: assemble five lenses over a diff — two-axis
+  code-review (Standards + Spec), comment discipline, adversarial doubt, a
+  constraints audit, and a design audit — as parallel readonly reviewers,
+  then aggregate into
   one deduplicated verdict with severity labels. Use before merging a branch
   or PR, before shipping, or when the user says review this / 审查这个分支 /
   把关. For a quick two-axis look at a diff without the gate ceremony, the
@@ -12,7 +13,7 @@ description: >-
 
 # Review
 
-A merge gate, not an in-flight posture (that is `doubt`). Four lenses over one
+A merge gate, not an in-flight posture (that is `doubt`). Five lenses over one
 diff, each in a fresh-context reviewer so lenses don't pollute each other, then
 one aggregation.
 
@@ -23,9 +24,9 @@ Pin the fixed point exactly as `code-review` does — a commit/branch/tag /
 "review this branch". Confirm it resolves and the diff is non-empty **before**
 spawning anything.
 
-## The four lenses (parallel readonly reviewers)
+## The five lenses (parallel readonly reviewers)
 
-Spawn all four with this package's `agent` tool — one call carrying four readonly `tasks` (one per lens, keyed standards/spec/doubt/constraints) — with the diff
+Spawn all five with this package's `agent` tool — one call carrying five readonly `tasks` (one per lens, keyed standards/spec/doubt/constraints/design) — with the diff
 command + commit list, skill pointers instead of pasted payloads where a
 pointer reaches:
 
@@ -74,6 +75,26 @@ Audit the diff against it: weakened thresholds, removed checks, new
 suppressions without an Exceptions row — each finding cites the exact
 docs/CONSTRAINTS.md line it violates.
 
+### Lens 5 — Design
+
+Runs only when the diff touches UI-bearing code (TSX/JSX/HTML/CSS/SCSS,
+Flutter dart, React Native); no UI code in the diff → the lens reports "no
+UI-bearing changes, design axis n/a" and nothing else.
+
+- **Mechanical tier**: run `node skills/ui-design/scripts/audit-ui.mjs
+  <changed-file-dirs>` (zero-dependency, 182 rules: web/css/flutter/
+  react-native) — findings are objective file:line report rows carrying the
+  audit's severity. Then check the diff's UI values against the repo-root
+  DESIGN.md tokens: a color/size/spacing not in the contract is a finding,
+  citing both the file:line and the DESIGN.md section it violates (no
+  DESIGN.md → say so, the way lens 1 says "no spec available").
+- **Visual tier**: any claim about how things LOOK must come from the
+  `pi-dev:image-reader` agent — spawn it with `subagent_type:
+  pi-dev:image-reader` (capture-based: it reads the rendered screenshot,
+  never the code). A reviewer inferring visual conclusions from code is a
+  protocol violation — the same never-self-assess-on-a-model-that-cannot-see
+  rule `implement` runs on builders.
+
 ## Aggregate
 
 1. Present each lens's report under its own heading, lightly cleaned. **Do
@@ -97,7 +118,7 @@ docs/CONSTRAINTS.md line it violates.
 
 For high-stakes merges (auth, migration, public API, data loss) — and whenever
 the user asks for an independent verdict or a second judge — spawn one more
-reader **after** the four lens reports: a fresh readonly `agent` on a
+reader **after** the five lens reports: a fresh readonly `agent` on a
 **different model** than this session (single-provider setups use the other
 tier — pass the other family alias (e.g. `sonnet` under a `fable` session); a
 multimodal verifier can view drive screenshots as evidence). It sees **the diff and the evidence
@@ -123,7 +144,7 @@ Without it: unchanged — the verdict file itself is still mandatory.
 
 ## Composition notes
 
-- Reviewers are readonly agents of one `agent` call carrying `tasks` (four
+- Reviewers are readonly agents of one `agent` call carrying `tasks` (five
   readonly tasks, one per lens, run_in_background together): the aggregate
   notice returns every lens report at once. Fresh context is the point — never
   review your own implementation through lens 3 in-session; that's what the
