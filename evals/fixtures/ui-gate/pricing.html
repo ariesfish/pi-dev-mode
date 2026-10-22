@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>定价 — RelayDeck</title>
+<style>
+  :root {
+    --bg: #0b0b0d; --surface: #131317; --raised: #1a1a20;
+    --text: #e8e8ea; --muted: #9a9aa3; --accent: #4e80f0; --accent-hover: #6b96f2;
+    --hairline: #26262c;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text);
+    font: 400 1rem/1.6 Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  nav { height: 56px; border-bottom: 1px solid var(--hairline); }
+  nav .wrap { display: flex; align-items: center; gap: 24px; height: 100%; }
+  .brand { font-weight: 700; }
+  .nav-item { color: var(--muted); text-decoration: none; font-size: .875rem; }
+  .nav-item.active { color: var(--text); border-bottom: 2px solid var(--accent); }
+  .cta-nav { margin-left: auto; background: var(--accent); color: #fff;
+    padding: 10px 20px; border-radius: 9999px; text-decoration: none; font-size: .875rem; }
+  h1 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 700; line-height: 1.1;
+    letter-spacing: -0.02em; }
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    padding: 48px 0; }
+  .plan { background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 12px; padding: 24px; }
+  .plan.featured { border-color: var(--accent); }
+  .plan h3 { font-size: 1rem; font-weight: 600; }
+  .price { font-family: var(--mono); font-size: 2rem; margin: 12px 0 4px; }
+  .price small { color: var(--muted); font-size: .875rem; }
+  .plan ul { list-style: none; margin: 16px 0; }
+  .plan li { color: var(--muted); font-size: .875rem; padding: 6px 0;
+    border-bottom: 1px solid var(--hairline); }
+  .plan li b { color: var(--text); font-weight: 500; }
+  .cta { display: block; text-align: center; margin-top: 8px;
+    background: var(--accent); color: #fff; padding: 12px 24px;
+    border-radius: 9999px; text-decoration: none; font-size: .875rem; }
+  .cta:hover { background: var(--accent-hover); }
+  .cta.ghost { background: none; color: var(--text); border: 1px solid var(--hairline); }
+  footer { border-top: 1px solid var(--hairline); padding: 32px 0;
+    color: var(--muted); font-size: .875rem; }
+  footer a { color: var(--accent); text-decoration: none; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <span class="brand">RelayDeck</span>
+    <a class="nav-item" href="home.html">首页</a>
+    <a class="nav-item active" href="pricing.html">定价</a>
+    <a class="cta-nav" href="#">开始使用</a>
+  </div>
+</nav>
+
+<header class="wrap" style="padding: 48px 0 0;">
+  <h1>按席位计价,功能不做减法</h1>
+</header>
+
+<section class="plans wrap">
+  <div class="plan">
+    <h3>开源版</h3>
+    <div class="price">¥0<small>/月</small></div>
+    <ul>
+      <li><b>3</b> 位成员</li>
+      <li><b>50</b> 台主机</li>
+      <li>会话清单与共享</li>
+    </ul>
+    <a class="cta ghost" href="#">自托管文档</a>
+  </div>
+  <div class="plan featured">
+    <h3>团队版</h3>
+    <div class="price">¥59<small>/席位/月</small></div>
+    <ul>
+      <li>成员数不限</li>
+      <li><b>SAML</b> 单点登录</li>
+      <li>按键审计与回放</li>
+    </ul>
+    <a class="cta" href="#">开始试用</a>
+  </div>
+  <div class="plan">
+    <h3>企业版</h3>
+    <div class="price">联系销售</div>
+    <ul>
+      <li>私有化部署</li>
+      <li>审计日志外发 <span style="font-family:var(--mono)">Syslog</span></li>
+      <li>专属支持工程师</li>
+    </ul>
+    <a class="cta ghost" href="#">预约演示</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 RelayDeck Inc. · <a href="home.html">首页</a> · <a href="#">文档</a> · <span style="font-family:var(--mono)">v2.4.1</span></p>
+  </div>
+</footer>
+</body>
+</html>

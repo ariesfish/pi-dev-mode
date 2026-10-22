@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RelayDeck — 面向团队的 SSH 会话管理</title>
+<style>
+  :root {
+    --bg: #0b0b0d; --surface: #131317; --raised: #1a1a20;
+    --text: #e8e8ea; --muted: #9a9aa3; --accent: #4e80f0; --accent-hover: #6b96f2;
+    --hairline: #26262c;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--text);
+    font: 400 1rem/1.6 Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  nav { height: 56px; border-bottom: 1px solid var(--hairline); }
+  nav .wrap { display: flex; align-items: center; gap: 24px; height: 100%; }
+  .brand { font-weight: 700; }
+  .nav-item { color: var(--muted); text-decoration: none; font-size: .875rem; }
+  .nav-item.active { color: var(--text); border-bottom: 2px solid var(--accent); }
+  .cta-nav { margin-left: auto; background: var(--accent); color: #fff;
+    padding: 10px 20px; border-radius: 9999px; text-decoration: none; font-size: .875rem; }
+  .hero { padding: 64px 0 48px; }
+  h1 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 700; line-height: 1.1;
+    letter-spacing: -0.02em; max-width: 18ch; }
+  .hero p { color: var(--muted); max-width: 52ch; margin-top: 16px; }
+  .cta { display: inline-block; margin-top: 24px; background: var(--accent);
+    color: #fff; padding: 12px 24px; border-radius: 9999px; text-decoration: none; }
+  .cta:hover { background: var(--accent-hover); }
+  .cta.ghost { background: none; color: var(--text); border: 1px solid var(--hairline); }
+  section.grid { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr);
+    padding: 48px 0; }
+  .card { background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: 8px; padding: 24px; }
+  .card h3 { font-size: 1rem; font-weight: 600; }
+  .card p { color: var(--muted); font-size: .875rem; margin-top: 8px; }
+  .card code { font-family: var(--mono); font-size: .875rem; color: var(--text);
+    background: var(--raised); padding: 2px 6px; border-radius: 4px; }
+  footer { border-top: 1px solid var(--hairline); padding: 32px 0;
+    color: var(--muted); font-size: .875rem; }
+  footer a { color: var(--accent); text-decoration: none; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <span class="brand">RelayDeck</span>
+    <a class="nav-item active" href="home.html">首页</a>
+    <a class="nav-item" href="pricing.html">定价</a>
+    <a class="cta-nav" href="pricing.html">开始使用</a>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <h1>把团队的 SSH 会话管成一间机房</h1>
+  <p>共享会话、按键审计、按环境隔离权限。RelayDeck 让运维团队在同一张会话清单里协作,不再传来传去 <code>~/.ssh/config</code>。</p>
+  <a class="cta" href="pricing.html">免费试用 14 天</a>
+  <a class="cta ghost" href="#">查看文档</a>
+</header>
+
+<section class="grid wrap">
+  <div class="card">
+    <h3>会话清单</h3>
+    <p>全团队共享的主机清单,环境标签分组,搜索直达,不再各自维护。</p>
+  </div>
+  <div class="card">
+    <h3>按键审计</h3>
+    <p>每一次操作留痕回放,危险命令实时告警,合规审计开箱即用。</p>
+  </div>
+  <div class="card">
+    <h3>权限隔离</h3>
+    <p>按环境与角色授予访问,离职即回收,密钥永不落盘到个人电脑。</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 RelayDeck Inc. · <a href="#">文档</a> · <a href="#">状态页</a> · <span style="font-family:var(--mono)">v2.4.1</span></p>
+  </div>
+</footer>
+</body>
+</html>

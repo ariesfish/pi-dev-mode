@@ -7,6 +7,7 @@ description: >-
 kind: dialogue
 target: ui-design:stays-quiet,review:fires
 expected_outcome: The session engages the merge gate (review skill machinery, design axis included, visual verdicts conditioned on captures) and never reads or engages the design-contract skill.
+fixture: ui-gate
 ---
 
 首页和定价页都照之前定的方向重做完了,分支上就这两块。你帮我把把关:
