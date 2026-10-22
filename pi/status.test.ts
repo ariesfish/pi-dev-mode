@@ -1,12 +1,28 @@
-// pi/status.test.ts — the status footer's pure half: every string the footer
+// pi/status.test.ts — the status bar's pure half: every string the bar
 // shows is built by a function here, computed from a record or a session
-// entry, so the questions (what the tokens say, what order, what drops when
-// the terminal is narrow) are answered in a test, not in a live TUI.
+// entry, so the questions (what the segments say, what order, what colors,
+// what drops when the terminal is narrow) are answered in a test, not in a
+// live TUI.
 import { describe, expect, test } from "bun:test";
-import { visibleWidth } from "@earendil-works/pi-tui";
+import { rgbColor, visibleWidth } from "@earendil-works/pi-tui";
 
 import type { AgentRecord } from "./agents.ts";
-import { ICONS, agentsSummary, agentSegments, elapsed, formatTokens, modelToken, statsTokens, summarizeUsage } from "./status.ts";
+import {
+  ICONS,
+  METER_WIDTH,
+  agentsSummary,
+  agentSegments,
+  colorize,
+  elapsed,
+  fitStatusLine,
+  formatTokens,
+  meterSegments,
+  modelSegment,
+  statusSegments,
+  summarizeUsage,
+  usageSegments,
+  type StatusTheme,
+} from "./status.ts";
 import type { SessionEntry } from "@earendil-works/pi-coding-agent";
 
 // ─── fixtures ───────────────────────────────────────────────────────────────
@@ -40,10 +56,17 @@ function ended(id: string, description: string, status: "completed" | "failed" |
   } as unknown as AgentRecord;
 }
 
+/** Tags theme calls instead of emitting ANSI; colors are concrete Color values. */
+const tagTheme: StatusTheme = {
+  fg: (color, text) => `<${color}:${text}>`,
+  style: (text) => `[${text}]`,
+  colors: { success: rgbColor(1, 2, 3), dim: rgbColor(4, 5, 6), toolSuccessBg: rgbColor(7, 8, 9) },
+};
+
 // ─── icons ──────────────────────────────────────────────────────────────────
 
 describe("icons render one column wide", () => {
-  test("every glyph the footer prints is width 1", () => {
+  test("every glyph the bar prints is width 1", () => {
     for (const [name, glyph] of Object.entries(ICONS)) {
       expect(visibleWidth(glyph), name).toBe(1);
     }
@@ -92,46 +115,161 @@ describe("summarizeUsage", () => {
   });
 });
 
-// ─── the stats tokens (line 2 right side) ───────────────────────────────────
+// ─── the context meter ──────────────────────────────────────────────────────
 
-describe("statsTokens", () => {
-  test("icon-led tokens, ctx before cost, zeros omitted", () => {
-    const totals = { input: 12500, output: 3200, cacheRead: 890000, cacheWrite: 12000, cost: 0.456, cacheHitRate: 98.2 };
-    const { tokens, ctxIndex } = statsTokens(totals, { percent: 34.2, contextWindow: 128000 });
-    expect(tokens).toEqual(["↑13k", "↓3.2k", "≡98.2%", "◔34.2%/128k", "$0.456"]); // 12.5k rounds like pi's footer
-    expect(tokens[ctxIndex]).toBe("◔34.2%/128k");
+describe("meterSegments", () => {
+  test("filled cells round the percent, the rest is dot track, 12 cells wide", () => {
+    const segments = meterSegments(8.5); // round(0.085 * 12) = 1
+    expect(segments.map((s) => s.text).join("")).toHaveLength(METER_WIDTH);
+    expect(segments).toEqual([
+      { text: ICONS.meterFill, color: "meterFill" },
+      { text: ICONS.meterTrack.repeat(11), color: "meterTrack" },
+    ]);
   });
 
-  test("no cache, no cost, unknown context", () => {
-    const totals = { input: 10, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, cacheHitRate: undefined };
-    const { tokens, ctxIndex } = statsTokens(totals, { percent: null, contextWindow: 128000 });
-    expect(tokens).toEqual(["↑10", "◔?%/128k"]);
-    expect(tokens[ctxIndex]).toBe("◔?%/128k");
+  test("null percent renders an empty track", () => {
+    expect(meterSegments(null)).toEqual([{ text: ICONS.meterTrack.repeat(METER_WIDTH), color: "meterTrack" }]);
   });
 
-  test("nothing to show, no context", () => {
-    const totals = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, cacheHitRate: undefined };
-    expect(statsTokens(totals).tokens).toEqual([]);
+  test("100% fills every cell", () => {
+    expect(meterSegments(100)).toEqual([{ text: ICONS.meterFill.repeat(METER_WIDTH), color: "meterFill" }]);
   });
 });
 
-// ─── the model token (line 2 left side) ─────────────────────────────────────
+// ─── the stats segments ─────────────────────────────────────────────────────
 
-describe("modelToken", () => {
-  test("provider/model with effort when the model reasons", () => {
-    expect(modelToken({ provider: "funai", id: "gpt-5.6-terra", reasoning: true }, "high")).toBe("◆ funai/gpt-5.6-terra · high");
+describe("usageSegments", () => {
+  test("icon-led stats in screenshot order, zeros omitted, two-space gaps", () => {
+    const segments = usageSegments({ input: 74000, output: 35000, cacheRead: 1600000, cacheWrite: 100000, cost: 0 });
+    expect(segments).toEqual([
+      { text: `  ${ICONS.in}74k`, color: "success" },
+      { text: `  ${ICONS.out}35k`, color: "accent" },
+      { text: `  ${ICONS.cache}1.7M`, color: "text" },
+    ]);
+  });
+
+  test("empty totals produce no segments", () => {
+    expect(usageSegments({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0 })).toEqual([]);
+  });
+});
+
+// ─── the status line (left half) ────────────────────────────────────────────
+
+describe("statusSegments", () => {
+  const totals = { input: 74000, output: 35000, cacheRead: 1700000, cacheWrite: 0, cost: 0 };
+  const context = { percent: 8.5, contextWindow: 1000000 };
+
+  test("screenshot field order: path, branch, stats, wide gap, meter, used/window, percent", () => {
+    const segments = statusSegments(totals, context, "~/Projects/WT-DeepInfer", "deepinfer-sm90");
+    expect(segments.map((s) => s.text).join("")).toBe(
+      `${ICONS.folder} ~/Projects/WT-DeepInfer (deepinfer-sm90)  ${ICONS.in}74k  ${ICONS.out}35k  ${ICONS.cache}1.7M     ${ICONS.meterFill}${ICONS.meterTrack.repeat(11)}  85k/1.0M 8.5%`,
+    );
+    expect(segments.map((s) => s.color)).toEqual([
+      "dim",
+      "dim",
+      "success",
+      "accent",
+      "text",
+      "plain",
+      "meterFill",
+      "meterTrack",
+      "dim",
+      "dim",
+    ]);
+  });
+
+  test("no identity, no stats: the meter follows the path after one space", () => {
+    const segments = statusSegments({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0 }, context, "~", undefined);
+    expect(segments.map((s) => s.text).join("")).toBe(
+      `${ICONS.folder} ~ ${ICONS.meterFill}${ICONS.meterTrack.repeat(11)}  85k/1.0M 8.5%`,
+    );
+  });
+
+  test("unknown percent: empty track, question mark, no percent segment", () => {
+    const segments = statusSegments(totals, { percent: null, contextWindow: 128000 }, "~", undefined);
+    const joined = segments.map((s) => s.text).join("");
+    expect(joined).toContain(`${ICONS.meterTrack.repeat(METER_WIDTH)}  ?/128k`);
+    expect(joined).not.toContain("%");
+  });
+
+  test("no context: no meter, no used/window, no percent", () => {
+    const segments = statusSegments(totals, undefined, "~", undefined);
+    expect(segments.some((s) => s.color === "meterFill" || s.color === "meterTrack")).toBe(false);
+    expect(segments.map((s) => s.text).join("")).not.toContain("/");
+  });
+});
+
+// ─── the model segment (right half) ─────────────────────────────────────────
+
+describe("modelSegment", () => {
+  test("robot icon, provider model effort — space separated, dim", () => {
+    expect(modelSegment({ provider: "推理集群", id: "deepseek-daily", reasoning: true }, "max")).toEqual({
+      text: `${ICONS.model} 推理集群 deepseek-daily max`,
+      color: "dim",
+    });
   });
 
   test("a reasoning model without a level shows off", () => {
-    expect(modelToken({ provider: "funai", id: "gpt-5.6-terra", reasoning: true }, undefined)).toBe("◆ funai/gpt-5.6-terra · off");
+    expect(modelSegment({ provider: "funai", id: "gpt-5.6-terra", reasoning: true }, undefined)).toEqual({
+      text: `${ICONS.model} funai gpt-5.6-terra off`,
+      color: "dim",
+    });
   });
 
   test("a non-reasoning model has no effort suffix", () => {
-    expect(modelToken({ provider: "funai", id: "gpt-5.6-sol", reasoning: false }, "high")).toBe("◆ funai/gpt-5.6-sol");
+    expect(modelSegment({ provider: "funai", id: "gpt-5.6-sol", reasoning: false }, "high")).toEqual({
+      text: `${ICONS.model} funai gpt-5.6-sol`,
+      color: "dim",
+    });
   });
 
   test("no model", () => {
-    expect(modelToken(undefined, undefined)).toBe("◆ no-model");
+    expect(modelSegment(undefined, undefined)).toEqual({ text: `${ICONS.model} no-model`, color: "dim" });
+  });
+});
+
+// ─── line fitting ───────────────────────────────────────────────────────────
+
+describe("fitStatusLine", () => {
+  const left = "a b c"; // 5 wide
+  const right = "x y"; // 3 wide
+
+  test("plenty of room: right flush, flexible gap", () => {
+    expect(fitStatusLine(left, right, 20)).toEqual({ left, right, gap: 12 });
+  });
+
+  test("tight: the gap collapses to one space", () => {
+    expect(fitStatusLine(left, right, 9)).toEqual({ left, right, gap: 1 });
+  });
+
+  test("narrower: the right side truncates first", () => {
+    expect(fitStatusLine(left, right, 7)).toEqual({ left, right: "x\u001b[0m", gap: 1 });
+  });
+
+  test("no room for the right side: left alone, truncated from its tail", () => {
+    expect(fitStatusLine(left, right, 4)).toEqual({ left: "a b\u001b[0m…\u001b[0m", right: "", gap: 0 });
+  });
+
+  test("CJK on either side counts double width", () => {
+    expect(fitStatusLine("abc", "推理", 9)).toEqual({ left: "abc", right: "推理", gap: 2 });
+    expect(fitStatusLine("推理", "xy", 8)).toEqual({ left: "推理", right: "xy", gap: 2 });
+  });
+});
+
+// ─── theme glue ─────────────────────────────────────────────────────────────
+
+describe("colorize", () => {
+  test("token colors go through theme.fg, meter segments through theme.style", () => {
+    expect(colorize({ text: "x", color: "dim" }, tagTheme)).toBe("<dim:x>");
+    expect(colorize({ text: "x", color: "success" }, tagTheme)).toBe("<success:x>");
+    expect(colorize({ text: "x", color: "accent" }, tagTheme)).toBe("<accent:x>");
+    expect(colorize({ text: "x", color: "meterFill" }, tagTheme)).toBe("[x]");
+    expect(colorize({ text: "x", color: "meterTrack" }, tagTheme)).toBe("[x]");
+  });
+
+  test("plain and text segments pass through unstyled", () => {
+    expect(colorize({ text: "x", color: "plain" }, tagTheme)).toBe("x");
+    expect(colorize({ text: "x", color: "text" }, tagTheme)).toBe("x");
   });
 });
 
@@ -184,7 +322,7 @@ describe("agentsSummary", () => {
 describe("agentSegments", () => {
   const now = Date.parse("2026-10-22T10:00:00.000Z");
 
-  test("mixed: ratio prefix, running with elapsed, ended marks, +more", () => {
+  test("mixed: ratio prefix, running with elapsed, nerd marks, +more", () => {
     const summary = agentsSummary(
       [
         running("a1", "review ui diff", "2026-10-22T09:48:00.000Z"),
@@ -196,10 +334,10 @@ describe("agentSegments", () => {
     )!;
     const segments = agentSegments(summary, now);
     expect(segments[0]).toEqual({ text: "agents 1/5 running", color: "dim" }); // 1 running of 5 total
-    expect(segments).toContainEqual({ text: "review ui diff (12m)", color: "accent" });
-    expect(segments).toContainEqual({ text: "✗ build site", color: "error" });
-    expect(segments).toContainEqual({ text: "✓ t040 cleanup", color: "success" });
-    expect(segments).toContainEqual({ text: "– old run", color: "dim" });
+    expect(segments).toContainEqual({ text: `${ICONS.running} review ui diff (12m)`, color: "accent" });
+    expect(segments).toContainEqual({ text: `${ICONS.failed} build site`, color: "error" });
+    expect(segments).toContainEqual({ text: `${ICONS.done} t040 cleanup`, color: "success" });
+    expect(segments).toContainEqual({ text: `${ICONS.stopped} old run`, color: "dim" });
     expect(segments.at(-1)).toEqual({ text: "+1", color: "dim" });
   });
 
@@ -207,7 +345,7 @@ describe("agentSegments", () => {
     const summary = agentsSummary([running("a1", "one", "2026-10-22T09:59:00.000Z"), running("a2", "two", "2026-10-22T09:59:30.000Z")])!;
     const segments = agentSegments(summary, now);
     expect(segments[0]).toEqual({ text: "agents 2 running", color: "dim" });
-    expect(segments).toContainEqual({ text: "one (1m)", color: "accent" });
+    expect(segments).toContainEqual({ text: `${ICONS.running} one (1m)`, color: "accent" });
   });
 
   test("all ended: ended prefix, no running items", () => {
