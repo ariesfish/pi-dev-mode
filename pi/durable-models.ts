@@ -31,6 +31,8 @@ import type {
 	ModelsDeferredFetchOptions,
 	ModelsImagesOptions,
 	ModelsSimpleStreamOptions,
+	ModelType,
+	ModelTypeMap,
 } from "@earendil-works/pi-ai";
 import type { ModelRegistry } from "@earendil-works/pi-coding-agent";
 

@@ -22,6 +22,9 @@
 # 7. numbers sync           (counts claimed in docs/CONSTRAINTS.md vs the
 #                           suites this run — suite outputs tee into a scratch
 #                           dir; claims cross-check even where a suite skipped)
+# 8. pi typecheck + evidence (undefined-name 类闸(TS2304/TS2552 = imports
+#                           缺口、运行时炸弹) + tsv 证据指针可达/非空
+#                           (check-evidence.py 无 .dev 时 no-op,exit 0))
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
@@ -50,3 +53,8 @@ if [ -f "$logs/pi.log" ]; then
   numbers_args+=(--pi-log "$logs/pi.log")
 fi
 python3 scripts/check-numbers.py "${numbers_args[@]}"
+
+# 8. pi typecheck + tsv 证据闸(check-types.sh 对 tsc 缺场可见 SKIP;
+# check-evidence.py 在无 .dev 的环境 no-op 退出 0)
+bash scripts/check-types.sh
+python3 scripts/check-evidence.py

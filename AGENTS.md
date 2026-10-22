@@ -25,3 +25,13 @@ ready-for-human / wontfix),以 `todo.md` 标题行括号标记或票文件 `Stat
 
 单一上下文布局；`docs/GLOSSARY.md` 与 `docs/adr/` 尚不存在时静默跳过,
 由 grill-me 在术语/决策实际落定后惰性创建。见 `docs/agents/domain.md`。
+
+## 任务隔离
+
+- 开任务先 `bash scripts/task.sh <名>`:任务会话在任务自己的 worktree 里工作;主树
+  是唯一的合并台(单 actor),不承载任务体。子任务派发已由工作流自动隔离——这条
+  针对的是人手开的顶层任务会话。
+- 主树上任何 `git merge/commit/reset` 前必跑 `bash scripts/assert-branch.sh <预期分支>`:
+  并行任务可以切走共享 HEAD(2026-10-22 事故:merge 落错分支,与另一任务纠缠)。
+- 多票共享同一文件时,票上写明编辑区域(插入锚点/只准尾追加/禁碰),
+  merge 冲突在拆票阶段消灭,不留给 merge 现场。

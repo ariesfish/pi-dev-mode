@@ -33,6 +33,9 @@ Slices may be 'HITL' or 'AFK'. HITL slices require human interaction, such as an
 - Each slice delivers a narrow but COMPLETE path through every layer (schema, API, UI, tests)
 - A completed slice is demoable or verifiable on its own
 - Prefer many thin slices over few thick ones
+- Tickets sharing one file carry editor-region ownership in their prompts —
+  insert-at anchor / append-at-end / hands-off: the merge conflict is designed
+  out here, at slicing time, not solved at the merge
 </vertical-slice-rules>
 
 ### 4. Confirm the breakdown (stated defaults + one question)

@@ -138,7 +138,10 @@ Orchestration discipline first: the session running this skill is the orchestrat
    subagent prompts sparse and self-contained (task file, AC labels, pointers
    — not pasted spec text).
 5. As each implementer completes, a **merger subagent** merges its work into
-   the integration branch.
+   the integration branch — after asserting the shared working tree still sits
+   on that branch (`bash scripts/assert-branch.sh <integration-branch>`): a
+   parallel top-level task can switch the shared HEAD out from under the
+   orchestrator (it did, 2026-10-22).
 6. The frontier advances: kick off more implementer subagents for newly
    unblocked tickets, until none remain.
 7. `code-review` on the integration branch. Fix all findings in a single

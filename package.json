@@ -41,6 +41,9 @@
     "playwright-core": "^1.64.1"
   },
   "devDependencies": {
-    "bun": "^1.4.3"
+    "@earendil-works/pi-coding-agent": "^1.4.0",
+    "@types/node": "^26.6.5",
+    "bun": "^1.4.3",
+    "typescript": "^7.0.2"
   }
 }
