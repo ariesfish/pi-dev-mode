@@ -43,9 +43,9 @@ Starting tokens ([`craft.md`](craft.md) vocabulary, one-line why):
   device
 - `exclude: stock_photos` — generic stock kills trust; product shot or nothing
 
-Cross-validation: [`library/stripe/`](library/stripe/) (near-white canvas, one
+Cross-validation: [`library/quiet-saas/`](library/quiet-saas/) (near-white canvas, one
 indigo accent reserved for conversion actions) and
-[`library/linear.app/`](library/linear.app/) (one chromatic accent, never
+[`library/noir-technical/`](library/noir-technical/) (one chromatic accent, never
 decorative) corroborate the one-accent budget and the quiet-surface posture.
 
 ## dashboard
@@ -87,9 +87,9 @@ Starting tokens:
   tighten further, exec views may loosen
 - `exclude: stock_photos` — dashboards show data, never people
 
-Cross-validation: [`library/linear.app/`](library/linear.app/) corroborates
+Cross-validation: [`library/noir-technical/`](library/noir-technical/) corroborates
 the sticky rail + ≤2-accent pattern (charcoal panels over hairlines, lavender
-reserved for the active state) and [`library/vercel/`](library/vercel/)
+reserved for the active state) and [`library/quiet-saas/`](library/quiet-saas/)
 corroborates the light polarity (near-white canvas, ink chrome, color only on
 interactive states) — same restraint, both polarities.
 
@@ -133,11 +133,10 @@ Starting tokens:
   marketing air, not data cram
 - `exclude: gradients` — code fills and callout borders own the only texture
 
-Cross-validation: [`library/mintlify/`](library/mintlify/) corroborates the
-rails-and-measure anatomy (3-column docs — sidebar / prose / TOC, Inter prose
-+ mono code, accent reserved for active states) and
-[`library/supabase/`](library/supabase/) corroborates the one-accent restraint
-(near-white system, a single green CTA event on dense docs).
+Cross-validation: [`library/quiet-saas/`](library/quiet-saas/) corroborates both
+the rails-and-measure anatomy (3-column docs — sidebar / prose / TOC, prose and
+mono in one family, accent reserved for active states) and the one-accent
+restraint (a single green CTA event on dense docs).
 
 ## app (mobile)
 
@@ -182,11 +181,11 @@ Starting tokens:
 - `exclude: stock_photos` — placeholders only; external assets fake the frame
   or break the preview
 
-Cross-validation: [`library/spotify/`](library/spotify/) corroborates the
-content-first shell and finger-scale pill geometry (one green as the sole
-chromatic event) and [`library/uber/`](library/uber/) corroborates the pill
-on every interactive element; both are deliberate polarity/personality picks —
-the preset's paper canvas is the neutral start they override.
+Cross-validation: [`library/brand-voltage/`](library/brand-voltage/) corroborates
+the content-first shell and finger-scale pill geometry (one green as the sole
+chromatic event) and the pill-on-every-control rule — both are deliberate
+personality picks; the preset's paper canvas is the neutral start they
+override.
 
 ## onboarding (mobile)
 
@@ -228,10 +227,10 @@ Starting tokens:
 - `exclude: stock_photos` — illustration or icon carries the hero; faces wait
   for the product itself
 
-Cross-validation: [`library/notion/`](library/notion/) corroborates the
+Cross-validation: [`library/playful-pop/`](library/playful-pop/) corroborates the
 illustration-led voice with one pill CTA carrying conversion, and
-[`library/oura/`](library/oura/) corroborates a single decisive CTA color
-against an otherwise calm, warm canvas.
+[`library/warm-editorial/`](library/warm-editorial/) corroborates a single
+decisive CTA color against an otherwise calm, warm canvas.
 
 ## app (desktop)
 

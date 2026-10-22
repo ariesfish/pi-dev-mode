@@ -26,7 +26,7 @@ Brief's full workflow is below; the other modes carry their evidence protocols w
 
 ## Mode: brief
 
-When the brief names an application archetype — landing page, dashboard, docs, mobile app, onboarding, desktop app — start from the matching preset in [`references/presets.md`](references/presets.md): a starting point the brief's explicit dimensions always override.
+When the brief names an application archetype — landing page, dashboard, docs, mobile app, onboarding, desktop app — start from the matching preset in [`references/presets.md`](references/presets.md): a starting point the brief's explicit dimensions always override. The brief may instead (or also) name a style — "noir-technical", "playful-pop", a technique like "bento-grid", or "make it feel like <product>" — which resolves through the [`references/library/`](references/library/README.md) alias index: the style profile's `dimensions:` pre-resolve the eight dimensions the same way (explicit dimensions still override), and the two starting points compose — the preset sets structure, the style sets look.
 
 ### 1. Accept the input
 
@@ -68,9 +68,9 @@ Every reference — screenshot, URL, an existing DESIGN.md, a [`references/libra
 | Change | what becomes this project's own: subject, copy, brand marks, exact layout |
 | Do-not-copy | what never crosses over: logos, literal screenshots, claims, proprietary UI |
 
-### 3. Resolve X against the exemplar library
+### 3. Resolve X against the style library
 
-X has a folder in `references/library/` → that DESIGN.md is the first evidence source: read it before anything else, cite it via its `origin` header as third-party analysis, and label its values provided — not observed, this repo did not capture the site. X missing → name the gap, suggest capturing the live site (screenshots or URLs), and leave every value inferred until that arrives.
+X resolves through [`references/library/`](references/library/README.md): twenty style profiles named by design language, never by site. Its README index carries the alias map — site and product mentions resolve to the style they were distilled into; a named style resolves directly. The profile is the first evidence source: read it before anything else, cite it via its `origin` header as a third-party distillation, and label its values provided — not observed, this repo did not capture any interface. No alias matches → name the gap, suggest the closest style plus a live capture of the named reference (screenshots or URLs), and leave every site-specific value inferred until that arrives.
 
 ### 4. Write the DESIGN.md and the split
 
@@ -96,6 +96,6 @@ Audit first; a redesign without an audit is a silent restyle with extra steps.
 
 ## Guardrails
 
-- Brief resolves only through craft.md tables; the reference and extract modes carry observed evidence instead, so their values may sit outside the vocabulary — with provenance.
+- Brief resolves only through craft.md tables; the library's style profiles pre-resolve the same dimensions with declared tokens, so their values may sit outside the vocabulary — carried with provenance.
 - Adjectives ("premium", "clean") are mapping questions, not answers.
 - A redesign edits DESIGN.md as decisions: what changes, why, version bumped — never a silent restyle.
