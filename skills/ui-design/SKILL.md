@@ -50,6 +50,30 @@ When the direction needs human eyes (or the ask was HITL), also render one previ
 
 Report every explicit decision and every default (value + the rule that picked it). Then the stack takes over: the spec carries a DESIGN.md status line, implement reads the contract before UI-bearing tickets, review audits against it.
 
+## Mode: reference
+
+"Make it feel like X" resolves through references, never adjectives from memory: X is a design language to evidence, not a spec to clone.
+
+### 1. Label every reference
+
+Every reference — screenshot, URL, an existing DESIGN.md, a [`references/library/`](references/library/README.md) file, user notes — is evidence tagged with a confidence label: **observed** (captured from the live interface), **provided** (handed in or vendored), or **inferred** (reasoned, not seen). No references at all → say so and stop; inventing from memory is the failure mode this exists to prevent.
+
+### 2. Split each reference into three layers
+
+| Layer | Holds |
+|---|---|
+| Keep | qualities to preserve: density, composition, type rhythm, color temperature, motion attitude |
+| Change | what becomes this project's own: subject, copy, brand marks, exact layout |
+| Do-not-copy | what never crosses over: logos, literal screenshots, claims, proprietary UI |
+
+### 3. Resolve X against the exemplar library
+
+X has a folder in `references/library/` → that DESIGN.md is the first evidence source: read it before anything else, cite it via its `origin` header as third-party analysis, and label its values provided — not observed, this repo did not capture the site. X missing → name the gap, suggest capturing the live site (screenshots or URLs), and leave every value inferred until that arrives.
+
+### 4. Write the DESIGN.md and the split
+
+Output = a DESIGN.md per the template (reference values may sit outside the brief vocabulary — each carried with provenance) plus the Keep/Change/Do-not-copy table, one row per claim, confidence label attached. The closing report names every reference, which decisions each drove, and what a live capture would upgrade.
+
 ## Guardrails
 
 - Brief resolves only through craft.md tables; the reference and extract modes carry observed evidence instead, so their values may sit outside the vocabulary — with provenance.
