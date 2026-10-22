@@ -38,6 +38,15 @@ findings; a class counts once it has happened twice.
      fixes: encode as constraints rows (new gates) or fold into existing lint
      (correct's highest enforcement tier) — never prose edits alone. Without a
      ledger, mine the tsv only, unchanged.
+   - **ADR health** — when the repo carries `docs/adr/`: run the repo's ADR
+     checker if it is wired (`scripts/check-adrs.py` — numbering, status
+     tokens, supersede closure); an overturned decision whose old half never
+     got marked is mechanical drift, and a repo where that check is missing
+     routes back to `constraints` for installation. What the checker cannot
+     see stays a judgment finding: a `proposed` status hanging undecided, a
+     `deprecated` ADR that nothing replaced, or code that has visibly
+     outgrown a decision — surface those to the user rather than silently
+     rewriting the ADR.
    - **Automated checks** — a mistake a check could have caught. Read the
      repo's own lint/typecheck/test commands and CI first: an existing check
      that sits unwired or broken is the finding. A repo with no guardrail at

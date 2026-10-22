@@ -42,6 +42,11 @@ Reference formats:
 
 - Read `../../references/glossary-format.md` (the package's single source, shared with `refact`) before creating or editing `docs/GLOSSARY.md`.
 - Read `../../references/adr-format.md` before creating an ADR.
+- Before writing a new ADR, scan the existing ones for a decision it
+  overturns. When it does, mark both ends in the same change, per
+  adr-format.md's supersede protocol: the new ADR's `Supersedes ADR-NNNN`
+  and the old one's `status: superseded by ADR-NNNN`. The ADR checker that
+  protocol ships with fails a pair marked on one end only.
 
 ## What to challenge
 

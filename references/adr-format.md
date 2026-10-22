@@ -18,13 +18,37 @@ That's it. An ADR can be a single paragraph. The value is in recording *that* a 
 
 Only include these when they add genuine value. Most ADRs won't need them.
 
-- **Status** frontmatter (`proposed | accepted | deprecated | superseded by ADR-NNNN`) — useful when decisions are revisited
+- **Status** frontmatter (`proposed | accepted | deprecated | superseded by ADR-NNNN`) — useful when decisions are revisited; the checker enforces this token set and the supersede closure below
 - **Considered Options** — only when the rejected alternatives are worth remembering
 - **Consequences** — only when non-obvious downstream effects need to be called out
 
 ## Numbering
 
-Scan `docs/adr/` for the highest existing number and increment by one.
+Scan `docs/adr/` for the highest existing number and increment by one. Numbers
+stay unique, zero-padded to four digits, and gap-free — `0002` missing while
+`0003` exists means someone renumbered by hand. A checker enforces the whole
+paragraph: `scripts/check-adrs.py` (from the pi-dev-mode package; the
+`constraints` skill installs it into a repo's `scripts/` and wires it into the
+check command or CI) fails duplicates, gaps, and malformed names.
+
+## Superseding
+
+When a new ADR overturns an earlier one, mark both ends in the same change —
+the half writers forget is the old one:
+
+1. the new ADR states `Supersedes ADR-NNNN` (a body sentence, or frontmatter
+   `supersedes: ADR-NNNN`);
+2. the old ADR's frontmatter becomes `status: superseded by ADR-NNNN`:
+
+   ```md
+   ---
+   status: superseded by ADR-0012
+   ---
+   ```
+
+The checker fails a pair marked on one end only, a `superseded by` that
+points at a missing ADR, and any hand-renumbering debris from the Numbering
+rules above.
 
 ## When to offer an ADR
 

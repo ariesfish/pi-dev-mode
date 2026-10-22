@@ -9,9 +9,12 @@
 # 2. gates regression      (budget semantics, 23 assertions)
 # 3. prose lint            (slop on added lines; CI-aware base resolution
 #                           lives in check-prose.py)
-# 4. adapters seam tests   (control-web, node-only: playwright-core from the
+# 4. ADR checker selftest  (installable scripts/check-adrs.py — each check
+#                           proved to fail on its specimen; this repo carries
+#                           no docs/adr/, so the selftest is the integrity run)
+# 5. adapters seam tests   (control-web, node-only: playwright-core from the
 #                           package-root node_modules — needs `npm install` once)
-# 5. pi extension suite    (bun test via test-extensions.sh — the pi runtime
+# 6. pi extension suite    (bun test via test-extensions.sh — the pi runtime
 #                           and bun are local-dev fixtures, not CI ones: it
 #                           runs when both are present and visible-SKIPs
 #                           otherwise; never a silent pass)
@@ -21,6 +24,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 python3 scripts/check-skills.py
 bash scripts/test-gates.sh
 python3 scripts/check-prose.py
+python3 scripts/check-adrs.py --selftest
 node --test "adapters/control-web/tests/*.test.mjs"
 if command -v pi >/dev/null 2>&1 && command -v bun >/dev/null 2>&1; then
   bash scripts/test-extensions.sh
