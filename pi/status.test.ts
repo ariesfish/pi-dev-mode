@@ -296,14 +296,14 @@ describe("elapsed", () => {
   const start = "2026-10-22T10:00:00.000Z";
   const at = (offsetMs: number) => Date.parse(start) + offsetMs;
 
-  test("seconds, minutes, zero-padded hours, days", () => {
+  test("always seconds — a run past a minute keeps ticking instead of freezing on \"1m\"", () => {
     expect(elapsed(start, at(0))).toBe("0s");
     expect(elapsed(start, at(45_000))).toBe("45s");
-    expect(elapsed(start, at(60_000))).toBe("1m");
-    expect(elapsed(start, at(5 * 60_000))).toBe("5m");
-    expect(elapsed(start, at(63 * 60_000))).toBe("1h03m");
-    expect(elapsed(start, at(24 * 3_600_000))).toBe("1d0h");
-    expect(elapsed(start, at(26 * 3_600_000))).toBe("1d2h");
+    expect(elapsed(start, at(60_000))).toBe("60s");
+    expect(elapsed(start, at(61_000))).toBe("61s");
+    expect(elapsed(start, at(5 * 60_000))).toBe("300s");
+    expect(elapsed(start, at(63 * 60_000))).toBe("3780s");
+    expect(elapsed(start, at(26 * 3_600_000))).toBe("93600s");
   });
 
   test("a clock behind the record clamps to zero", () => {
@@ -388,7 +388,7 @@ describe("agentSegments", () => {
     )!;
     const segments = agentSegments(summary, now);
     expect(segments[0]).toEqual({ text: "agents 1 running · 4 done", color: "dim" });
-    expect(segments).toContainEqual({ text: `${ICONS.running} review ui diff (12m)`, color: "accent" });
+    expect(segments).toContainEqual({ text: `${ICONS.running} review ui diff (720s)`, color: "accent" });
     expect(segments).toContainEqual({ text: `${ICONS.failed} build site`, color: "error" });
     expect(segments).toContainEqual({ text: `${ICONS.done} t040 cleanup`, color: "success" });
     expect(segments).toContainEqual({ text: `${ICONS.stopped} old run`, color: "dim" });
@@ -399,7 +399,7 @@ describe("agentSegments", () => {
     const summary = agentsSummary([running("a1", "one", "2026-10-22T09:59:00.000Z"), running("a2", "two", "2026-10-22T09:59:30.000Z")])!;
     const segments = agentSegments(summary, now);
     expect(segments[0]).toEqual({ text: "agents 2 running", color: "dim" });
-    expect(segments).toContainEqual({ text: `${ICONS.running} one (1m)`, color: "accent" });
+    expect(segments).toContainEqual({ text: `${ICONS.running} one (60s)`, color: "accent" });
   });
 
   test("all ended: done prefix, no running items", () => {

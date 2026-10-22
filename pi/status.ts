@@ -41,8 +41,10 @@ export const ICONS = {
   stopped: "\uF04D", // nf-fa-stop — rendered ✓
 } as const;
 
-/** Refresh cadence for the agents line (elapsed minutes, missed records). */
+/** Refresh cadence for the agents line: fast while a run is live so the
+ * elapsed seconds visibly move, slow otherwise. */
 const TICK_MS = 30_000;
+const RUNNING_TICK_MS = 5_000;
 /** Display caps for the agents line; the truth stays in the counts. */
 const RUNNING_MAX = 6;
 const ENDED_MAX = 3;
@@ -238,15 +240,12 @@ function homeRelative(cwd: string): string {
 
 // ─── the agents line ────────────────────────────────────────────────────────
 
+/** How long a run has been going, always in seconds: a minute figure turns
+ * frozen-looking the moment it stops changing every second, and "still
+ * running" is exactly what this number is read for. */
 export function elapsed(startedAt: string, now: number): string {
   const ms = Math.max(0, now - Date.parse(startedAt));
-  const seconds = Math.floor(ms / 1000);
-  if (seconds < 60) return `${seconds}s`;
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h${String(minutes % 60).padStart(2, "0")}m`;
-  return `${Math.floor(hours / 24)}d${hours % 24}h`;
+  return `${Math.floor(ms / 1000)}s`;
 }
 
 export interface AgentItem {
@@ -438,10 +437,18 @@ export function registerStatusBar(pi: ExtensionAPI, runner: StatusSource, settin
           tui.requestRender();
         };
         invalidateAgents = invalidate;
-        const tick = setInterval(invalidate, TICK_MS);
+        // Self-rescheduling: each tick picks the next delay from the state it
+        // just read, so a live run refreshes seconds fast and an idle line
+        // does not spend renders for nothing.
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        const tick = () => {
+          invalidate();
+          timer = setTimeout(tick, (agents?.running ?? 0) > 0 ? RUNNING_TICK_MS : TICK_MS);
+        };
+        timer = setTimeout(tick, TICK_MS);
         return {
           dispose() {
-            clearInterval(tick);
+            clearTimeout(timer);
             if (invalidateAgents === invalidate) invalidateAgents = undefined;
           },
           invalidate,
