@@ -4,19 +4,18 @@
 // what drops when the terminal is narrow) are answered in a test, not in a
 // live TUI.
 import { describe, expect, test } from "bun:test";
-import { rgbColor, visibleWidth } from "@earendil-works/pi-tui";
+import { visibleWidth } from "@earendil-works/pi-tui";
 
 import type { AgentRecord } from "./agents.ts";
 import {
   ICONS,
-  METER_WIDTH,
   agentsSummary,
   agentSegments,
   colorize,
+  contextSegments,
   elapsed,
   fitStatusLine,
   formatTokens,
-  meterSegments,
   modelSegment,
   statusSegments,
   summarizeUsage,
@@ -56,19 +55,17 @@ function ended(id: string, description: string, status: "completed" | "failed" |
   } as unknown as AgentRecord;
 }
 
-/** Tags theme calls instead of emitting ANSI; colors are concrete Color values. */
+/** Tags theme calls instead of emitting ANSI. */
 const tagTheme: StatusTheme = {
   fg: (color, text) => `<${color}:${text}>`,
-  style: (text) => `[${text}]`,
-  colors: { success: rgbColor(1, 2, 3), dim: rgbColor(4, 5, 6), toolSuccessBg: rgbColor(7, 8, 9) },
 };
 
 // ─── icons ──────────────────────────────────────────────────────────────────
 
 describe("icons render one column wide", () => {
-  test("every glyph the bar prints is width 1", () => {
+  test("every glyph matches pi-tui's width table (cache bolt is the one 2-wide)", () => {
     for (const [name, glyph] of Object.entries(ICONS)) {
-      expect(visibleWidth(glyph), name).toBe(1);
+      expect(visibleWidth(glyph), name).toBe(name === "cache" ? 2 : 1);
     }
   });
 });
@@ -115,41 +112,40 @@ describe("summarizeUsage", () => {
   });
 });
 
-// ─── the context meter ──────────────────────────────────────────────────────
-
-describe("meterSegments", () => {
-  test("filled cells round the percent, the rest is dot track, 12 cells wide", () => {
-    const segments = meterSegments(8.5); // round(0.085 * 12) = 1
-    expect(segments.map((s) => s.text).join("")).toHaveLength(METER_WIDTH);
-    expect(segments).toEqual([
-      { text: ICONS.meterFill, color: "meterFill" },
-      { text: ICONS.meterTrack.repeat(11), color: "meterTrack" },
-    ]);
-  });
-
-  test("null percent renders an empty track", () => {
-    expect(meterSegments(null)).toEqual([{ text: ICONS.meterTrack.repeat(METER_WIDTH), color: "meterTrack" }]);
-  });
-
-  test("100% fills every cell", () => {
-    expect(meterSegments(100)).toEqual([{ text: ICONS.meterFill.repeat(METER_WIDTH), color: "meterFill" }]);
-  });
-});
-
 // ─── the stats segments ─────────────────────────────────────────────────────
 
 describe("usageSegments", () => {
-  test("icon-led stats in screenshot order, zeros omitted, two-space gaps", () => {
+  test("icon-led stats in screenshot order, one space after each icon, zeros omitted", () => {
     const segments = usageSegments({ input: 74000, output: 35000, cacheRead: 1600000, cacheWrite: 100000, cost: 0 });
     expect(segments).toEqual([
-      { text: `  ${ICONS.in}74k`, color: "success" },
-      { text: `  ${ICONS.out}35k`, color: "accent" },
-      { text: `  ${ICONS.cache}1.7M`, color: "text" },
+      { text: `  ${ICONS.in} 74k`, color: "success" },
+      { text: `  ${ICONS.out} 35k`, color: "accent" },
+      { text: `  ${ICONS.cache} 1.7M`, color: "text" },
     ]);
   });
 
   test("empty totals produce no segments", () => {
     expect(usageSegments({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0 })).toEqual([]);
+  });
+});
+
+// ─── the context group ──────────────────────────────────────────────────────
+
+describe("contextSegments", () => {
+  test("database icon, used/window, percent — one space after the icon", () => {
+    expect(contextSegments({ percent: 8.5, contextWindow: 1000000 })).toEqual([
+      { text: `  ${ICONS.context} 85k/1.0M`, color: "dim" },
+      { text: " 8.5%", color: "dim" },
+    ]);
+  });
+
+  test("unknown percent: question mark, no percent segment", () => {
+    const segments = contextSegments({ percent: null, contextWindow: 128000 });
+    expect(segments).toEqual([{ text: `  ${ICONS.context} ?/128k`, color: "dim" }]);
+  });
+
+  test("no context: no segments", () => {
+    expect(contextSegments(undefined)).toEqual([]);
   });
 });
 
@@ -159,42 +155,21 @@ describe("statusSegments", () => {
   const totals = { input: 74000, output: 35000, cacheRead: 1700000, cacheWrite: 0, cost: 0 };
   const context = { percent: 8.5, contextWindow: 1000000 };
 
-  test("screenshot field order: path, branch, stats, wide gap, meter, used/window, percent", () => {
+  test("screenshot field order: path, branch, stats, context, all icon-led", () => {
     const segments = statusSegments(totals, context, "~/Projects/WT-DeepInfer", "deepinfer-sm90");
     expect(segments.map((s) => s.text).join("")).toBe(
-      `${ICONS.folder} ~/Projects/WT-DeepInfer (deepinfer-sm90)  ${ICONS.in}74k  ${ICONS.out}35k  ${ICONS.cache}1.7M     ${ICONS.meterFill}${ICONS.meterTrack.repeat(11)}  85k/1.0M 8.5%`,
+      `${ICONS.folder} ~/Projects/WT-DeepInfer (deepinfer-sm90)  ${ICONS.in} 74k  ${ICONS.out} 35k  ${ICONS.cache} 1.7M  ${ICONS.context} 85k/1.0M 8.5%`,
     );
-    expect(segments.map((s) => s.color)).toEqual([
-      "dim",
-      "dim",
-      "success",
-      "accent",
-      "text",
-      "plain",
-      "meterFill",
-      "meterTrack",
-      "dim",
-      "dim",
-    ]);
+    expect(segments.map((s) => s.color)).toEqual(["dim", "dim", "success", "accent", "text", "dim", "dim"]);
   });
 
-  test("no identity, no stats: the meter follows the path after one space", () => {
+  test("no identity, no stats: context follows the path", () => {
     const segments = statusSegments({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0 }, context, "~", undefined);
-    expect(segments.map((s) => s.text).join("")).toBe(
-      `${ICONS.folder} ~ ${ICONS.meterFill}${ICONS.meterTrack.repeat(11)}  85k/1.0M 8.5%`,
-    );
+    expect(segments.map((s) => s.text).join("")).toBe(`${ICONS.folder} ~  ${ICONS.context} 85k/1.0M 8.5%`);
   });
 
-  test("unknown percent: empty track, question mark, no percent segment", () => {
-    const segments = statusSegments(totals, { percent: null, contextWindow: 128000 }, "~", undefined);
-    const joined = segments.map((s) => s.text).join("");
-    expect(joined).toContain(`${ICONS.meterTrack.repeat(METER_WIDTH)}  ?/128k`);
-    expect(joined).not.toContain("%");
-  });
-
-  test("no context: no meter, no used/window, no percent", () => {
+  test("no context: no context group", () => {
     const segments = statusSegments(totals, undefined, "~", undefined);
-    expect(segments.some((s) => s.color === "meterFill" || s.color === "meterTrack")).toBe(false);
     expect(segments.map((s) => s.text).join("")).not.toContain("/");
   });
 });
@@ -202,23 +177,23 @@ describe("statusSegments", () => {
 // ─── the model segment (right half) ─────────────────────────────────────────
 
 describe("modelSegment", () => {
-  test("robot icon, provider model effort — space separated, dim", () => {
+  test("robot icon, Provider/model Effort — dim", () => {
     expect(modelSegment({ provider: "推理集群", id: "deepseek-daily", reasoning: true }, "max")).toEqual({
-      text: `${ICONS.model} 推理集群 deepseek-daily max`,
+      text: `${ICONS.model} 推理集群/deepseek-daily max`,
       color: "dim",
     });
   });
 
   test("a reasoning model without a level shows off", () => {
     expect(modelSegment({ provider: "funai", id: "gpt-5.6-terra", reasoning: true }, undefined)).toEqual({
-      text: `${ICONS.model} funai gpt-5.6-terra off`,
+      text: `${ICONS.model} funai/gpt-5.6-terra off`,
       color: "dim",
     });
   });
 
   test("a non-reasoning model has no effort suffix", () => {
     expect(modelSegment({ provider: "funai", id: "gpt-5.6-sol", reasoning: false }, "high")).toEqual({
-      text: `${ICONS.model} funai gpt-5.6-sol`,
+      text: `${ICONS.model} funai/gpt-5.6-sol`,
       color: "dim",
     });
   });
@@ -259,17 +234,11 @@ describe("fitStatusLine", () => {
 // ─── theme glue ─────────────────────────────────────────────────────────────
 
 describe("colorize", () => {
-  test("token colors go through theme.fg, meter segments through theme.style", () => {
+  test("every segment color goes through theme.fg", () => {
     expect(colorize({ text: "x", color: "dim" }, tagTheme)).toBe("<dim:x>");
     expect(colorize({ text: "x", color: "success" }, tagTheme)).toBe("<success:x>");
     expect(colorize({ text: "x", color: "accent" }, tagTheme)).toBe("<accent:x>");
-    expect(colorize({ text: "x", color: "meterFill" }, tagTheme)).toBe("[x]");
-    expect(colorize({ text: "x", color: "meterTrack" }, tagTheme)).toBe("[x]");
-  });
-
-  test("plain and text segments pass through unstyled", () => {
-    expect(colorize({ text: "x", color: "plain" }, tagTheme)).toBe("x");
-    expect(colorize({ text: "x", color: "text" }, tagTheme)).toBe("x");
+    expect(colorize({ text: "x", color: "text" }, tagTheme)).toBe("<text:x>");
   });
 });
 

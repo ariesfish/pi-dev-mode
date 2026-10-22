@@ -1,12 +1,17 @@
 // pi/status.ts — the status bar (T-103..T-105): one nerd-icon status line
-// ABOVE the editor (📁 path (branch) ↑in ↓out ⚡cache · 12-cell ctx meter ·
-// used/window % · right-aligned 🤖-style provider model effort), the agents
-// line BELOW the editor, and the other extensions' setStatus texts in the
-// footer. Layout, field order, spacing, and palette follow the 2026-10-22
-// reference screenshot (see .dev/feature-statusbar/spec.md); the built-in
-// footer (↑k ↓k R…k CH… hints) is replaced by OUR file (not vendored) — it
-// has no word to say about the background agents this package runs, and its
+// ABOVE the editor (📁 path (branch) ↑in ↓out ⚡cache · 🗄 used/window % ·
+// right-aligned robot provider/model effort), the agents line BELOW the
+// editor, and the other extensions' setStatus texts in the footer. Layout,
+// field order, spacing, and palette follow the 2026-10-22 reference
+// screenshot (see .dev/feature-statusbar/spec.md); the built-in footer
+// (↑k ↓k R…k CH… hints) is replaced by OUR file (not vendored) — it has no
+// word to say about the background agents this package runs, and its
 // token/context line would duplicate this bar.
+//
+// Glyph choice is NOT from the official codepoint cheatsheet: the user's
+// terminals render Maple Mono NF CN, whose PUA map is the v2 layout (the v3
+// table renders unrelated logos — probe-verified, see the feature dir). Every
+// glyph below was rendered and visually confirmed against Maple itself.
 //
 // Data: everything shown is built by pure functions over records and session
 // entries (tested in status.test.ts); the components only assemble, color,
@@ -17,24 +22,23 @@
 import { isAbsolute, relative, resolve } from "node:path";
 import type { AgentRecord } from "./agents.ts";
 import type { ExtensionAPI, SessionEntry } from "@earendil-works/pi-coding-agent";
-import { mixColors, truncateToWidth, visibleWidth, type Color } from "@earendil-works/pi-tui";
+import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
-/** Every nerd-font glyph the bar prints; width 1 pinned by test. U+26A1 (the
- * screenshot's hollow bolt) is width 2 in pi-tui's width table, so the hollow
- * bolt is nf-oct-zap. All codepoints verified against the installed
- * JetBrainsMono Nerd Font (fc-list :charset=). */
+/** Every glyph the bar prints; widths pinned by test — the cache bolt
+ * (U+26A1, the reference screenshot's own glyph) is the one 2-wide entry in
+ * pi-tui's width table; Maple draws it in one cell with the same ink
+ * overflow the reference shows. */
 export const ICONS = {
-  folder: "\uF07B", // nf-fa-folder
-  in: "\uF062", // nf-fa-arrow_up
-  out: "\uF063", // nf-fa-arrow_down
-  cache: "\uF26A", // nf-oct-zap — hollow bolt
-  model: "\uF544", // nf-fa-robot
-  running: "\uF1CE", // nf-fa-circle_o_notch
-  done: "\uF00C", // nf-fa-check
-  failed: "\uF00D", // nf-fa-times
-  stopped: "\uF04D", // nf-fa-stop
-  meterFill: "\u2588", // █ solid cell
-  meterTrack: "\u283F", // ⠿ braille dot lattice
+  folder: "\uF07B", // nf-fa-folder — rendered ✓
+  in: "\uF062", // nf-fa-arrow_up — rendered ✓
+  out: "\uF063", // nf-fa-arrow_down — rendered ✓
+  cache: "\u26A1", // ⚡ hollow bolt, the reference glyph — rendered ✓
+  context: "\uF1C0", // nf-fa-database cylinder — rendered ✓ (v2 map)
+  model: "\uF17B", // nf-fa-android robot head — rendered ✓ (Maple has F544 absent)
+  running: "\uF1CE", // nf-fa-circle_o_notch — rendered ✓
+  done: "\uF00C", // nf-fa-check — rendered ✓
+  failed: "\uF00D", // nf-fa-times — rendered ✓
+  stopped: "\uF04D", // nf-fa-stop — rendered ✓
 } as const;
 
 /** Refresh cadence for the agents line (elapsed minutes, missed records). */
@@ -105,35 +109,37 @@ export function summarizeUsage(entries: readonly SessionEntry[]): UsageTotals {
 
 // ─── the status line: pure segments ─────────────────────────────────────────
 
-/** How the renderer colors a segment; meter specials resolve via theme.style. */
-export type StatusColor = "plain" | "dim" | "success" | "accent" | "text" | "meterFill" | "meterTrack";
+/** How the renderer colors a segment; all resolve through theme.fg. */
+export type StatusColor = "dim" | "success" | "accent" | "text";
 
 export interface StatusSegment {
   text: string;
   color: StatusColor;
 }
 
-/** The context meter is 12 cells in the reference screenshot. */
-export const METER_WIDTH = 12;
-
-/** █ fill on a ⠿ dot lattice; percent null renders an empty track. */
-export function meterSegments(percent: number | null): StatusSegment[] {
-  const filled =
-    percent === null ? 0 : Math.min(METER_WIDTH, Math.max(0, Math.round((percent / 100) * METER_WIDTH)));
+/** Icon-led stats in screenshot order (↑ in, ↓ out, ⚡ cache), one space
+ * between icon and number, zeros omitted. */
+export function usageSegments(totals: UsageTotals): StatusSegment[] {
   const segments: StatusSegment[] = [];
-  if (filled > 0) segments.push({ text: ICONS.meterFill.repeat(filled), color: "meterFill" });
-  if (METER_WIDTH - filled > 0)
-    segments.push({ text: ICONS.meterTrack.repeat(METER_WIDTH - filled), color: "meterTrack" });
+  if (totals.input > 0)
+    segments.push({ text: `  ${ICONS.in} ${formatTokens(totals.input)}`, color: "success" });
+  if (totals.output > 0)
+    segments.push({ text: `  ${ICONS.out} ${formatTokens(totals.output)}`, color: "accent" });
+  const cache = totals.cacheRead + totals.cacheWrite;
+  if (cache > 0) segments.push({ text: `  ${ICONS.cache} ${formatTokens(cache)}`, color: "text" });
   return segments;
 }
 
-/** Icon-led stats in screenshot order (↑ in, ↓ out, ⚡ cache), zeros omitted. */
-export function usageSegments(totals: UsageTotals): StatusSegment[] {
-  const segments: StatusSegment[] = [];
-  if (totals.input > 0) segments.push({ text: `  ${ICONS.in}${formatTokens(totals.input)}`, color: "success" });
-  if (totals.output > 0) segments.push({ text: `  ${ICONS.out}${formatTokens(totals.output)}`, color: "accent" });
-  const cache = totals.cacheRead + totals.cacheWrite;
-  if (cache > 0) segments.push({ text: `  ${ICONS.cache}${formatTokens(cache)}`, color: "text" });
+/** The context group: database icon + used/window + percent, dim, like the
+ * other stat fields (the meter was dropped on owner request 2026-10-22). */
+export function contextSegments(context: { percent: number | null; contextWindow: number } | undefined): StatusSegment[] {
+  if (!context) return [];
+  const used =
+    context.percent === null ? "?" : formatTokens(Math.round((context.percent / 100) * context.contextWindow));
+  const segments: StatusSegment[] = [
+    { text: `  ${ICONS.context} ${used}/${formatTokens(context.contextWindow)}`, color: "dim" },
+  ];
+  if (context.percent !== null) segments.push({ text: ` ${context.percent.toFixed(1)}%`, color: "dim" });
   return segments;
 }
 
@@ -147,24 +153,17 @@ export function statusSegments(
   const segments: StatusSegment[] = [{ text: `${ICONS.folder} ${pwd}`, color: "dim" }];
   if (identity) segments.push({ text: ` (${identity})`, color: "dim" });
   segments.push(...usageSegments(totals));
-  if (context) {
-    // Wide gap before the meter once stats exist, single space otherwise.
-    segments.push({ text: segments.length > 1 ? "     " : " ", color: "plain" });
-    segments.push(...meterSegments(context.percent));
-    const used =
-      context.percent === null ? "?" : formatTokens(Math.round((context.percent / 100) * context.contextWindow));
-    segments.push({ text: `  ${used}/${formatTokens(context.contextWindow)}`, color: "dim" });
-    if (context.percent !== null) segments.push({ text: ` ${context.percent.toFixed(1)}%`, color: "dim" });
-  }
+  segments.push(...contextSegments(context));
   return segments;
 }
 
-/** The right-aligned half: robot icon, provider model effort (effort only when the model reasons). */
+/** The right-aligned half: robot icon, Provider/model Effort (effort only when
+ * the model reasons). */
 export function modelSegment(
   model: { provider: string; id: string; reasoning: boolean } | undefined,
   thinkingLevel: string | undefined,
 ): StatusSegment {
-  const name = model ? `${model.provider} ${model.id}` : "no-model";
+  const name = model ? `${model.provider}/${model.id}` : "no-model";
   const effort = model?.reasoning ? ` ${thinkingLevel ?? "off"}` : "";
   return { text: `${ICONS.model} ${name}${effort}`, color: "dim" };
 }
@@ -179,7 +178,7 @@ export interface FittedLine {
 }
 
 /** Right-aligned model segment, flexible gap, right truncates first, then the
- * left's tail (meter/ctx give way, the path survives). */
+ * left's tail (ctx give way, the path survives). */
 export function fitStatusLine(leftPlain: string, rightPlain: string, width: number): FittedLine {
   const leftWidth = visibleWidth(leftPlain);
   const rightWidth = visibleWidth(rightPlain);
@@ -197,28 +196,13 @@ export function fitStatusLine(leftPlain: string, rightPlain: string, width: numb
 
 /** The slice of Theme the bar needs; structural so tests can fake it. */
 export interface StatusTheme {
-  fg(color: "dim" | "success" | "accent", text: string): string;
-  style(text: string, options: { fg: Color; bg: Color }): string;
-  colors: Readonly<{ success: Color; dim: Color; toolSuccessBg: Color }>;
+  fg(color: StatusColor, text: string): string;
 }
 
-/** Segment color → theme call. Meter fill/track sit on the dark green plate
- * (toolSuccessBg ≈ the reference's #0D2219); the track is success dimmed down. */
+/** Segment color → theme call. "text" pins the theme's near-white (the
+ * reference's bright #C8C9C9) instead of the terminal's default foreground. */
 export function colorize(segment: StatusSegment, theme: StatusTheme): string {
-  switch (segment.color) {
-    case "plain":
-    case "text":
-      return segment.text;
-    case "meterFill":
-      return theme.style(segment.text, { fg: theme.colors.success, bg: theme.colors.toolSuccessBg });
-    case "meterTrack":
-      return theme.style(segment.text, {
-        fg: mixColors(theme.colors.success, theme.colors.dim, 0.55),
-        bg: theme.colors.toolSuccessBg,
-      });
-    default:
-      return theme.fg(segment.color, segment.text);
-  }
+  return theme.fg(segment.color, segment.text);
 }
 
 function homeRelative(cwd: string): string {
