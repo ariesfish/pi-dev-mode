@@ -17,7 +17,7 @@ DESIGN.md is to looks what AGENTS.md is to behavior: a plain-markdown file at th
 
 | Mode | Entry question |
 |---|---|
-| brief | "What should this look like?" — resolve the eight dimensions, write DESIGN.md |
+| brief | "What should this look like?" — resolve the eight dimensions, settle a style from the library, write DESIGN.md |
 | reference | "Make it feel like X" — Keep / Change / Do-not-copy from references, then DESIGN.md |
 | extract | "Capture what exists" — reverse an existing interface into DESIGN.md first |
 | redesign | "Change the direction" — audit first, then deliberate edits, never silent restyle |
@@ -26,7 +26,7 @@ Brief's full workflow is below; the other modes carry their evidence protocols w
 
 ## Mode: brief
 
-When the brief names an application archetype — landing page, dashboard, docs, mobile app, onboarding, desktop app — start from the matching preset in [`references/presets.md`](references/presets.md): a starting point the brief's explicit dimensions always override. The brief may instead (or also) name a style — "noir-technical", "playful-pop", a technique like "bento-grid", or "make it feel like <product>" — which resolves through the [`references/library/`](references/library/README.md) alias index: the style profile's `dimensions:` pre-resolve the eight dimensions the same way (explicit dimensions still override), and the two starting points compose — the preset sets structure, the style sets look.
+When the brief names an application archetype — landing page, dashboard, docs, mobile app, onboarding, desktop app — start from the matching preset in [`references/presets.md`](references/presets.md): a starting point the brief's explicit dimensions always override. The brief may instead (or also) name a style — "noir-technical", "playful-pop", a technique like "bento-grid", or "make it feel like <product>" — which resolves through the [`references/library/`](references/library/README.md) alias index: the style profile's `dimensions:` pre-resolve the eight dimensions the same way (explicit dimensions still override), and the two starting points compose — the preset sets structure, the style sets look. A brief that names no style still gets one: step 3 consults the library — a clear match is adopted, an ambiguous one is asked with the top choices and a recommendation.
 
 ### 1. Accept the input
 
@@ -36,19 +36,28 @@ Two shapes, same destination: an explicit dimension list, or natural language ("
 
 palette · accent · typography · display · layout · mood · density · exclude — a closed vocabulary; every legal value and its concrete tokens are in [`references/craft.md`](references/craft.md). A value outside the table is a question, never a guess: name the legal values and ask.
 
-### 3. Apply defaults, transparently
+### 3. Consult the style library for the look
 
-Unspecified dimensions resolve by the default rules in craft.md (mood-compatibility driven). When the user is reachable and a missing dimension would change the direction, ask — bounded, at most two questions. Every defaulted dimension lands in the frontmatter `resolved-from-defaults` map and in the closing report: silent defaults are how one "clean" brief becomes five different sites.
+Signals so far — dimensions, archetype, domain — point into [`references/library/`](references/library/README.md); scan its index, not every file:
 
-### 4. Write DESIGN.md
+- **One style dominates** → adopt it: its `dimensions` pre-resolve what the brief left open (each landing in `resolved-from-defaults`, the style named as the rule) and its Distinguishing moves seed the do's. The closing report carries the style and the signals that picked it.
+- **Two or more plausible, and the choice changes the direction** → ask once, bounded: name the top two or three with one line each on why and how they differ, recommended first. Never table the whole index; never pick in silence.
+- **Nothing points anywhere** → a styleless contract is legal: craft's neutral defaults (next step) stand, no style is forced.
+- User unreachable with an ambiguous choice → proceed on the recommended style, logged in `resolved-from-defaults`; the report names it as a decision awaiting override.
+
+### 4. Apply defaults, transparently
+
+Unspecified dimensions resolve by the default rules in craft.md (mood-compatibility driven), on top of any style the previous step adopted. When the user is reachable and a missing dimension would change the direction, ask — bounded, at most two questions (the style ask above counts as one). Every defaulted dimension lands in the frontmatter `resolved-from-defaults` map and in the closing report: silent defaults are how one "clean" brief becomes five different sites.
+
+### 5. Write DESIGN.md
 
 From [`references/template.md`](references/template.md): frontmatter tokens (colors as a semantic map, typography per role) plus eleven fixed sections, names aligned with the wider DESIGN.md ecosystem so exemplar files drop in without translation. A DESIGN.md already exists → ask: overwrite, merge into it, or skip.
 
-### 5. Optional: a preview a human can eyeball
+### 6. Optional: a preview a human can eyeball
 
 When the direction needs human eyes (or the ask was HITL), also render one preview file: color swatches labeled with role and hex, type specimens at declared sizes, a spacing ruler, two or three live components styled with the resolved tokens. The preview is a looking glass, not the deliverable.
 
-### 6. Report and hand off
+### 7. Report and hand off
 
 Report every explicit decision and every default (value + the rule that picked it). Then the stack takes over: the spec carries a DESIGN.md status line, implement reads the contract before UI-bearing tickets, review audits against it.
 
@@ -98,4 +107,5 @@ Audit first; a redesign without an audit is a silent restyle with extra steps.
 
 - Brief resolves only through craft.md tables; the library's style profiles pre-resolve the same dimensions with declared tokens, so their values may sit outside the vocabulary — carried with provenance.
 - Adjectives ("premium", "clean") are mapping questions, not answers.
+- The style library is a closed vocabulary: adopt, propose, or none — a style outside the index is a question, never an invention (craft's rule, lifted one level).
 - A redesign edits DESIGN.md as decisions: what changes, why, version bumped — never a silent restyle.
