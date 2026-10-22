@@ -19,14 +19,20 @@
 #                           present and visible-SKIPs otherwise; never a silent
 #                           pass. bun is devDependencies-managed: devDependencies'
 #                           node_modules/.bin shadows any system bun)
+# 7. numbers sync           (counts claimed in docs/CONSTRAINTS.md vs the
+#                           suites this run — suite outputs tee into a scratch
+#                           dir; claims cross-check even where a suite skipped)
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
+logs="$(mktemp -d)"
+trap 'rm -rf "$logs"' EXIT
+
 python3 scripts/check-skills.py
-bash scripts/test-gates.sh
+bash scripts/test-gates.sh 2>&1 | tee "$logs/gates.log"
 python3 scripts/check-prose.py
 python3 scripts/check-adrs.py --selftest
-node --test "adapters/control-web/tests/*.test.mjs"
+node --test "adapters/control-web/tests/*.test.mjs" 2>&1 | tee "$logs/adapters.log"
 # bun resolves project-first: devDependencies' bun (from the package-root
 # `npm install`) shadows any system bun; test-extensions.sh calls bare `bun`,
 # so PATH has to carry it in.
@@ -34,7 +40,13 @@ if [ -x node_modules/.bin/bun ]; then
   PATH="$PWD/node_modules/.bin:$PATH"
 fi
 if command -v pi >/dev/null 2>&1 && command -v bun >/dev/null 2>&1; then
-  bash scripts/test-extensions.sh
+  bash scripts/test-extensions.sh 2>&1 | tee "$logs/pi.log"
 else
   echo "test-extensions: SKIP (no local pi runtime + bun (node_modules/.bin or PATH) — evidence tier, docs/CONSTRAINTS.md)"
 fi
+
+numbers_args=(--gates-log "$logs/gates.log" --adapters-log "$logs/adapters.log")
+if [ -f "$logs/pi.log" ]; then
+  numbers_args+=(--pi-log "$logs/pi.log")
+fi
+python3 scripts/check-numbers.py "${numbers_args[@]}"
