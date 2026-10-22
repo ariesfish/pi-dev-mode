@@ -7,8 +7,8 @@ session runs it.
 Distilled from: OpenDesign's design-brief dimension tables (Apache-2.0 — the
 closed vocabulary, the token resolutions, and the default rules below),
 taste rules, and Apple Human Interface Guidelines principles (© Apple — cited
-by link only, no source text reproduced). Full web review checklist lands in
-this skill's web-guidelines reference.
+by link only, no source text reproduced). The full web review checklist lives in
+[`web-guidelines.md`](web-guidelines.md).
 
 ## The eight dimensions (closed vocabulary)
 

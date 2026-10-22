@@ -26,6 +26,8 @@ Brief's full workflow is below; the other modes carry their evidence protocols w
 
 ## Mode: brief
 
+When the brief names an application archetype — landing page, dashboard, docs, mobile app, onboarding, desktop app — start from the matching preset in [`references/presets.md`](references/presets.md): a starting point the brief's explicit dimensions always override.
+
 ### 1. Accept the input
 
 Two shapes, same destination: an explicit dimension list, or natural language ("dark, editorial, serif headlines, information-dense"). Prose maps to dimensions with the mapping table in [`references/craft.md`](references/craft.md); one phrase may map to several dimensions — resolve each on its own.
