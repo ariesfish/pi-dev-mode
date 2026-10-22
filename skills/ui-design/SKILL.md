@@ -55,3 +55,21 @@ Report every explicit decision and every default (value + the rule that picked i
 - Brief resolves only through craft.md tables; the reference and extract modes carry observed evidence instead, so their values may sit outside the vocabulary — with provenance.
 - Adjectives ("premium", "clean") are mapping questions, not answers.
 - A redesign edits DESIGN.md as decisions: what changes, why, version bumped — never a silent restyle.
+
+## Mode: extract
+
+Reverse an existing interface into DESIGN.md; the artifact is the audit baseline a later redesign diffs against, not a style endorsement.
+
+1. Read the live UI and the code that produces it: pages, components, and the tokens actually in use, not what a config file claims.
+2. Fill the same eleven sections of [`references/template.md`](references/template.md) from observed values.
+3. Mark every entry with provenance: observed (read from the page or the source) or inferred (reverse-engineered from one instance where no explicit token exists).
+4. Flag the contradictions the codebase carries instead of smoothing them over — multiple blues where one should exist, ad-hoc spacing off the scale, a radius per component rather than a system. Contradictions are findings to list, not drift to reconcile silently.
+
+## Mode: redesign
+
+Audit first; a redesign without an audit is a silent restyle with extra steps.
+
+1. Read the existing DESIGN.md; if absent, run extract first and treat that as the baseline.
+2. Diff the baseline against the live UI and list every mismatch before proposing anything.
+3. Propose changes as explicit decisions: what moves, why, and the cost; bump the DESIGN.md version with every accepted change.
+4. Silent restyles are findings, not merges: an unexplained visual change lands on the mismatch list as drift, waiting for a decision, never absorbed quietly.
