@@ -1,12 +1,11 @@
 // pi/status.ts — the status bar (T-103..T-105): one nerd-icon status line
-// ABOVE the editor (📁 path (branch) ↑in ↓out ⚡cache · 🗄 used/window % ·
-// right-aligned robot provider/model effort), the agents line BELOW the
-// editor, and the other extensions' setStatus texts in the footer. Layout,
-// field order, spacing, and palette follow the 2026-10-22 reference
-// screenshot (see .dev/feature-statusbar/spec.md); the built-in footer
-// (↑k ↓k R…k CH… hints) is replaced by OUR file (not vendored) — it has no
-// word to say about the background agents this package runs, and its
-// token/context line would duplicate this bar.
+// ABOVE the editor — model first, then ↑in ↓out ⚡cache-hit-rate, context
+// group, $cost, and the right-aligned 📁 path + git branch — the agents line
+// BELOW the editor, and the other extensions' setStatus texts in the footer.
+// Field order follows the owner's 2026-10-22 steering (model first, path
+// last); the built-in footer (↑k ↓k R…k CH… hints) is replaced by OUR file
+// (not vendored) — it has no word to say about the background agents this
+// package runs, and its token/context line would duplicate this bar.
 //
 // Glyph choice is NOT from the official codepoint cheatsheet: the user's
 // terminals render Maple Mono NF CN, whose PUA map is the v2 layout (the v3
@@ -35,6 +34,7 @@ export const ICONS = {
   cache: "\u26A1", // ⚡ hollow bolt, the reference glyph — rendered ✓
   context: "\uF1C0", // nf-fa-database cylinder — rendered ✓ (v2 map)
   model: "\uF17B", // nf-fa-android robot head — rendered ✓ (Maple has F544 absent)
+  branch: "\uF126", // nf-fa-code_branch — rendered ✓ (git branch pictogram)
   running: "\uF1CE", // nf-fa-circle_o_notch — rendered ✓
   done: "\uF00C", // nf-fa-check — rendered ✓
   failed: "\uF00D", // nf-fa-times — rendered ✓
@@ -56,11 +56,12 @@ export interface StatusSource {
 
 // ─── numbers ────────────────────────────────────────────────────────────────
 
-/** Same shape as pi's built-in footer: 999 / 1.0k / 12k / 123k / 1.2M. */
+/** Token numbers in the owner's uppercase style: 999 / 1.0K / 12K / 123K /
+ * 1.2M (pi's built-in footer uses lowercase k; the owner overrode it). */
 export function formatTokens(count: number): string {
   if (count < 1000) return count.toString();
-  if (count < 10000) return `${(count / 1000).toFixed(1)}k`;
-  if (count < 1_000_000) return `${Math.round(count / 1000)}k`;
+  if (count < 10000) return `${(count / 1000).toFixed(1)}K`;
+  if (count < 1_000_000) return `${Math.round(count / 1000)}K`;
   if (count < 10_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
   return `${Math.round(count / 1_000_000)}M`;
 }
@@ -117,21 +118,22 @@ export interface StatusSegment {
   color: StatusColor;
 }
 
-/** Icon-led stats in screenshot order (↑ in, ↓ out, ⚡ cache), one space
- * between icon and number, zeros omitted. */
+/** Icon-led stats in the owner's order (↑ in, ↓ out, ⚡ cache hit rate), one
+ * space between icon and number (the bolt's extra cell is pi-tui's width-2
+ * accounting, so no explicit space after it), zeros omitted. */
 export function usageSegments(totals: UsageTotals): StatusSegment[] {
   const segments: StatusSegment[] = [];
   if (totals.input > 0)
     segments.push({ text: `  ${ICONS.in} ${formatTokens(totals.input)}`, color: "success" });
   if (totals.output > 0)
     segments.push({ text: `  ${ICONS.out} ${formatTokens(totals.output)}`, color: "accent" });
-  const cache = totals.cacheRead + totals.cacheWrite;
-  if (cache > 0) segments.push({ text: `  ${ICONS.cache} ${formatTokens(cache)}`, color: "text" });
+  if ((totals.cacheRead > 0 || totals.cacheWrite > 0) && totals.cacheHitRate !== undefined)
+    segments.push({ text: `  ${ICONS.cache}${totals.cacheHitRate.toFixed(1)}%`, color: "text" });
   return segments;
 }
 
-/** The context group: database icon + used/window + percent, dim, like the
- * other stat fields (the meter was dropped on owner request 2026-10-22). */
+/** The context group: database icon + used/window + percent, dim (the meter
+ * was dropped on owner request 2026-10-22). */
 export function contextSegments(context: { percent: number | null; contextWindow: number } | undefined): StatusSegment[] {
   if (!context) return [];
   const used =
@@ -143,17 +145,38 @@ export function contextSegments(context: { percent: number | null; contextWindow
   return segments;
 }
 
-/** The left half of the status line, in the reference screenshot's field order. */
+/** The cumulative cost: plain $ + 3 decimals, dim, zero omitted (restored on
+ * owner request 2026-10-22). */
+export function costSegments(totals: UsageTotals): StatusSegment[] {
+  return totals.cost > 0 ? [{ text: `  $${totals.cost.toFixed(3)}`, color: "dim" }] : [];
+}
+
+/** The left half of the status line, in the owner's field order: model first,
+ * then ↑in ↓out ⚡hit-rate, context, cost. */
 export function statusSegments(
   totals: UsageTotals,
   context: { percent: number | null; contextWindow: number } | undefined,
+  model: { provider: string; id: string; reasoning: boolean } | undefined,
+  thinkingLevel: string | undefined,
+): StatusSegment[] {
+  return [
+    modelSegment(model, thinkingLevel),
+    ...usageSegments(totals),
+    ...contextSegments(context),
+    ...costSegments(totals),
+  ];
+}
+
+/** The right-aligned half: folder + cwd, then the git branch with its icon
+ * (session name in parens as the fallback when no branch). */
+export function pathSegments(
   pwd: string,
-  identity: string | undefined,
+  branch: string | undefined,
+  sessionName: string | undefined,
 ): StatusSegment[] {
   const segments: StatusSegment[] = [{ text: `${ICONS.folder} ${pwd}`, color: "dim" }];
-  if (identity) segments.push({ text: ` (${identity})`, color: "dim" });
-  segments.push(...usageSegments(totals));
-  segments.push(...contextSegments(context));
+  if (branch) segments.push({ text: ` ${ICONS.branch} ${branch}`, color: "dim" });
+  else if (sessionName) segments.push({ text: ` (${sessionName})`, color: "dim" });
   return segments;
 }
 
@@ -365,18 +388,19 @@ export function registerStatusBar(pi: ExtensionAPI, runner: StatusSource, settin
               };
             }
             const pwd = homeRelative(session.getCwd());
-            const identity = branchState.branch ?? session.getSessionName();
-            const leftSegments = statusSegments(stats.totals, stats.context, pwd, identity);
-            const rightSegment = modelSegment(ctx.model, ctx.thinkingLevel);
+            const sessionName = session.getSessionName() || undefined;
+            const leftSegments = statusSegments(stats.totals, stats.context, ctx.model, ctx.thinkingLevel);
+            const rightSegments = pathSegments(pwd, branchState.branch ?? undefined, sessionName);
             const leftPlain = leftSegments.map((s) => s.text).join("");
-            const rightPlain = rightSegment.text;
+            const rightPlain = rightSegments.map((s) => s.text).join("");
             const fit = fitStatusLine(leftPlain, rightPlain, width);
             const leftColored = leftSegments.map((s) => colorize(s, theme)).join("");
+            const rightColored = rightSegments.map((s) => colorize(s, theme)).join("");
             const leftOut = fit.right === "" && fit.left !== leftPlain ? truncateToWidth(leftColored, width, "…") : leftColored;
             const rightOut =
               fit.right === rightPlain
-                ? colorize(rightSegment, theme)
-                : truncateToWidth(colorize(rightSegment, theme), Math.max(0, width - visibleWidth(leftPlain) - 1), "");
+                ? rightColored
+                : truncateToWidth(rightColored, Math.max(0, width - visibleWidth(leftPlain) - 1), "");
             return [truncateToWidth(leftOut + " ".repeat(fit.gap) + rightOut, width, "…")];
           },
         };

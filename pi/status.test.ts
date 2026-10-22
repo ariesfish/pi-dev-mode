@@ -13,10 +13,12 @@ import {
   agentSegments,
   colorize,
   contextSegments,
+  costSegments,
   elapsed,
   fitStatusLine,
   formatTokens,
   modelSegment,
+  pathSegments,
   statusSegments,
   summarizeUsage,
   usageSegments,
@@ -73,15 +75,15 @@ describe("icons render one column wide", () => {
 // ─── token numbers ──────────────────────────────────────────────────────────
 
 describe("formatTokens", () => {
-  test("same semantics as pi's built-in footer", () => {
+  test("owner's uppercase style", () => {
     expect(formatTokens(0)).toBe("0");
     expect(formatTokens(999)).toBe("999");
-    expect(formatTokens(1000)).toBe("1.0k");
-    expect(formatTokens(9999)).toBe("10.0k");
-    expect(formatTokens(12000)).toBe("12k");
-    expect(formatTokens(123456)).toBe("123k");
+    expect(formatTokens(1000)).toBe("1.0K");
+    expect(formatTokens(9999)).toBe("10.0K");
+    expect(formatTokens(12000)).toBe("12K");
+    expect(formatTokens(123456)).toBe("123K");
     expect(formatTokens(1234567)).toBe("1.2M");
-    expect(formatTokens(128000)).toBe("128k");
+    expect(formatTokens(128000)).toBe("128K");
   });
 });
 
@@ -115,13 +117,18 @@ describe("summarizeUsage", () => {
 // ─── the stats segments ─────────────────────────────────────────────────────
 
 describe("usageSegments", () => {
-  test("icon-led stats in screenshot order, one space after each icon, zeros omitted", () => {
-    const segments = usageSegments({ input: 74000, output: 35000, cacheRead: 1600000, cacheWrite: 100000, cost: 0 });
+  test("icon-led stats in owner order, one space after arrow icons, hit rate after the bolt", () => {
+    const segments = usageSegments({ input: 74000, output: 35000, cacheRead: 1600000, cacheWrite: 100000, cost: 0, cacheHitRate: 98.2 });
     expect(segments).toEqual([
-      { text: `  ${ICONS.in} 74k`, color: "success" },
-      { text: `  ${ICONS.out} 35k`, color: "accent" },
-      { text: `  ${ICONS.cache} 1.7M`, color: "text" },
+      { text: `  ${ICONS.in} 74K`, color: "success" },
+      { text: `  ${ICONS.out} 35K`, color: "accent" },
+      { text: `  ${ICONS.cache}98.2%`, color: "text" },
     ]);
+  });
+
+  test("no cache hit rate: the bolt stays hidden even with cache traffic", () => {
+    const segments = usageSegments({ input: 10, output: 0, cacheRead: 900, cacheWrite: 0, cost: 0, cacheHitRate: undefined });
+    expect(segments.map((s) => s.text).join("")).not.toContain(ICONS.cache);
   });
 
   test("empty totals produce no segments", () => {
@@ -132,16 +139,16 @@ describe("usageSegments", () => {
 // ─── the context group ──────────────────────────────────────────────────────
 
 describe("contextSegments", () => {
-  test("database icon, used/window, percent — one space after the icon", () => {
+  test("database icon, used/window, percent — uppercase, one space after the icon", () => {
     expect(contextSegments({ percent: 8.5, contextWindow: 1000000 })).toEqual([
-      { text: `  ${ICONS.context} 85k/1.0M`, color: "dim" },
+      { text: `  ${ICONS.context} 85K/1.0M`, color: "dim" },
       { text: " 8.5%", color: "dim" },
     ]);
   });
 
   test("unknown percent: question mark, no percent segment", () => {
     const segments = contextSegments({ percent: null, contextWindow: 128000 });
-    expect(segments).toEqual([{ text: `  ${ICONS.context} ?/128k`, color: "dim" }]);
+    expect(segments).toEqual([{ text: `  ${ICONS.context} ?/128K`, color: "dim" }]);
   });
 
   test("no context: no segments", () => {
@@ -149,28 +156,62 @@ describe("contextSegments", () => {
   });
 });
 
+// ─── the cost segment ───────────────────────────────────────────────────────
+
+describe("costSegments", () => {
+  test("plain dollar, 3 decimals, dim", () => {
+    expect(costSegments({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0.456 })).toEqual([
+      { text: "  $0.456", color: "dim" },
+    ]);
+  });
+
+  test("zero cost is omitted", () => {
+    expect(costSegments({ input: 1, output: 1, cacheRead: 0, cacheWrite: 0, cost: 0 })).toEqual([]);
+  });
+});
+
 // ─── the status line (left half) ────────────────────────────────────────────
 
 describe("statusSegments", () => {
-  const totals = { input: 74000, output: 35000, cacheRead: 1700000, cacheWrite: 0, cost: 0 };
+  const totals = { input: 74000, output: 35000, cacheRead: 1700000, cacheWrite: 0, cost: 0.456, cacheHitRate: 98.2 };
   const context = { percent: 8.5, contextWindow: 1000000 };
+  const model = { provider: "推理集群", id: "deepseek-daily", reasoning: true };
 
-  test("screenshot field order: path, branch, stats, context, all icon-led", () => {
-    const segments = statusSegments(totals, context, "~/Projects/WT-DeepInfer", "deepinfer-sm90");
+  test("owner order: model first, stats, hit rate, context, cost", () => {
+    const segments = statusSegments(totals, context, model, "max");
     expect(segments.map((s) => s.text).join("")).toBe(
-      `${ICONS.folder} ~/Projects/WT-DeepInfer (deepinfer-sm90)  ${ICONS.in} 74k  ${ICONS.out} 35k  ${ICONS.cache} 1.7M  ${ICONS.context} 85k/1.0M 8.5%`,
+      `${ICONS.model} 推理集群/deepseek-daily max  ${ICONS.in} 74K  ${ICONS.out} 35K  ${ICONS.cache}98.2%  ${ICONS.context} 85K/1.0M 8.5%  $0.456`,
     );
-    expect(segments.map((s) => s.color)).toEqual(["dim", "dim", "success", "accent", "text", "dim", "dim"]);
+    expect(segments.map((s) => s.color)).toEqual(["dim", "success", "accent", "text", "dim", "dim", "dim"]);
   });
 
-  test("no identity, no stats: context follows the path", () => {
-    const segments = statusSegments({ input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0 }, context, "~", undefined);
-    expect(segments.map((s) => s.text).join("")).toBe(`${ICONS.folder} ~  ${ICONS.context} 85k/1.0M 8.5%`);
+  test("no context, no cost: model and stats only", () => {
+    const segments = statusSegments({ input: 10, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0 }, undefined, model, "max");
+    expect(segments.map((s) => s.text).join("")).toBe(
+      `${ICONS.model} 推理集群/deepseek-daily max  ${ICONS.in} 10`,
+    );
+  });
+});
+
+// ─── the path group (right half) ────────────────────────────────────────────
+
+describe("pathSegments", () => {
+  test("folder, path, git branch with its icon", () => {
+    expect(pathSegments("~/Projects/WT-DeepInfer", "deepinfer-sm90", undefined)).toEqual([
+      { text: `${ICONS.folder} ~/Projects/WT-DeepInfer`, color: "dim" },
+      { text: ` ${ICONS.branch} deepinfer-sm90`, color: "dim" },
+    ]);
   });
 
-  test("no context: no context group", () => {
-    const segments = statusSegments(totals, undefined, "~", undefined);
-    expect(segments.map((s) => s.text).join("")).not.toContain("/");
+  test("no branch: session name in parens as the fallback", () => {
+    expect(pathSegments("~", undefined, "mysession")).toEqual([
+      { text: `${ICONS.folder} ~`, color: "dim" },
+      { text: " (mysession)", color: "dim" },
+    ]);
+  });
+
+  test("nothing else: path alone", () => {
+    expect(pathSegments("~", undefined, undefined)).toEqual([{ text: `${ICONS.folder} ~`, color: "dim" }]);
   });
 });
 
