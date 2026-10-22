@@ -26,6 +26,7 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | Fuzzy idea, no shared language yet | `grill-me` (then `proto` if a question is best answered by building) |
 | A question needs external docs read | `research` (background) |
 | Formalize the work | `spec` -> `tickets` |
+| UI-bearing work and the repo has no DESIGN.md, or the design direction must change | `ui-design` (the design contract: brief / reference / extract / redesign) |
 | The quality bar with numbers is missing, or an autonomous loop is about to run | `constraints` |
 | Incoming bug report / feature request needs filing & labels | `triage-issue` (same tracker, inbound lane) |
 | One ticket to build (names ONE area or module) | `implement` |
