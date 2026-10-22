@@ -1,13 +1,20 @@
-// pi/status.ts — the status footer (T-102): the default footer answers every
-// question in shorthand (↑k ↓k R…k CH…) and has no word to say about the
-// background agents this package runs. This file replaces it (OUR FILE, not
-// vendored) with: a model segment on the left (◆ provider/model · effort),
-// icon-led stats on the right (↑ in, ↓ out, ≡ cache hit, ◔ ctx, $ cost), live
-// agent segments, and the other extensions' setStatus texts unchanged below.
+// pi/status.ts — the status bar (T-103..T-105): one nerd-icon status line
+// ABOVE the editor — model first, then ↑in ↓out ⚡cache-hit-rate, context
+// group, $cost, and the right-aligned 📁 path + git branch — the agents line
+// BELOW the editor, and the other extensions' setStatus texts in the footer.
+// Field order follows the owner's 2026-10-22 steering (model first, path
+// last); the built-in footer (↑k ↓k R…k CH… hints) is replaced by OUR file
+// (not vendored) — it has no word to say about the background agents this
+// package runs, and its token/context line would duplicate this bar.
 //
-// Data: everything shown is built by a pure function over records and session
-// entries (tested in status.test.ts); the component only assembles, colors,
-// and fits. Agent state is re-read only at two deliberate points — the
+// Glyph choice is NOT from the official codepoint cheatsheet: the user's
+// terminals render Maple Mono NF CN, whose PUA map is the v2 layout (the v3
+// table renders unrelated logos — probe-verified, see the feature dir). Every
+// glyph below was rendered and visually confirmed against Maple itself.
+//
+// Data: everything shown is built by pure functions over records and session
+// entries (tested in status.test.ts); the components only assemble, color,
+// and fit. Agent state is re-read only at two deliberate points — the
 // persist funnel's onChange hook (agents.ts) and a 30s tick — because
 // AgentRunner.list() may probe processes (fate checks spawn `ps` on macOS),
 // never per frame.
@@ -16,16 +23,22 @@ import type { AgentRecord } from "./agents.ts";
 import type { ExtensionAPI, SessionEntry } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
-/** Every glyph the footer prints; width 1 pinned by test. */
+/** Every glyph the bar prints; widths pinned by test — the cache bolt
+ * (U+26A1, the reference screenshot's own glyph) is the one 2-wide entry in
+ * pi-tui's width table; Maple draws it in one cell with the same ink
+ * overflow the reference shows. */
 export const ICONS = {
-  model: "◆",
-  in: "↑",
-  out: "↓",
-  cache: "≡",
-  ctx: "◔",
-  done: "✓",
-  failed: "✗",
-  stopped: "–",
+  folder: "\uF07B", // nf-fa-folder — rendered ✓
+  in: "\uF062", // nf-fa-arrow_up — rendered ✓
+  out: "\uF063", // nf-fa-arrow_down — rendered ✓
+  cache: "\u26A1", // ⚡ hollow bolt, the reference glyph — rendered ✓
+  context: "\uF1C0", // nf-fa-database cylinder — rendered ✓ (v2 map)
+  model: "\uF17B", // nf-fa-android robot head — rendered ✓ (Maple has F544 absent)
+  branch: "\uF126", // nf-fa-code_branch — rendered ✓ (git branch pictogram)
+  running: "\uF1CE", // nf-fa-circle_o_notch — rendered ✓
+  done: "\uF00C", // nf-fa-check — rendered ✓
+  failed: "\uF00D", // nf-fa-times — rendered ✓
+  stopped: "\uF04D", // nf-fa-stop — rendered ✓
 } as const;
 
 /** Refresh cadence for the agents line (elapsed minutes, missed records). */
@@ -34,7 +47,7 @@ const TICK_MS = 30_000;
 const RUNNING_MAX = 6;
 const ENDED_MAX = 3;
 
-/** What the runner hands the footer; AgentRunner satisfies this structurally. */
+/** What the runner hands the bar; AgentRunner satisfies this structurally. */
 export interface StatusSource {
   list(): AgentRecord[];
   /** Called at the end of every persist — the funnel for state changes. */
@@ -43,11 +56,12 @@ export interface StatusSource {
 
 // ─── numbers ────────────────────────────────────────────────────────────────
 
-/** Same shape as pi's built-in footer: 999 / 1.0k / 12k / 123k / 1.2M. */
+/** Token numbers in the owner's uppercase style: 999 / 1.0K / 12K / 123K /
+ * 1.2M (pi's built-in footer uses lowercase k; the owner overrode it). */
 export function formatTokens(count: number): string {
   if (count < 1000) return count.toString();
-  if (count < 10000) return `${(count / 1000).toFixed(1)}k`;
-  if (count < 1_000_000) return `${Math.round(count / 1000)}k`;
+  if (count < 10000) return `${(count / 1000).toFixed(1)}K`;
+  if (count < 1_000_000) return `${Math.round(count / 1000)}K`;
   if (count < 10_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
   return `${Math.round(count / 1_000_000)}M`;
 }
@@ -94,35 +108,124 @@ export function summarizeUsage(entries: readonly SessionEntry[]): UsageTotals {
   return totals;
 }
 
-// ─── line 2: model left, stats right ────────────────────────────────────────
+// ─── the status line: pure segments ─────────────────────────────────────────
 
-/** The scarce half of the context line: icon-led tokens, ctx before cost, zeros omitted. */
-export function statsTokens(
-  totals: UsageTotals,
-  context?: { percent: number | null; contextWindow: number },
-): { tokens: string[]; ctxIndex: number } {
-  const tokens: string[] = [];
-  if (totals.input > 0) tokens.push(`${ICONS.in}${formatTokens(totals.input)}`);
-  if (totals.output > 0) tokens.push(`${ICONS.out}${formatTokens(totals.output)}`);
-  if ((totals.cacheRead > 0 || totals.cacheWrite > 0) && totals.cacheHitRate !== undefined)
-    tokens.push(`${ICONS.cache}${totals.cacheHitRate.toFixed(1)}%`);
-  const ctxIndex = tokens.length;
-  if (context) {
-    const percent = context.percent === null ? "?" : context.percent.toFixed(1);
-    tokens.push(`${ICONS.ctx}${percent}%/${formatTokens(context.contextWindow)}`);
-  }
-  if (totals.cost > 0) tokens.push(`$${totals.cost.toFixed(3)}`);
-  return { tokens, ctxIndex: context ? ctxIndex : -1 };
+/** How the renderer colors a segment; all resolve through theme.fg. */
+export type StatusColor = "dim" | "success" | "accent" | "text";
+
+export interface StatusSegment {
+  text: string;
+  color: StatusColor;
 }
 
-/** The model half: ◆ provider/model · effort (effort only when the model reasons). */
-export function modelToken(
+/** Icon-led stats in the owner's order (↑ in, ↓ out, ⚡ cache hit rate), one
+ * space between icon and number (the bolt's extra cell is pi-tui's width-2
+ * accounting, so no explicit space after it), zeros omitted. */
+export function usageSegments(totals: UsageTotals): StatusSegment[] {
+  const segments: StatusSegment[] = [];
+  if (totals.input > 0)
+    segments.push({ text: `  ${ICONS.in} ${formatTokens(totals.input)}`, color: "success" });
+  if (totals.output > 0)
+    segments.push({ text: `  ${ICONS.out} ${formatTokens(totals.output)}`, color: "accent" });
+  if ((totals.cacheRead > 0 || totals.cacheWrite > 0) && totals.cacheHitRate !== undefined)
+    segments.push({ text: `  ${ICONS.cache}${totals.cacheHitRate.toFixed(1)}%`, color: "text" });
+  return segments;
+}
+
+/** The context group: database icon + used/window + percent, dim (the meter
+ * was dropped on owner request 2026-10-22). */
+export function contextSegments(context: { percent: number | null; contextWindow: number } | undefined): StatusSegment[] {
+  if (!context) return [];
+  const used =
+    context.percent === null ? "?" : formatTokens(Math.round((context.percent / 100) * context.contextWindow));
+  const segments: StatusSegment[] = [
+    { text: `  ${ICONS.context} ${used}/${formatTokens(context.contextWindow)}`, color: "dim" },
+  ];
+  if (context.percent !== null) segments.push({ text: ` ${context.percent.toFixed(1)}%`, color: "dim" });
+  return segments;
+}
+
+/** The cumulative cost: plain $ + 3 decimals, dim, zero omitted (restored on
+ * owner request 2026-10-22). */
+export function costSegments(totals: UsageTotals): StatusSegment[] {
+  return totals.cost > 0 ? [{ text: `  $${totals.cost.toFixed(3)}`, color: "dim" }] : [];
+}
+
+/** The left half of the status line, in the owner's field order: model first,
+ * then ↑in ↓out ⚡hit-rate, context, cost. */
+export function statusSegments(
+  totals: UsageTotals,
+  context: { percent: number | null; contextWindow: number } | undefined,
   model: { provider: string; id: string; reasoning: boolean } | undefined,
   thinkingLevel: string | undefined,
-): string {
-  if (!model) return `${ICONS.model} no-model`;
-  const base = `${ICONS.model} ${model.provider}/${model.id}`;
-  return model.reasoning ? `${base} · ${thinkingLevel ?? "off"}` : base;
+): StatusSegment[] {
+  return [
+    modelSegment(model, thinkingLevel),
+    ...usageSegments(totals),
+    ...contextSegments(context),
+    ...costSegments(totals),
+  ];
+}
+
+/** The right-aligned half: folder + cwd, then the git branch with its icon
+ * (session name in parens as the fallback when no branch). */
+export function pathSegments(
+  pwd: string,
+  branch: string | undefined,
+  sessionName: string | undefined,
+): StatusSegment[] {
+  const segments: StatusSegment[] = [{ text: `${ICONS.folder} ${pwd}`, color: "dim" }];
+  if (branch) segments.push({ text: ` ${ICONS.branch} ${branch}`, color: "dim" });
+  else if (sessionName) segments.push({ text: ` (${sessionName})`, color: "dim" });
+  return segments;
+}
+
+/** The right-aligned half: robot icon, Provider/model Effort (effort only when
+ * the model reasons). */
+export function modelSegment(
+  model: { provider: string; id: string; reasoning: boolean } | undefined,
+  thinkingLevel: string | undefined,
+): StatusSegment {
+  const name = model ? `${model.provider}/${model.id}` : "no-model";
+  const effort = model?.reasoning ? ` ${thinkingLevel ?? "off"}` : "";
+  return { text: `${ICONS.model} ${name}${effort}`, color: "dim" };
+}
+
+// ─── line fitting (pure, test-pinned) ───────────────────────────────────────
+
+export interface FittedLine {
+  left: string;
+  right: string;
+  /** Spaces between left and right; 0 only when the right side was dropped. */
+  gap: number;
+}
+
+/** Right-aligned model segment, flexible gap, right truncates first, then the
+ * left's tail (ctx give way, the path survives). */
+export function fitStatusLine(leftPlain: string, rightPlain: string, width: number): FittedLine {
+  const leftWidth = visibleWidth(leftPlain);
+  const rightWidth = visibleWidth(rightPlain);
+  if (leftWidth + rightWidth + 1 <= width) {
+    return { left: leftPlain, right: rightPlain, gap: width - leftWidth - rightWidth };
+  }
+  if (leftWidth + 1 < width) {
+    const right = truncateToWidth(rightPlain, width - leftWidth - 1, "");
+    return { left: leftPlain, right, gap: width - leftWidth - visibleWidth(right) };
+  }
+  return { left: truncateToWidth(leftPlain, width, "…"), right: "", gap: 0 };
+}
+
+// ─── theme glue ─────────────────────────────────────────────────────────────
+
+/** The slice of Theme the bar needs; structural so tests can fake it. */
+export interface StatusTheme {
+  fg(color: StatusColor, text: string): string;
+}
+
+/** Segment color → theme call. "text" pins the theme's near-white (the
+ * reference's bright #C8C9C9) instead of the terminal's default foreground. */
+export function colorize(segment: StatusSegment, theme: StatusTheme): string {
+  return theme.fg(segment.color, segment.text);
 }
 
 function homeRelative(cwd: string): string {
@@ -197,7 +300,8 @@ export function agentSegments(summary: AgentsSummary, now: number): AgentSegment
       : `agents ${summary.ended} ended`;
   const segments: AgentSegment[] = [{ text: prefix, color: "dim" }];
   for (const item of summary.items) {
-    if (item.status === "running") segments.push({ text: `${item.description} (${elapsed(item.startedAt ?? "", now)})`, color: "accent" });
+    if (item.status === "running")
+      segments.push({ text: `${ICONS.running} ${item.description} (${elapsed(item.startedAt ?? "", now)})`, color: "accent" });
     else if (item.status === "completed") segments.push({ text: `${ICONS.done} ${item.description}`, color: "success" });
     else if (item.status === "failed") segments.push({ text: `${ICONS.failed} ${item.description}`, color: "error" });
     else segments.push({ text: `${ICONS.stopped} ${item.description}`, color: "dim" });
@@ -206,120 +310,137 @@ export function agentSegments(summary: AgentsSummary, now: number): AgentSegment
   return segments;
 }
 
-// ─── the footer ─────────────────────────────────────────────────────────────
+// ─── the bar: three slots around the editor ─────────────────────────────────
 
 /**
- * Replaces the TUI footer when this session is the parent (depth 0, interactive
- * mode). Re-installed on every session_start, so a switched session rebinds a
- * fresh ctx and a /reload (which drops custom footers) gets its footer back.
+ * Installs the three-part status bar when this session is the parent (depth 0,
+ * interactive mode): the status line above the editor, the agents line below
+ * it, and the extension statuses in the footer. Re-installed on every
+ * session_start, so a switched session rebinds a fresh ctx and a /reload
+ * (which drops custom footers and widgets) gets its bar back.
  */
-export function registerStatusFooter(pi: ExtensionAPI, runner: StatusSource, settings: { depth: number }): void {
+export function registerStatusBar(pi: ExtensionAPI, runner: StatusSource, settings: { depth: number }): void {
   if (settings.depth !== 0) return;
-  let redraw: (() => void) | undefined;
-  const notify = () => redraw?.();
+  let invalidateStatus: (() => void) | undefined;
+  let invalidateAgents: (() => void) | undefined;
+  const notify = () => {
+    invalidateStatus?.();
+    invalidateAgents?.();
+  };
   const existing = runner.onChange;
   runner.onChange = existing ? () => (existing(), notify()) : notify;
 
   pi.on("session_start", (_event, ctx) => {
     if (ctx.mode !== "tui") return;
-    ctx.ui.setFooter((tui, theme, footerData) => {
-      let dirty = true;
-      let agents: AgentsSummary | undefined;
-      let stats: { key: string; totals: UsageTotals; context: { percent: number | null; contextWindow: number } | undefined } | undefined;
-      const markDirty = () => {
-        dirty = true;
-        tui.requestRender();
-      };
-      redraw = markDirty;
-      const offBranch = footerData.onBranchChange(() => tui.requestRender());
-      const tick = setInterval(markDirty, TICK_MS);
 
+    // The footer is the only slot that hands out footerData — the git branch
+    // and its change events — so the branch is shared with the status widget
+    // above the editor through this state.
+    const branchState: { branch: string | null } = { branch: null };
+
+    ctx.ui.setFooter((tui, theme, footerData) => {
+      const offBranch = footerData.onBranchChange(() => {
+        branchState.branch = footerData.getGitBranch();
+        invalidateStatus?.();
+        tui.requestRender();
+      });
+      branchState.branch = footerData.getGitBranch();
       return {
-        dispose() {
-          clearInterval(tick);
-          offBranch();
-          if (redraw === markDirty) redraw = undefined;
-        },
+        dispose: offBranch,
         invalidate() {},
         render(width: number): string[] {
-          const lines: string[] = [];
-          const session = ctx.sessionManager;
-          let line2: string;
+          const statuses = footerData.getExtensionStatuses();
+          if (statuses.size === 0) return [];
+          const text = [...statuses.entries()]
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([, t]) => t.replace(/[\r\n\t]/g, " ").replace(/ +/g, " ").trim())
+            .join(" ");
+          return [truncateToWidth(text, width, theme.fg("dim", "…"))];
+        },
+      };
+    });
 
-          // Line 1: cwd (branch) • session name
-          let pwd = homeRelative(session.getCwd());
-          const branch = footerData.getGitBranch();
-          if (branch) pwd += ` (${branch})`;
-          const name = session.getSessionName();
-          if (name) pwd += ` • ${name}`;
-          lines.push(truncateToWidth(theme.fg("dim", pwd), width, theme.fg("dim", "…")));
+    ctx.ui.setWidget(
+      "pi-dev-status",
+      (tui, theme) => {
+        let stats:
+          | { key: string; totals: UsageTotals; context: { percent: number | null; contextWindow: number } | undefined }
+          | undefined;
+        const invalidate = () => tui.requestRender();
+        invalidateStatus = invalidate;
+        return {
+          dispose() {
+            if (invalidateStatus === invalidate) invalidateStatus = undefined;
+          },
+          invalidate,
+          render(width: number): string[] {
+            const session = ctx.sessionManager;
+            // ReadonlySessionManager omits getEntryCount from its Pick; the
+            // method exists (and avoids the getEntries() copy per render).
+            const count = (session as unknown as { getEntryCount(): number }).getEntryCount();
+            const key = `${session.getSessionId()}|${session.getLeafId()}|${count}|${ctx.model?.id ?? "-"}|${ctx.thinkingLevel ?? "-"}`;
+            if (stats?.key !== key) {
+              const usage = ctx.getContextUsage();
+              stats = {
+                key,
+                totals: summarizeUsage(session.getEntries()),
+                context: usage ? { percent: usage.percent, contextWindow: usage.contextWindow } : undefined,
+              };
+            }
+            const pwd = homeRelative(session.getCwd());
+            const sessionName = session.getSessionName() || undefined;
+            const leftSegments = statusSegments(stats.totals, stats.context, ctx.model, ctx.thinkingLevel);
+            const rightSegments = pathSegments(pwd, branchState.branch ?? undefined, sessionName);
+            const leftPlain = leftSegments.map((s) => s.text).join("");
+            const rightPlain = rightSegments.map((s) => s.text).join("");
+            const fit = fitStatusLine(leftPlain, rightPlain, width);
+            const leftColored = leftSegments.map((s) => colorize(s, theme)).join("");
+            const rightColored = rightSegments.map((s) => colorize(s, theme)).join("");
+            const leftOut = fit.right === "" && fit.left !== leftPlain ? truncateToWidth(leftColored, width, "…") : leftColored;
+            const rightOut =
+              fit.right === rightPlain
+                ? rightColored
+                : truncateToWidth(rightColored, Math.max(0, width - visibleWidth(leftPlain) - 1), "");
+            return [truncateToWidth(leftOut + " ".repeat(fit.gap) + rightOut, width, "…")];
+          },
+        };
+      },
+      { placement: "aboveEditor" },
+    );
 
-          // Line 2: ◆ provider/model · effort <pad> ↑in ↓out ≡cache ◔ctx $cost
-          const key = `${session.getSessionId()}|${session.getLeafId()}|${session.getEntryCount()}|${ctx.model?.id ?? "-"}`;
-          if (stats?.key !== key) {
-            const usage = ctx.getContextUsage();
-            stats = {
-              key,
-              totals: summarizeUsage(session.getEntries()),
-              context: usage ? { percent: usage.percent, contextWindow: usage.contextWindow } : undefined,
-            };
-          }
-          const leftPlain = modelToken(ctx.model, ctx.thinkingLevel);
-          const { tokens, ctxIndex } = statsTokens(stats.totals, stats.context);
-          const rightVisible = tokens.join(" ");
-          // Fit on plain text first (default footer arithmetic), color after:
-          // plain left, plain right, an absolute ctx range within the right side.
-          const leftWidth = visibleWidth(leftPlain);
-          let plainLeft = leftPlain;
-          let plainRight = rightVisible;
-          if (rightVisible !== "" && leftWidth + 2 + visibleWidth(rightVisible) <= width) {
-            plainLeft = leftPlain + " ".repeat(width - leftWidth - visibleWidth(rightVisible));
-          } else if (rightVisible !== "" && width - leftWidth - 2 > 0) {
-            plainRight = truncateToWidth(rightVisible, width - leftWidth - 2, "");
-            plainLeft = leftPlain + " ".repeat(Math.max(0, width - leftWidth - visibleWidth(plainRight)));
-          } else {
-            plainRight = "";
-            plainLeft = truncateToWidth(leftPlain, width, "…");
-          }
-          let rightStart = 0;
-          for (let i = 0; i < ctxIndex; i++) rightStart += visibleWidth(tokens[i]) + 1;
-          const ctxEnd = rightStart + (ctxIndex >= 0 ? visibleWidth(tokens[ctxIndex]) : 0);
-          const percent = stats.context?.percent ?? null;
-          const ctxColor = percent === null || percent <= 70 ? undefined : percent > 90 ? "error" : "warning";
-          // fg() emits a reset, so an outer dim wrapper drops: dim the slices
-          // around the colored ctx token instead of wrapping the whole line.
-          line2 =
-            theme.fg("dim", plainLeft + plainRight.slice(0, rightStart)) +
-            (ctxIndex >= 0 && ctxColor ? theme.fg(ctxColor, plainRight.slice(rightStart, ctxEnd)) : plainRight.slice(rightStart, ctxEnd)) +
-            theme.fg("dim", plainRight.slice(ctxEnd));
-          lines.push(truncateToWidth(line2, width, "…"));
-
-          // Line 3: agents (only when there are any)
-          if (dirty) {
-            agents = agentsSummary(runner.list());
-            dirty = false;
-          }
-          if (agents && agents.running + agents.ended > 0) {
+    ctx.ui.setWidget(
+      "pi-dev-agents",
+      (tui, theme) => {
+        let dirty = true;
+        let agents: AgentsSummary | undefined;
+        const invalidate = () => {
+          dirty = true;
+          tui.requestRender();
+        };
+        invalidateAgents = invalidate;
+        const tick = setInterval(invalidate, TICK_MS);
+        return {
+          dispose() {
+            clearInterval(tick);
+            if (invalidateAgents === invalidate) invalidateAgents = undefined;
+          },
+          invalidate,
+          render(width: number): string[] {
+            if (dirty) {
+              agents = agentsSummary(runner.list());
+              dirty = false;
+            }
+            if (!agents || agents.running + agents.ended === 0) return [];
             const parts: string[] = [];
             for (const [index, segment] of agentSegments(agents, Date.now()).entries()) {
               if (index > 0) parts.push(theme.fg("dim", " · "));
               parts.push(theme.fg(segment.color, segment.text));
             }
-            lines.push(truncateToWidth(parts.join(""), width, theme.fg("dim", "…")));
-          }
-
-          // Line 4: other extensions' setStatus texts, pi's own footer order
-          const statuses = footerData.getExtensionStatuses();
-          if (statuses.size > 0) {
-            const text = [...statuses.entries()]
-              .sort(([a], [b]) => a.localeCompare(b))
-              .map(([, t]) => t.replace(/[\r\n\t]/g, " ").replace(/ +/g, " ").trim())
-              .join(" ");
-            lines.push(truncateToWidth(text, width, theme.fg("dim", "…")));
-          }
-          return lines;
-        },
-      };
-    });
+            return [truncateToWidth(parts.join(""), width, theme.fg("dim", "…"))];
+          },
+        };
+      },
+      { placement: "belowEditor" },
+    );
   });
 }
