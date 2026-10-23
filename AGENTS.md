@@ -1,9 +1,10 @@
 # AGENTS.md
 
 pi-dev-mode 的仓库指令。本仓库是一个 pi 包(pi 包清单见 package.json 的 `pi` 键):
-27 件技能 + 自家扩展(`pi/`,含 agent/ask/batch/intercom/schedule/worktree)+
- 验证域 CDP harness(`adapters/control-web/`)+ gates 账本。提交信息与文档
-中英混排按既有惯例;变更 `adapters/control-web/harness/` 走该目录 README 的
+30 件技能 + 自家扩展(`pi/`,含 agent/ask/batch/intercom/schedule/worktree)+
+ 验证域 CDP harness(`adapters/control-web/`)+ gates 账本。提交信息按
+`commit` 技能规范(Conventional Commits、英文 subject),发布说明与变更
+日志走 `changelog` 技能;文档中英混排按既有惯例。变更 `adapters/control-web/harness/` 走该目录 README 的
 例外审批,不做静默重构。
 
 ## Agent skills

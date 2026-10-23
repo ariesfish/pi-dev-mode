@@ -63,7 +63,8 @@ For every task, in either mode:
   check with a `skip-test: <reason>` line in the decision trail.
 - Run the regression suite and the build.
 - Commit **only the files that task touched** plus its task-status update —
-  never `git add -A` — one commit per task, so any point is a clean rollback.
+  never `git add -A` — one commit per task, message per the `commit` skill,
+  so any point is a clean rollback.
 - Append one row per decision to the trail (`.dev/audit/<ticket-slug>.tsv`). Final format
   (final since P3): columns `id, decision, reason, evidence, verdict, skip_test, show` —
   cells single-line, evidence is a pointer (commit / file:line / artifact path),

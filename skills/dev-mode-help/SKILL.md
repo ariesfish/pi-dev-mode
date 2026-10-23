@@ -41,6 +41,8 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ pro
 | `doubt` | in-flight adversarial cross-examination of a decision, bounded cycles |
 | `benchmark-checklist` | the seven questions before any performance number leaves the room |
 | `eval` | the promotion gate for skill changes: trigger regression / variant A/B |
+| `commit` | conventional English commit message: type(scope): imperative subject, commit never push |
+| `changelog` | CHANGELOG upkeep: Unreleased entries from the last tag, in the file's own style |
 | `retro` | session retrospective: findings routed to checks/types/docs/skill edits |
 | `refact` | deepen shallow modules — seams, locality, leverage |
 | `scout` | chart decision tickets until the destination is visible (charting, not charging) |
@@ -57,6 +59,7 @@ setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ pro
 - **Knowledge base (always-on)**: docs/GLOSSARY.md + docs/adr/ from `grill-me`/`refact`; every skill reads them and speaks the project's language.
 - **Quality contract**: docs/CONSTRAINTS.md from `constraints`; `code-review` watches the diff against it; `implement-all` treats rows as gates.
 - **Verification**: every build ends on the real artifact; `diagnose` freezes proven repro loops for the verification machinery (`create-verification-skill`).
+- **Commit & release notes**: every implement-family commit follows `commit`; ship prep routes release notes through `changelog`.
 
 ## Where things live
 

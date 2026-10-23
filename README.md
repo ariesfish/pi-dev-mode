@@ -22,6 +22,7 @@
 - diagnose (疑难 bug 与性能回归排查)
 - code-map / repo-map (理解陌生代码与仓库)
 - create-verification-skill / maintain-verification-skill (生成和维护驱动真实应用的验证技能)
+- commit / changelog (提交信息规范与变更日志维护)
 - setup (新仓库初始化配置)
 
 配套能力:
