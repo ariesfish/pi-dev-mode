@@ -63,7 +63,7 @@ fresh question — one question per turn is the ceiling, not a quota to fill.
 
 For each approved slice, publish a new ticket to the tracker. Use the body template below. These tickets are considered ready for AFK agents, so publish them with the correct triage label unless instructed otherwise. Under the local-files tracker, tickets land inside the source feature's own directory — `.dev/<slug>/plan.md` section + `todo.md` block (+ optional `tickets/T-XXX.md`), slug taken from the spec's directory; unattributed intake goes to `.dev/inbox/` instead (see setup references/issue-tracker.md).
 
-When the target repo carries `.dev/lifecycle/` (ledger on), publishing a ticket opens its ledger item in the same step: `gates/gate.sh open <T-id> "<title>"` per slice (id = the ticket id; idempotent — re-publish reuses). Without `.dev/lifecycle/`: no ledger step, unchanged.
+When the target repo carries `.dev/lifecycle/` (ledger on), publishing a ticket opens its ledger item in the same step: this package's `gates/gate.sh open <T-id> "<title>"` per slice (id = the ticket id; idempotent — re-publish reuses). Without `.dev/lifecycle/`: no ledger step, unchanged.
 
 Publish tickets in dependency order (blockers first) so you can reference real ticket identifiers in the "Blocked by" field. When the source material (spec or plan) lives as a tracker ticket, attach each published slice as a sub-issue of it (GitHub sub-issues), so the parent reference is structural rather than prose.
 

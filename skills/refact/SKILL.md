@@ -40,7 +40,7 @@ This skill is _informed_ by the project's domain model. The domain language give
 
 Read the project's domain glossary and any ADRs in the area you're touching first.
 
-Then explore the codebase directly, or delegate exploration to a readonly background agent via the `agent` tool (this package ships it; host conventions in references/pi-host.md). Don't follow rigid heuristics — explore organically and note where you experience friction:
+Then explore the codebase directly, or delegate exploration to a readonly background agent via the `agent` tool (this package ships it; host conventions in ../../references/pi-host.md). Don't follow rigid heuristics — explore organically and note where you experience friction:
 
 - Where does understanding one concept require bouncing between many small modules?
 - Where are modules **shallow** — interface nearly as complex as the implementation?

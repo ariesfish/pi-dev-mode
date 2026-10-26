@@ -1,6 +1,6 @@
 # Quantitative gate — the numbers behind a review verdict
 
-`scripts/check-code.sh` is the measuring half of `review` and `code-review`.
+this package's `scripts/check-code.sh` is the measuring half of `review` and `code-review`.
 It answers three questions with numbers a verdict can cite:
 
 | Metric | Engine | Question | Threshold |
@@ -16,14 +16,16 @@ coverage that does not exist. A CC 25 function at 100% line coverage still score
 ## Commands
 
 ```bash
-bash scripts/check-code.sh setup                    # once per machine: uv runtime, pinned engines, grammars
-bash scripts/check-code.sh doctor                   # per language: what coverage tool is missing here
-bash scripts/check-code.sh review --changed         # the gate for a working tree
-bash scripts/check-code.sh review --since origin/main --evidence
-bash scripts/check-code.sh review --since HEAD~3 --langs typescript \
+# PKG = this package's root; run from the target repo
+PKG=<pi-dev-mode-package>
+bash "$PKG/scripts/check-code.sh" setup                    # once per machine: uv runtime, pinned engines, grammars
+bash "$PKG/scripts/check-code.sh" doctor                   # per language: what coverage tool is missing here
+bash "$PKG/scripts/check-code.sh" review --changed         # the gate for a working tree
+bash "$PKG/scripts/check-code.sh" review --since origin/main --evidence
+bash "$PKG/scripts/check-code.sh" review --since HEAD~3 --langs typescript \
   --coverage-command "bun test --coverage --coverage-reporter=lcov" \
   --test-command "bun test" --mutants --max-workers 6
-bash scripts/check-code.sh ratchet --update-baseline   # seed/refresh docs/check-code-baseline.json
+bash "$PKG/scripts/check-code.sh" ratchet --update-baseline   # seed/refresh docs/check-code-baseline.json
 ```
 
 Exit `0` pass, `1` gate failed, `2` usage or environment error. `review` always
@@ -54,12 +56,12 @@ measurement commands (`codecheck crap|dupes|mutants`) plus the gate itself
 out what they duplicated: one source walker, one tree-sitter layer, one EDN
 reader, one coverage loader, one snapshot path. The gate's rules — thresholds,
 the `broken`/`unmeasured` classification, the ratchet — live in
-`python/src/codecheck/gate/`, so `scripts/check-code.sh` is a bootstrap and a
+`python/src/codecheck/gate/`, so this package's `scripts/check-code.sh` is a bootstrap and a
 dispatcher rather than the source of truth.
 `setup` builds one uv-managed runtime (`~/.local/share/check-code`) and installs
 that package editable; nothing is fetched from the network.
 
-`bash scripts/check-code.sh setup --self-test` runs the package suite (327
+`scripts/check-code.sh setup --self-test` (this package's) runs the package suite (327
 passing, one skip: a snapshot test wants babashka for an independent EDN reader).
 The
 `python/` tree is upstream's code, so the gate skips it — its suite is the

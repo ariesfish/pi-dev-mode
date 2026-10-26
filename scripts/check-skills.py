@@ -25,6 +25,9 @@ Validated, in order:
      adapters/ hooks/ pi/ evals/) resolve from the skill's own directory or
      the package root. Target-repo placeholders (docs/GLOSSARY.md, .dev/*,
      .pi/*) are deliberately out of scope — those name the USER's repo.
+     A tool that only resolves at the package root (gates/gate.sh,
+     scripts/check-code.sh, …) must be qualified "this package's …": bare, it
+     reads as a target-repo path that does not exist there.
   8. phantom agents (the drift class of 2026-10-22's audit, caught alive:
      skills taught `ask_user` (real tool: ask_user_question) and a `viewer`
      agent type this package never registers (it ships image-reader)):
@@ -126,6 +129,13 @@ PACKAGE_ROOTS = ("references", "scripts", "gates", "skills", "agents",
                  "adapters", "hooks", "pi", "evals")
 PATH_TOKEN = (r"(?:(?:\.{1,2}/)+)?(?:" + "|".join(PACKAGE_ROOTS) + r")/"
               r"[\w./-]*\.(?:md|sh|ts|py|json)")
+
+# Tools that ship in this package but are not installable into a target repo.
+# Written bare (`scripts/check-code.sh`), they read as a path in the TARGET
+# repo — where the file does not exist (audit 2026-10-26: nine such sites).
+# `scripts/check-adrs.py` is deliberately absent: it IS meant to be copied in.
+PACKAGE_TOOLS = ("scripts/check-code.sh", "scripts/assert-branch.sh",
+                 "scripts/task.sh", "gates/gate.sh")
 
 H1_STOPWORDS = {"a", "an", "the"}
 
@@ -318,10 +328,38 @@ def main() -> int:
                 if p in seen:
                     failures.append(f"{rel}: duplicated paragraph: {p[:60]!r}...")
                 seen.add(p)
-        # pointer files resolve (skill-dir or package-root anchored)
-        for tok in set(re.findall(r"`(" + PATH_TOKEN + r")`", body)) | set(re.findall(r"\]\((" + PATH_TOKEN + r")\)", body)):
+        # pointer files resolve (skill-dir or package-root anchored). A
+        # package-shipped tool that resolves only at the package root must be
+        # qualified — bare, it reads as a target-repo path that is not there.
+        for mm in re.finditer(r"`(" + PATH_TOKEN + r")`", body):
+            tok = mm.group(1)
             if pointer_missing(tok, [f.parent, root]):
                 failures.append(f"{rel}: pointer `{tok}` resolves under neither the skill dir nor the package root")
+            elif (
+                tok in PACKAGE_TOOLS
+                and pointer_missing(tok, [f.parent])
+                and "this package" not in body[max(0, mm.start() - 45):mm.start()]
+            ):
+                failures.append(
+                    f"{rel}: package tool `{tok}` written as a target-repo path — qualify it \"this package's …\" so the reader does not run a missing file"
+                )
+        for mm in re.finditer(r"\]\((" + PATH_TOKEN + r")\)", body):
+            tok = mm.group(1)
+            if pointer_missing(tok, [f.parent, root]):
+                failures.append(f"{rel}: pointer `{tok}` resolves under neither the skill dir nor the package root")
+        # The same rule when the backtick carries arguments (`gates/gate.sh run …`):
+        # the exact-token pass above stops at the tool path's end, not the backtick.
+        for mm in re.finditer(r"`((?:\.{1,2}/)*(?:scripts|gates)/[\w./-]+\.sh)\b", body):
+            tok = mm.group(1)
+            if body[mm.end():mm.end() + 1] == "`":
+                continue  # exact form: the pointer pass handled it
+            if tok not in PACKAGE_TOOLS or not pointer_missing(tok, [f.parent]):
+                continue
+            if "this package" in body[max(0, mm.start() - 45):mm.start()]:
+                continue
+            failures.append(
+                f"{rel}: package tool `{tok}` written as a target-repo path — qualify it \"this package's …\" so the reader does not run a missing file"
+            )
 
     # catalog completeness: the router table (`pi-dev-mode`) and the discovery
     # page (`dev-mode-help`) are the two inventory surfaces — every shipped

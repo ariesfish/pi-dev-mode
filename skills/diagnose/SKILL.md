@@ -65,7 +65,7 @@ Confirm:
 - [ ] The failure is reproducible across multiple runs (or, for non-deterministic bugs, reproducible at a high enough rate to debug against).
 - [ ] You have captured the exact symptom (error message, wrong output, slow timing) so later phases can verify the fix actually addresses it.
 
-**Ledger (opt-in).** When the target repo carries `.dev/lifecycle/` and the bug has a ledger item (the ticket id from `triage-issue`/`tickets`), the loop's command doubles as the repro gate: record the first reproduction as a D-class FAIL — `gates/gate.sh run <id> repro -- <loop command>` — because a recorded red is a fact and it is the failure-half of the evidence sequence. After the fix, the **same command** must exit 0 — recorded as a `repro` green — before "fixed" is claimed. The perf branch records its bench command the same way (`run <id> bench -- …`). No `.dev/lifecycle/`: no ledger steps, unchanged.
+**Ledger (opt-in).** When the target repo carries `.dev/lifecycle/` and the bug has a ledger item (the ticket id from `triage-issue`/`tickets`), the loop's command doubles as the repro gate: record the first reproduction as a D-class FAIL — this package's `gates/gate.sh run <id> repro -- <loop command>` — because a recorded red is a fact and it is the failure-half of the evidence sequence. After the fix, the **same command** must exit 0 — recorded as a `repro` green — before "fixed" is claimed. The perf branch records its bench command the same way (`run <id> bench -- …`). No `.dev/lifecycle/`: no ledger steps, unchanged.
 
 Do not proceed until you reproduce the bug.
 

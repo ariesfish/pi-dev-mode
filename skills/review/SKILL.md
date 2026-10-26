@@ -30,7 +30,9 @@ Run the quantitative gate over the same fixed point before any lens reads the
 diff:
 
 ```bash
-bash scripts/check-code.sh review --since <fixed-point> --evidence
+# PKG = this package's root (its skill directory's ../..); run from the target repo
+PKG=<pi-dev-mode-package>
+bash "$PKG/scripts/check-code.sh" review --since <fixed-point> --evidence
 ```
 
 It measures CRAP per function, structural duplication, and (with `--mutants`)
@@ -165,14 +167,14 @@ verdict: a verifier FAIL — or disagreement with the lenses — reads as
 INCONCLUSIVE, named as such, with what would close it.
 
 Ledger (when the target repo carries `.dev/lifecycle/`): after the verdict
-file lands, record it with `gates/gate.sh verdict <id> --from
+file lands, record it with this package's `gates/gate.sh verdict <id> --from
 <verdict.json> --note "<one line>"` (A-class gate, sha256 + verdict
 recorded). A landing that follows the verdict records its read-back as a
 D-class land gate: a merge command can report success while a merge queue
 only queued the PR — so history records a command that reads the landed
 state back (`gh pr view <n> --json state,mergedAt,baseRefName`, or the git
 equivalent, e.g. `git branch --contains <sha> | grep -q <trunk>` after
-fetch) via `gates/gate.sh run <id> land -- <read-back cmd>`, and only its
+fetch) via this package's `gates/gate.sh run <id> land -- <read-back cmd>`, and only its
 exit 0 closes the item. Exit 4 (BLOCKED) stops for a human `resume`.
 Without it: unchanged — the verdict file itself is still mandatory.
 

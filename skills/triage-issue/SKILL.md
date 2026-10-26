@@ -74,7 +74,7 @@ Show counts and a one-line summary per issue. Let the maintainer pick.
 4. **Align (if needed).** If the issue needs fleshing out, run `grill-me`.
 
 5. **Apply the outcome:**
-   - `ready-for-agent` — post an agent brief comment ([references/AGENT-BRIEF.md](references/AGENT-BRIEF.md)). A performance report ("slower", "lags", "latency regression") gets a brief that names `diagnose` as the entry skill and requires a baseline measurement before any fix is proposed. When the target repo carries `.dev/lifecycle/` (ledger on), the ticket also opens as a ledger item at this moment: `gates/gate.sh open <ticket-id> "<title>"` (idempotent — re-triage reuses; without `.dev/lifecycle/`: no ledger step, unchanged).
+   - `ready-for-agent` — post an agent brief comment ([references/AGENT-BRIEF.md](references/AGENT-BRIEF.md)). A performance report ("slower", "lags", "latency regression") gets a brief that names `diagnose` as the entry skill and requires a baseline measurement before any fix is proposed. When the target repo carries `.dev/lifecycle/` (ledger on), the ticket also opens as a ledger item at this moment: this package's `gates/gate.sh open <ticket-id> "<title>"` (idempotent — re-triage reuses; without `.dev/lifecycle/`: no ledger step, unchanged).
    - `ready-for-human` — same structure as an agent brief, but note why it can't be delegated (judgment calls, external access, design decisions, manual testing).
    - `needs-info` — post triage notes (template below).
    - `wontfix` (bug) — polite explanation, then close.

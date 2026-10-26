@@ -95,7 +95,7 @@ For every task, in either mode:
      `git revert` cannot undo — get explicit sign-off first
    - an acceptance label turns out wrong (`[check]` no machine can run,
      `[judgment]` the agent keeps deciding anyway): fix the label, re-confirm
-   - `gates/gate.sh` exits 4 (BLOCKED — the item's rework budget tripped,
+   - this package's `gates/gate.sh` exits 4 (BLOCKED — the item's rework budget tripped,
      consecutive FAILs on one gate): stop the ticket, report the gate and the
      resume command, move to the next ticket only if it is independent —
      never retry or reroute a blocked item
@@ -105,7 +105,7 @@ For every task, in either mode:
    least one RED per task (or its skip-test line), suite and build results,
    commit hashes. "Inconclusive" is not a pass; flag it instead.
 6. **Ledger (opt-in)**: when the target repo carries `.dev/lifecycle/`, open
-   each ticket with `gates/gate.sh open`; passed D-class gates ride
+   each ticket with this package's `gates/gate.sh open`; passed D-class gates ride
    `implement`'s ledger clause (tdd/check; a FAIL is recorded too — a
    first-pass red is a fact); a landed ticket closes with
    `close --note`. Blocker tickets stay open for the human verdict, then
@@ -140,7 +140,7 @@ Orchestration discipline first: the session running this skill is the orchestrat
    — not pasted spec text).
 5. As each implementer completes, a **merger subagent** merges its work into
    the integration branch — after asserting the shared working tree still sits
-   on that branch (`bash scripts/assert-branch.sh <integration-branch>`): a
+   on that branch with this package's `scripts/assert-branch.sh <integration-branch>`: a
    parallel top-level task can switch the shared HEAD out from under the
    orchestrator (it did, 2026-10-22).
 6. The frontier advances: kick off more implementer subagents for newly

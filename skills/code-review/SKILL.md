@@ -35,7 +35,9 @@ Before going further, confirm the fixed point resolves (`git rev-parse <fixed-po
 Then measure the same range once:
 
 ```bash
-bash scripts/check-code.sh review --since <fixed-point> --evidence
+# PKG = this package's root; run from the target repo
+PKG=<pi-dev-mode-package>
+bash "$PKG/scripts/check-code.sh" review --since <fixed-point> --evidence
 ```
 
 The evidence file (`.dev/audit/evidence/check-code-*.txt`) is an input to both
