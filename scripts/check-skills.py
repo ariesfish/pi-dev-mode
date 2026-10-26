@@ -146,7 +146,7 @@ def registered_tools(pi_root: Path) -> set[str]:
     (name: "spec", "build", …) must not widen this set."""
     out: set[str] = set()
     for f in sorted(pi_root.glob("*.ts")):
-        for chunk in f.read_text().split("registerTool(")[1:]:
+        for chunk in f.read_text(encoding="utf-8").split("registerTool(")[1:]:
             m = re.search(r'name:\s*"([a-z][a-z0-9_]+)"', chunk[:400])
             if m:
                 out.add(m.group(1))
@@ -157,7 +157,7 @@ def registered_tools(pi_root: Path) -> set[str]:
 # `ready-for-agent` (an AFK agent label, not a persona claim) never flags.
 def label_vocab(labels_doc: Path) -> set[str]:
     try:
-        return set(re.findall(r"`([a-z][a-z0-9-]+)`", labels_doc.read_text()))
+        return set(re.findall(r"`([a-z][a-z0-9-]+)`", labels_doc.read_text(encoding="utf-8")))
     except OSError:
         return set()
 
@@ -210,9 +210,14 @@ def main() -> int:
                   + sorted((root / "gates").glob("*.md")))
     wide_files = [f for f in wide_files if f.exists()]
 
+    # name per file, filled by the frontmatter pass and reused below: parsing
+    # the same YAML twice is how a broken description once crashed this checker
+    # with a traceback instead of printing its FAIL line.
+    fm_names: dict[Path, str] = {}
+
     for f in skill_files + agent_files:
         rel = f.relative_to(root)
-        text = f.read_text()
+        text = f.read_text(encoding="utf-8")
         m = re.match(r"^---\n(.*?)\n---\n", text, re.S)
         if not m:
             failures.append(f"{rel}: frontmatter not found or unterminated")
@@ -229,6 +234,7 @@ def main() -> int:
         if not isinstance(fm, dict) or "name" not in fm or not isinstance(fm.get("description"), str) or not fm["description"].strip():
             failures.append(f"{rel}: frontmatter needs name and a non-empty description")
             continue
+        fm_names[f] = str(fm["name"])
         if f.parent.name != "agents" and fm["name"] != f.parent.name:
             failures.append(f"{rel}: name {fm['name']!r} != directory {f.parent.name!r}")
         if "Chinese triggers" not in re.sub(r"\s+", " ", fm["description"]):
@@ -258,13 +264,16 @@ def main() -> int:
 
     # retired names and (for skills/agents) dangling references — checked on the
     # wide set so the map layer (references/README.md etc.) cannot go stale again
-    readme_mounts = mounted_vocab((root / "references" / "README.md").read_text())
+    readme_mounts_file = root / "references" / "README.md"
+    readme_mounts = (
+        mounted_vocab(readme_mounts_file.read_text(encoding="utf-8")) if readme_mounts_file.is_file() else set()
+    )
     tools = CORE_TOOLS | registered_tools(root / "pi")
     personas = {f"pi-dev:{f.stem}" for f in agent_files}
     labels = label_vocab(root / "docs" / "agents" / "triage-labels.md")
     for f in wide_files:
         rel = f.relative_to(root)
-        text = f.read_text()
+        text = f.read_text(encoding="utf-8")
         for mm in re.finditer(r"`([a-z][A-Za-z0-9:_-]*)`", text):
             n = mm.group(1)
             if retired_hit(text, mm, n):
@@ -287,11 +296,11 @@ def main() -> int:
     # per-skill structural checks (H1, duplicate paragraphs, pointer paths)
     for f in skill_files:
         rel = f.relative_to(root)
-        text = f.read_text()
+        text = f.read_text(encoding="utf-8")
         m = re.match(r"^---\n(.*?)\n---\n", text, re.S)
         if not m:
             continue  # already failed above
-        fm_name = (yaml.safe_load(m.group(1)) if yaml is not None else _FM.safe_load(m.group(1))).get("name", "")
+        fm_name = fm_names.get(f, "")
         body = text[m.end():]
         # H1 vs name
         h1 = re.search(r"^# (.+)$", body, re.M)
@@ -323,7 +332,7 @@ def main() -> int:
         f = root / "skills" / inv / "SKILL.md"
         if not f.exists():
             continue
-        t = f.read_text()
+        t = f.read_text(encoding="utf-8")
         for n in sorted(names):
             if n != inv and f"`{n}`" not in t:
                 failures.append(f"skills/{inv}/SKILL.md: skill `{n}` missing from this inventory surface")
@@ -339,7 +348,7 @@ def main() -> int:
             cases += 1
             rel = case_dir.relative_to(root)
             pm = case_dir / "prompt.md"
-            text = pm.read_text()
+            text = pm.read_text(encoding="utf-8")
             m = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.S)
             if not m:
                 failures.append(f"{rel}/prompt.md: frontmatter not found")

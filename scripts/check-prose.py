@@ -123,6 +123,11 @@ def added_lines(base: str) -> dict[str, list[tuple[int, str]]]:
     proc = subprocess.run(
         ["git", "diff", "-U0", base, "--"], cwd=REPO, capture_output=True, text=True
     )
+    # A failed diff (no HEAD, unknown base, not a repo) used to come back as an
+    # empty stdout and pass as "0 slop hit(s)" — the only silent-pass path here.
+    if proc.returncode != 0:
+        print(f"check-prose: git diff {base} failed (exit {proc.returncode}): {proc.stderr.strip() or 'no output'}", file=sys.stderr)
+        raise SystemExit(2)
     current: str | None = None
     lineno = 0
     for line in proc.stdout.splitlines():
@@ -139,6 +144,9 @@ def added_lines(base: str) -> dict[str, list[tuple[int, str]]]:
         ["git", "ls-files", "--others", "--exclude-standard"],
         cwd=REPO, capture_output=True, text=True,
     )
+    if ls.returncode != 0:
+        print(f"check-prose: git ls-files failed (exit {ls.returncode}): {ls.stderr.strip() or 'no output'}", file=sys.stderr)
+        raise SystemExit(2)
     for f in ls.stdout.splitlines():
         if is_surface(f):
             text = (REPO / f).read_text(encoding="utf-8").splitlines()

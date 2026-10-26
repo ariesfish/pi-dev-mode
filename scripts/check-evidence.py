@@ -18,6 +18,7 @@
 
 from __future__ import annotations
 
+import argparse
 import re
 import shutil
 import subprocess
@@ -96,16 +97,23 @@ def selftest() -> int:
 
 
 def main() -> int:
-    args = sys.argv[1:]
-    if "--selftest" in args:
+    ap = argparse.ArgumentParser(description="tsv evidence pointers: reachable and non-empty")
+    ap.add_argument("--from", dest="from_id", default="T-000", help="first ticket id to enforce (feature close-out)")
+    ap.add_argument("--selftest", action="store_true", help="prove the T-034 shape turns red")
+    args = ap.parse_args()
+    if args.selftest:
         return selftest()
-    from_id = "T-000"
-    if "--from" in args:
-        from_id = args[args.index("--from") + 1]
+    from_id = args.from_id
     root = Path(__file__).resolve().parent.parent
     audit_dir = root / ".dev" / "audit"
     if not audit_dir.is_dir():
         print(f"check-evidence: no .dev/audit/ under {root} — nothing to check, exit 0")
+        return 0
+    # A directory without decision rows is not a broken ledger: `.dev/audit/`
+    # also hosts evidence for review runs and audit reports. Only rows make a
+    # claim, and only claims have pointers to verify (T-034).
+    if not sorted(audit_dir.glob("T-*.tsv")):
+        print(f"check-evidence: no .dev/audit/T-*.tsv under {root} — no rows to check, exit 0")
         return 0
     failures = check_tree(audit_dir, from_id)
     if failures:

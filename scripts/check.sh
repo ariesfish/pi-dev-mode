@@ -36,6 +36,7 @@ trap 'rm -rf "$logs"' EXIT
 python3 scripts/check-skills.py
 bash scripts/test-gates.sh 2>&1 | tee "$logs/gates.log"
 python3 scripts/check-prose.py
+python3 scripts/check-prose.py --selftest
 python3 scripts/check-adrs.py --selftest
 # The harness launches a real Chrome and reads CHROME_BIN (its documented
 # override). Resolve one here so the same command works on macOS and Linux; no
@@ -90,4 +91,5 @@ python3 scripts/check-numbers.py "${numbers_args[@]}"
 # check-evidence.py 在无 .dev 的环境 no-op 退出 0)
 bash scripts/check-types.sh
 python3 scripts/check-evidence.py
+python3 scripts/check-evidence.py --selftest
 python3 scripts/check-replay.py
