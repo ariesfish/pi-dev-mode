@@ -42,7 +42,7 @@ skip_test 率标准挖法(不手搓,retro 直接用):
 awk -F'\t' 'NR>1 && $1!="id" && $6!="" && $6!="N/A" {n++} END{print "skip:", n, "/", NR-1}' .dev/audit/T-*.tsv
 ```
 
-`gate.sh mine` 出 D 门首过率 + 裁决翻转(分歧)+ blocked 数;skip-test 率在 `.dev/audit/*.tsv` 的 `skip_test` 列(七列定稿),retro 技能合并三率,编码为 constraints 行或吞进 lint(correct 的最高层级修复)。
+`gate.sh mine` 出 D 门首过率 + 裁决翻转(分歧)+ blocked 数;skip-test 率在 `.dev/audit/*.tsv` 的 `skip_test` 列(七列定稿),retro 技能合并三率,编码为 constraints 行或吞进 lint(仓库里最强的执行层级:architecture > types/lint > tests > docs)。
 
 ## observe 桩(P5 item 4,立桩不实现)
 

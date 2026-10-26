@@ -2,7 +2,7 @@
 
 Last reviewed: 2026-10-26 by the review-gate round (quantitative gate: CRAP / duplication / mutation measured in `python/`, evidence required per verdict, adapters resolve their own browser). Previous round: attention-notify (T-041/T-042: pi suite 120/11 -> 158/14, tsc noise 45 -> 43, replay-coverage gate added). Dimensions and block/warn numbers are stated as defaults, adjustable via an Exceptions row.
 
-本仓是技能/文档栈:没有产品运行时,质量维度全部落在**检查可执行**上。规则↔enforcement 配对(correct 的规则表):每行命令 = 本地与 CI 同一条(`scripts/check.sh`)。
+本仓是技能/文档栈:没有产品运行时,质量维度全部落在**检查可执行**上。规则↔enforcement 配对(每条规则都有执行者):每行命令 = 本地与 CI 同一条(`scripts/check.sh`)。
 
 ## Floor (always enforced, no setup required)
 
@@ -51,4 +51,4 @@ Last reviewed: 2026-10-26 by the review-gate round (quantitative gate: CRAP / du
 | ID | Rule | Path | Reason | Owner | Expires |
 |----|------|------|--------|-------|---------|
 | — | (无在任例外;首例 XP-01 show-me WIP 于 2026-10-21 随技能完结、check 全绿而撤) | | | | |
-| — | — | — | 空表:新例外必须有日期行、理由、owner、到期(correct 的例外四要素) | — | — |
+| — | — | — | 空表:新例外必须有日期行、理由、owner、到期(例外四要素) | — | — |

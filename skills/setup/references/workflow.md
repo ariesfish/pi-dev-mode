@@ -23,7 +23,7 @@ setup
   -> diagnose        # fix bugs/regressions with a feedback loop
   -> refact          # improve seams/locality after learning from code
 
-wayfinder            # above it all: when the destination is foggy, decision tickets first
+scout                # above it all: when the destination is foggy, decision tickets first
 pi-dev-mode          # the router that picks between all of these
 ```
 
@@ -37,7 +37,7 @@ pi-dev-mode          # the router that picks between all of these
 - `docs/GLOSSARY.md` — glossary only; no implementation details
 - `docs/adr/*.md` — hard-to-reverse, surprising trade-off decisions.
 - Spec (.dev/<slug>/spec.md, feature-first dir) — the feature contract: objective, decisions, out of scope, three-label acceptance. Per-developer process memory, gitignored.
-- Issues — independently grabbable vertical slices.
+- `.dev/<slug>/plan.md` sections — independently grabbable vertical slices.
 - Tests/code — source of truth for behavior and implementation.
 
 ## Routing rules

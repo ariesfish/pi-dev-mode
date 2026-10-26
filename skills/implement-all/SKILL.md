@@ -14,8 +14,8 @@ description: >-
 
 Implement a whole plan: the tickets from `tickets` (ticket graph), or a ticket
 list in a feature's `.dev/<slug>/plan.md`. `implement` is one ticket, serial, in-hand; this skill
-takes the whole graph. Complement, not subordinate: `implement` after this
-README.
+takes the whole graph. Complement, not subordinate: `implement` stays the one-ticket lane
+this skill hands work to.
 
 ## What implement-all needs before it starts
 

@@ -36,7 +36,7 @@ findings; a class counts once it has happened twice.
      D-gate first-pass rate plus the A-verdict flip count, together with the
      `skip_test` rate from `.dev/audit/*.tsv`. Route the three rates into
      fixes: encode as constraints rows (new gates) or fold into existing lint
-     (correct's highest enforcement tier) — never prose edits alone. Without a
+     (the strongest enforcement tier the repo has: architecture > types/lint > tests > docs) — never prose edits alone. Without a
      ledger, mine the tsv only, unchanged.
    - **ADR health** — when the repo carries `docs/adr/`: run the repo's ADR
      checker if it is wired (`scripts/check-adrs.py` — numbering, status

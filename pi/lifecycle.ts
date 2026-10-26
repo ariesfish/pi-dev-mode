@@ -35,9 +35,9 @@ const COMMANDS: LifecycleCommand[] = [
   },
   {
     name: "review",
-    description: "Gate a merge/ship — four lenses + aggregate verdict (/review <fixed-point>)",
+    description: "Gate a merge/ship — parallel lenses + aggregate verdict (/review <fixed-point>)",
     skill: "review",
-    frame: (args) => `review 技能把关:${args || "当前分支待合并改动"}。先确认固定点与 diff 非空再起飞四镜头,聚合裁决 APPROVE / REQUEST CHANGES / INCONCLUSIVE;高风险(auth/迁移/公共 API/数据)加独立裁决者自写 verdict 文件。`,
+    frame: (args) => `review 技能把关:${args || "当前分支待合并改动"}。先确认固定点与 diff 非空再逐个镜头起飞,聚合裁决 APPROVE / REQUEST CHANGES / INCONCLUSIVE;高风险(auth/迁移/公共 API/数据)加独立裁决者自写 verdict 文件。`,
   },
   {
     name: "ship",

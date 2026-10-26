@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# check.sh — one command, identical locally and in CI (correct's same-command
+# check.sh — one command, identical locally and in CI (the same-command
 # rule: "Run the same command locally and in CI"). This is the canonical
 # acceptance entry named in docs/CONSTRAINTS.md's enforcement table.
 #

@@ -7,7 +7,7 @@
 | /spec, /plan, /tasks | `spec` → `tickets` |
 | /build, /build auto | `implement-all`(auto 模式) |
 | /test | `tdd` + 套件/构建步骤(在 implement-all 的每任务环内) |
-| /review | `review`(四镜头管线;镜头 1 = `code-review`) |
+| /review | `review`(五镜头管线;镜头 1 = `code-review`) |
 | /ship | `review` 过门后的落地流程(`/ship` 生命周期命令,P4 落 pi/lifecycle.ts;pstack shipping 为底) |
 | code-review-and-quality | `code-review`(双轴)或 review 管线 |
 | incremental-implementation | `implement` / `implement-all` |

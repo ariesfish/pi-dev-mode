@@ -2,7 +2,7 @@
   "name": "pi-dev-mode",
   "private": true,
   "version": "0.1.0",
-  "description": "pi-dev-mode: 15 base skills (mattp lineage) fused with addyosmani lifecycle discipline and pstack verification rigor, plus the pi extension (subagent, question, wakeup, loop) and pi-dev-mode routing. Mode and skills are pi-native; host conventions map through references/pi-host.md.",
+  "description": "pi-dev-mode: lifecycle skills (routing, spec, tickets, TDD, review, ship) plus the pi extension (agents, batch, intercom, ask, schedule, status) and this repo's gates. Mode and skills are pi-native; host conventions map through references/pi-host.md.",
   "author": {
     "name": "ariesfish"
   },
