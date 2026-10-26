@@ -1,6 +1,6 @@
 # Constraints
 
-Last reviewed: 2026-10-26 by the attention-notify round (T-041/T-042: pi suite 120/11 -> 158/14, tsc noise 45 -> 43, replay-coverage gate added). Dimensions and block/warn numbers are stated as defaults, adjustable via an Exceptions row.
+Last reviewed: 2026-10-26 by the review-gate round (quantitative gate: CRAP / duplication / mutation measured in `python/`, evidence required per verdict, adapters resolve their own browser). Previous round: attention-notify (T-041/T-042: pi suite 120/11 -> 158/14, tsc noise 45 -> 43, replay-coverage gate added). Dimensions and block/warn numbers are stated as defaults, adjustable via an Exceptions row.
 
 本仓是技能/文档栈:没有产品运行时,质量维度全部落在**检查可执行**上。规则↔enforcement 配对(correct 的规则表):每行命令 = 本地与 CI 同一条(`scripts/check.sh`)。
 
@@ -12,6 +12,7 @@ Last reviewed: 2026-10-26 by the attention-notify round (T-041/T-042: pi suite 1
 - 技能/文档改动必须有 `bash scripts/check.sh` 全绿才 commit
 - 源码无 secrets
 - 从持久化历史重建状态(restore/reattach/replay*)一律按 last-write-per-id 归约;回归用例必须灌真实多记录历史,单条记录不算(T-042:三次 /reload 才暴露的重复投递)
+- 裁决里的每个数字都要能指到 `.dev/audit/evidence/` 下的文件;指不到的数字不上裁决
 
 ## Enforced with numbers
 
@@ -21,6 +22,7 @@ Last reviewed: 2026-10-26 by the attention-notify round (T-041/T-042: pi suite 1
 | Gates semantics | test-gates 全断言绿(当前 23) | `bash scripts/test-gates.sh` | task end + CI(check.sh) |
 | Prose(deslop) | 新增行 slop 命中 = 0 | `python3 scripts/check-prose.py`(增量,环境感知 base) | task end + CI(check.sh) |
 | Full acceptance | 一条命令全绿:skills/gates/prose/ADR checker selftest + adapters 12 件缝测试 + pi 扩展套件(在场时)+ numbers sync + pi typecheck + tsv 证据指针 | `bash scripts/check.sh` | task end + CI |
+| Review gate | `review` / `code-review` 开跑前先量同一固定点,evidence 落 `.dev/audit/evidence/check-code-*.txt`;裁决首行与 evidence 的 gate 结果一致,`broken`(每个函数 0% 覆盖 = 测试命令没匹配到测试)按失败处理 | `bash scripts/check-code.sh review --since <fixed-point>`(工具链缺场用 `check-code.sh setup`;装不上 = 该 review 标 INCONCLUSIVE,不算通过) | review 开始前 |
 | pi 扩展套件 | bun test 158/158(14 文件) | `bash scripts/check.sh` 第 6 级:pi 运行时 + bun 在场时执行,缺场**可见 SKIP**(CI 无 pi 运行时——证据层不是静默通过);bun 由 devDependencies 提供(`node_modules/.bin`,仓库根 `npm install` 一次) | task end(本机满装时) |
 | pi 类型闸 | pi/ 源码未定义标识符类(TS2304/TS2552)= 0——imports 缺口即运行时炸弹(2026-10-22 事故类:dirname/inspect 未导入致前台 spawn 崩溃) | `bash scripts/check-types.sh`(check.sh 第 8 级;tsc 来自 devDependencies,缺场可见 SKIP) | task end + CI(装依赖后) |
 | tsv 证据指针 | `.dev/audit/*.tsv` 的 evidence/show 指针可达且目录非空(照写不照验 = T-034 事故形状;已移除的历史档显式豁免清单) | `python3 scripts/check-evidence.py`(check.sh 第 8 级;无 .dev 环境 no-op) | task end + feature 收尾 |
@@ -40,6 +42,9 @@ Last reviewed: 2026-10-26 by the attention-notify round (T-041/T-042: pi suite 1
 | blocked items / verdict flips | 0 / 0 | 0 |
 | 重放函数覆盖数 | 2(AgentRunner.restore / DurableEngine.reattach) | must not fall |
 | skip-test 率(`.dev/audit/*.tsv`) | 0 | 0 |
+| 最差 CRAP(ratchet) | 未播种:播种要一次全量且覆盖可信的 run。TS 侧命令须限定 `pi/`(`bun test --coverage --coverage-reporter=lcov pi/`,158 绿;不限定时 bun 也会收 adapters 的浏览器用例),而 `--coverage-command` 是全局的,同一次 run 里 Python 侧(scripts/)会被判 broken——所以要么在包里声明 per-language 计划,要么先补 `package.json` 的 coverage script,再 `bash scripts/check-code.sh ratchet --update-baseline` | 只降不升;抬高 baseline 必须是独立 diff,在 review 里单独看 |
+| 变异存活(ratchet) | 未播种(同上,追加 `--mutants`) | 只降不升;新分支的 survivor 视为缺断言 |
+| 重复候选(≥0.8,ratchet) | 2(2026-10-26 全量,`bash scripts/check-code.sh dupes` 可复现:`pi/intercom.ts:62-70`、`pi/agent-text.ts` 与 `pi/attention.ts`) | 只降不升;随 baseline 入档 |
 
 ## Exceptions
 

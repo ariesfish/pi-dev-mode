@@ -32,6 +32,17 @@ Capture the diff command once: `git diff <fixed-point>...HEAD` (three-dot, so th
 
 Before going further, confirm the fixed point resolves (`git rev-parse <fixed-point>`) and the diff is non-empty. A bad ref or empty diff should fail here, not inside two parallel sub-agents.
 
+Then measure the same range once:
+
+```bash
+bash scripts/check-code.sh review --since <fixed-point> --evidence
+```
+
+The evidence file (`.dev/audit/evidence/check-code-*.txt`) is an input to both
+axes: a `broken` coverage result voids any complexity claim, and a surviving
+mutant is a missing assertion the Spec axis names. Thresholds and per-language
+setup: [quantitative-gate.md](../review/references/quantitative-gate.md).
+
 ### 2. Identify the spec source
 
 Look for the originating spec, in this order:

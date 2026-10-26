@@ -30,6 +30,7 @@
 - **并行执行**: 独立任务一批派发, 各自在隔离环境中跑, 结果一次性回收
 - **结构化提问**: 需要决策时给出带选项的提问, 按选项回答, 也可自由作答
 - **浏览器驱动**: 验证技能可以像用户一样操作浏览器, 检查界面行为
+- **量化门禁**: `scripts/check-code.sh` 在 review 前量出 CRAP、重复度、变异存活数, 数字连同证据落在 `.dev/audit/evidence/`, 裁决必须引用; 引擎是 `python/` 里一个包 (`python -m codecheck crap|dupes|mutants`, 合并自 crapper / dryer / mutator)
 - **终端状态与通知**: 后台 subagent 完成/失败、batch 结算、提问弹窗、子 agent 求决策时, 用 OSC 7501 子记录上报状态, 并在支持的终端弹桌面通知 (Ghostty/iTerm2/WezTerm/kitty 走 OSC 9, VS Code 集成终端走 OSC 99); `PI_DEV_NOTIFY=0` 关通知, `PI_DEV_PROGRAM_STATUS=0` 关状态记录
 
 ## 安装

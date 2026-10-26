@@ -1,0 +1,30 @@
+[project]
+name = "pi-dev-mode-code-check"
+version = "0.1.0"
+description = "The three measuring engines behind scripts/code-check.sh: CRAP, duplication, mutation testing."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+dependencies = [
+    "tree-sitter>=0.24",
+    "tree-sitter-language-pack>=0.7",
+]
+
+[project.scripts]
+codecheck = "codecheck.__main__:main"
+codecheck-crap = "codecheck.__main__:crap"
+codecheck-dupes = "codecheck.__main__:dupes"
+codecheck-mutants = "codecheck.__main__:mutants"
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

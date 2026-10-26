@@ -24,6 +24,27 @@ Pin the fixed point exactly as `code-review` does — a commit/branch/tag /
 "review this branch". Confirm it resolves and the diff is non-empty **before**
 spawning anything.
 
+## Step 0 — the numbers
+
+Run the quantitative gate over the same fixed point before any lens reads the
+diff:
+
+```bash
+bash scripts/check-code.sh review --since <fixed-point> --evidence
+```
+
+It measures CRAP per function, structural duplication, and (with `--mutants`)
+mutation survivors, then writes `.dev/audit/evidence/check-code-<sha>-<stamp>.txt`.
+The lint-shaped failure is `broken`: every function at 0% coverage means the
+pinned test command matched no tests, so the numbers are fiction — fix the
+coverage command before the gate's verdict means anything. Thresholds, per-language
+setup, and the ratchet are in [references/quantitative-gate.md](references/quantitative-gate.md).
+
+A gate that fails is already one Required finding; the lenses then explain *why*
+(`broken` is a tooling gap, `threshold` is a complexity finding, a survivor is a
+missing assertion). Cite the evidence file path in the verdict, never a number
+you did not read from it.
+
 ## The five lenses (parallel readonly reviewers)
 
 Spawn all five with this package's `agent` tool — one call carrying five readonly `tasks` (one per lens, keyed standards/spec/doubt/constraints/design) — with the diff
@@ -75,6 +96,11 @@ Audit the diff against it: weakened thresholds, removed checks, new
 suppressions without an Exceptions row — each finding cites the exact
 docs/CONSTRAINTS.md line it violates.
 
+Also read this session's `.dev/audit/evidence/check-code-*.txt` and check the
+contract against it: does a row cover what the gate measured, and does any
+row claim a number the run does not derive? An unprobed `must not fall` row is
+a finding at the same severity as a weakened check.
+
 ### Lens 5 — Design
 
 Runs only when the diff touches UI-bearing code (TSX/JSX/HTML/CSS/SCSS,
@@ -110,13 +136,17 @@ UI-bearing changes, design axis n/a" and nothing else.
    (Critical / Required / Optional / Nit; lens 4 adds its floor violations as
    Critical).
 3. Verdict exactly one of:
-   - **APPROVE** — no Critical/Required findings
+   - **APPROVE** — no Critical/Required findings and no blocking gate result
+     (`threshold`, `broken`, survivors, or a failed ratchet)
    - **REQUEST CHANGES** — one or more Critical/Required, each with the lens
-     and file:line
+     and file:line; a blocking gate result is Required on its own, and the
+     verdict names the metric it came from
    - **INCONCLUSIVE** — a lens errored or was refused its inputs; name the gap.
-     An inconclusive review is not an approve.
+     An inconclusive review is not an approve. A gate that could not run
+     (no runtime, no coverage plan) is a gap, not a pass.
 4. End with: total findings per lens, the top finding overall, and what
-   evidence would close it.
+   evidence would close it. Every numeric claim about the diff comes from the
+evidence file; a number without that pointer is unverified.
 
 ## Independent verifier (high-stakes merges, or on request)
 

@@ -1,3 +1,8 @@
 .DS_Store
 /.dev/
 node_modules
+coverage/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+target/
