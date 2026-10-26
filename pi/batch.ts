@@ -11,6 +11,7 @@
 // children as ordinary agents — which they are.
 import { type Static, Type } from "typebox";
 
+import { truncateUtf8 } from "./agent-text.ts";
 import type { EndedRecord } from "./records.ts";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
@@ -148,8 +149,8 @@ export function aggregateNoticeText(rows: BatchRow[], rowCap = NOTICE_ROW_CAP_BY
   const texts = rows
     .filter((r) => r.status !== "stopped")
     .map((r) => {
-      const text = Buffer.byteLength(r.finalText, "utf8") <= rowCap ? r.finalText : `${Buffer.from(r.finalText, "utf8").subarray(0, rowCap).toString("utf8").replace(/\uFFFD$/, "")}…[truncated]`;
-      return `— ${r.key} —\n${text || "(no output)"}`;
+      const capped = truncateUtf8(r.finalText, rowCap);
+      return `— ${r.key} —\n${(capped === r.finalText ? capped : `${capped}…[truncated]`) || "(no output)"}`;
     });
   return [statsLine(rows), ...head, "", ...texts].join("\n");
 }

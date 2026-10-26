@@ -44,7 +44,7 @@ Last reviewed: 2026-10-26 by the review-gate round (quantitative gate: CRAP / du
 | skip-test 率(`.dev/audit/*.tsv`) | 0 | 0 |
 | 最差 CRAP(ratchet) | 未播种:播种要一次全量且覆盖可信的 run。TS 侧命令须限定 `pi/`(`bun test --coverage --coverage-reporter=lcov pi/`,158 绿;不限定时 bun 也会收 adapters 的浏览器用例),而 `--coverage-command` 是全局的,同一次 run 里 Python 侧(scripts/)会被判 broken——所以要么在包里声明 per-language 计划,要么先补 `package.json` 的 coverage script,再 `bash scripts/check-code.sh ratchet --update-baseline` | 只降不升;抬高 baseline 必须是独立 diff,在 review 里单独看 |
 | 变异存活(ratchet) | 未播种(同上,追加 `--mutants`) | 只降不升;新分支的 survivor 视为缺断言 |
-| 重复候选(≥0.8,ratchet) | 2(2026-10-26 全量,`bash scripts/check-code.sh dupes` 可复现:`pi/intercom.ts:62-70`、`pi/agent-text.ts` 与 `pi/attention.ts`) | 只降不升;随 baseline 入档 |
+| 重复候选(≥0.8,ratchet) | 0(2026-10-26 审计后 `bash scripts/check-code.sh dupes` 全量 0:UTF-8 截断收进 `pi/agent-text.ts`,intercom 的 req/reply 路径合并为 `rowPath`) | 只降不升;随 baseline 入档 |
 
 ## Exceptions
 

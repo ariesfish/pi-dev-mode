@@ -18,6 +18,8 @@
 // pi's frame output: they consume no cells and move no cursor.
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
+import { truncateUtf8 } from "./agent-text.ts";
+
 const ESC = "\x1b";
 const ST = `${ESC}\\`;
 const BEL = "\x07";
@@ -71,26 +73,14 @@ export function validProgramId(id: string): boolean {
   return segments.length <= MAX_ID_DEPTH && Buffer.byteLength(id, "utf8") <= MAX_ID_BYTES && segments.every((s) => SEGMENT_PATTERN.test(s));
 }
 
-function clipUtf8(text: string, cap: number): string {
-  if (Buffer.byteLength(text, "utf8") <= cap) return text;
-  const bytes = Buffer.from(text, "utf8");
-  let end = cap;
-  while (end > 0 && (bytes[end] & 0xc0) === 0x80) end--;
-  return bytes.subarray(0, end).toString("utf8");
-}
-
 /** Free text is one line without control characters (the spec refuses
  * reports whose decoded text carries any). */
 function oneLine(text: string | undefined): string {
   return (text ?? "").replace(CONTROL_CHARACTERS, " ").replace(/\s+/g, " ").trim();
 }
 
-function clipText(text: string, cap: number): string {
-  return clipUtf8(text, cap);
-}
-
 function base64Pair(key: "msg" | "title", text: string | undefined, cap: number): string | undefined {
-  const clean = clipText(oneLine(text), cap);
+  const clean = truncateUtf8(oneLine(text), cap);
   return clean ? `${key}=${Buffer.from(clean, "utf8").toString("base64")}` : undefined;
 }
 
@@ -117,7 +107,7 @@ export function formatProgramStatus(report: ProgramStatusReport): string {
 
 /** One OSC 9 desktop notification, or "" when there is nothing to show. */
 export function formatNotification(body: string): string {
-  const text = clipText(oneLine(body), MAX_NOTIFICATION_CHARS);
+  const text = truncateUtf8(oneLine(body), MAX_NOTIFICATION_CHARS);
   return text ? `${ESC}]9;${text}${BEL}` : "";
 }
 
@@ -130,9 +120,9 @@ export function formatNotification(body: string): string {
  * the 2s throttle plus same-text dedupe in Attention keep it from nagging.
  */
 export function formatKittyNotification(title: string, body: string, id: string): string {
-  const cleanBody = clipText(oneLine(body), MAX_NOTIFICATION_CHARS);
+  const cleanBody = truncateUtf8(oneLine(body), MAX_NOTIFICATION_CHARS);
   if (!cleanBody) return "";
-  const cleanTitle = clipText(oneLine(title), 60) || TITLE;
+  const cleanTitle = truncateUtf8(oneLine(title), 60) || TITLE;
   const safeId = id.replace(/[^A-Za-z0-9_+.-]/g, "").slice(0, 32) || "pi-dev";
   const frame = (kind: "title" | "body", text: string, last: boolean) =>
     `${ESC}]99;i=${safeId}:p=${kind}:e=1${last ? "" : ":d=0"};${Buffer.from(text, "utf8").toString("base64")}${ST}`;
@@ -155,10 +145,6 @@ export function notificationChannel(env: NodeJS.ProcessEnv): NotificationChannel
   // Opting in on an unrecognized terminal bets on OSC 9, the wider of the two.
   if (env.PI_DEV_NOTIFY === "1") return detected === "none" ? "osc9" : detected;
   return detected;
-}
-
-export function notificationsEnabled(env: NodeJS.ProcessEnv): boolean {
-  return notificationChannel(env) !== "none";
 }
 
 // ─── decoding this package's own notices ────────────────────────────────────
@@ -202,24 +188,24 @@ export function noticeEvent(message: AttentionMessage): AttentionEvent | undefin
     case "pi-dev-agent": {
       const description = text(details.description) ?? "subagent";
       const status = text(details.status) ?? "completed";
-      return { state: status === "failed" ? "error" : "done", message: clipText(`${description} ${status}`, MAX_EVENT_CHARS) };
+      return { state: status === "failed" ? "error" : "done", message: truncateUtf8(`${description} ${status}`, MAX_EVENT_CHARS) };
     }
     case "pi-dev-agent-batch": {
-      if (details.error) return { state: "error", message: clipText(oneLine(content.split(/\r?\n/, 1)[0] ?? "batch notice failed"), MAX_EVENT_CHARS) };
+      if (details.error) return { state: "error", message: truncateUtf8(oneLine(content.split(/\r?\n/, 1)[0] ?? "batch notice failed"), MAX_EVENT_CHARS) };
       const summary = countRows(details.rows);
       return {
         state: summary.includes("failed") ? "error" : "done",
-        message: clipText(`batch ${summary || "finished"}`, MAX_EVENT_CHARS),
+        message: truncateUtf8(`batch ${summary || "finished"}`, MAX_EVENT_CHARS),
       };
     }
     case "pi-dev-intercom": {
       const description = text(details.description) ?? "subagent";
-      const body = clipText(oneLine(text(details.message) ?? ""), MAX_EVENT_CHARS);
+      const body = truncateUtf8(oneLine(text(details.message) ?? ""), MAX_EVENT_CHARS);
       if (details.reason === "progress_update") return { state: "working", message: body ? `${description}: ${body}` : description };
       return { state: "blocked", kind: "question", message: body ? `${description} asks: ${body}` : `${description} asks for a decision` };
     }
     default: {
-      const line = clipText(oneLine(content.split(/\r?\n/, 1)[0] ?? ""), MAX_EVENT_CHARS);
+      const line = truncateUtf8(oneLine(content.split(/\r?\n/, 1)[0] ?? ""), MAX_EVENT_CHARS);
       return line ? { state: "done", message: line } : undefined;
     }
   }
@@ -315,7 +301,7 @@ export class Attention {
 
   /** An ask dialog opened: the user is the one blocking now. */
   askOpened(question: string): void {
-    const msg = clipText(oneLine(question), MAX_EVENT_CHARS);
+    const msg = truncateUtf8(oneLine(question), MAX_EVENT_CHARS);
     this.report({ state: "blocked", kind: "question", msg: msg || "waiting for your answer", id: ASK_ID });
     this.desktop(`waiting for your answer: ${msg}`.trim());
   }
@@ -327,7 +313,7 @@ export class Attention {
 
   /** The request was answered: nothing waits on the user any more. */
   askAnswered(): void {
-    this.report({ state: "clear", id: ASK_ID });
+    this.askClosed();
   }
 
   /** The user is back and typing: a done/error record about work they have
@@ -372,4 +358,3 @@ export class Attention {
 }
 
 /** Convenience for the notice seam: the message type AgentRunner hands over. */
-export type NoticeMessage = Parameters<ExtensionAPI["sendMessage"]>[0];

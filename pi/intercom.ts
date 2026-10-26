@@ -59,14 +59,13 @@ export interface IntercomRequest {
 
 const ID_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$/;
 
-export function requestPath(dir: string, id: string): string {
+function rowPath(dir: string, kind: "req" | "reply", id: string): string {
   if (!ID_PATTERN.test(id)) throw new Error(`Invalid intercom request id "${id}".`);
-  return join(dir, `req-${id}.json`);
+  return join(dir, `${kind}-${id}.json`);
 }
 
-function replyPath(dir: string, id: string): string {
-  if (!ID_PATTERN.test(id)) throw new Error(`Invalid intercom request id "${id}".`);
-  return join(dir, `reply-${id}.json`);
+export function requestPath(dir: string, id: string): string {
+  return rowPath(dir, "req", id);
 }
 
 /** The child's view of one request: file, wait, or a named timeout verdict. */
@@ -77,7 +76,7 @@ export function writeRequest(dir: string, req: IntercomRequest): void {
 
 export function readReply(dir: string, id: string): string | undefined {
   try {
-    return JSON.parse(readFileSync(replyPath(dir, id), "utf8")).message as string;
+    return JSON.parse(readFileSync(rowPath(dir, "reply", id), "utf8")).message as string;
   } catch {
     return undefined;
   }
@@ -107,7 +106,7 @@ export function pendingRequests(dir: string, nowMs = Date.now()): { req: Interco
 }
 
 export function writeReply(dir: string, id: string, message: string): void {
-  writeFileSync(replyPath(dir, id), JSON.stringify({ id, message, repliedAt: Date.now() }), { mode: 0o600 });
+  writeFileSync(rowPath(dir, "reply", id), JSON.stringify({ id, message, repliedAt: Date.now() }), { mode: 0o600 });
 }
 
 /** The child-side ask_parent tool; wired only when the parent passed this session the channel. */

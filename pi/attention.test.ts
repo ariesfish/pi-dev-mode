@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { Attention, formatKittyNotification, formatNotification, formatProgramStatus, noticeEvent, notificationChannel, notificationsEnabled } from "./attention.ts";
+import { Attention, formatKittyNotification, formatNotification, formatProgramStatus, noticeEvent, notificationChannel } from "./attention.ts";
 
 // Encoding is the contract here: a terminal either parses these bytes or it
 // does not. The literals below are the protocol spec's own examples' style
@@ -90,7 +90,6 @@ describe("notificationChannel", () => {
   test("opt-in and opt-out win over detection", () => {
     expect(notificationChannel({ PI_DEV_NOTIFY: "1" })).toBe("osc9");
     expect(notificationChannel({ PI_DEV_NOTIFY: "0", TERM_PROGRAM: "ghostty" })).toBe("none");
-    expect(notificationsEnabled({ PI_DEV_NOTIFY: "0", TERM_PROGRAM: "ghostty" })).toBe(false);
   });
 
   test("OSC 9 terminals are on by default", () => {
