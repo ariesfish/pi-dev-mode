@@ -3,8 +3,8 @@ name: dev-mode-help
 description: >-
   One-page discovery map for this stack: which skill for which situation, how
   they chain into a lifecycle, and where the mode, mandate, and host mapping
-  live. Use when unsure which skill fits, when exploring the stack, or when
-  introducing it to a new session or teammate. Chinese triggers: 用哪个技能, 这个栈怎么用, 技能地图.
+  live. Use when exploring the stack, or when introducing it to a new session
+  or teammate. Chinese triggers: 这个栈怎么用, 技能地图, 介绍给新队友.
 ---
 
 # Dev Mode Help

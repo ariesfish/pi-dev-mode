@@ -6,8 +6,7 @@ description: >-
   constraints audit, and a design audit — as parallel readonly reviewers,
   then aggregate into
   one deduplicated verdict with severity labels. Use before merging a branch
-  or PR, before shipping, or when the user says review this / 审查这个分支 /
-  把关. For a quick two-axis look at a diff without the gate ceremony, the
+  or PR, before shipping, or when the user says 把关 / 合并前审查. For a quick two-axis look at a diff without the gate ceremony, the
   `code-review` skill standalone is that lane. Chinese triggers: 合并前把关, 发布前审查, 评审管线.
 ---
 

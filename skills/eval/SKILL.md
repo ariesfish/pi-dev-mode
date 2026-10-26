@@ -41,34 +41,25 @@ stay quiet where it must not.
 
 1. Pick the cases: every case under `evals/<skill-under-test>/`, plus the
    stays-quiet cases of sibling skills most likely to be stolen from.
-2. For each case, run one candidate in a scratch working directory:
+2. Run each case with the packaged runner — it implements the isolation rules
+   below instead of restating them per session:
    ```bash
-   cd $(mktemp -d)
-   # Dialogue lane (trigger adjudication): tools restricted to read; if the
-   # case declares a fixture, copy its contents into cwd (the candidate's cwd
-   # IS the project root — package.json etc. directly visible at the top).
-   cp -r <repo>/evals/fixtures/<name>/. .   # only when prompt.md declares a fixture
-   pi -p --session-dir "$PWD/session" --no-extensions --no-skills \
-     --tools read --skill <repo>/skills "$(cat <case>/prompt.md body)"
-   # Execution lane (behavior adjudication): full tools, fixture contents as
-   # cwd (fixture required), time-limited (900s is enough to observe);
-   # routing-behavior cases keep the extension loaded (-e <repo>/pi/index.ts) —
-   # mandate/repo-state are part of the product.
-   cp -r <repo>/evals/fixtures/<name>/. "$PWD/workspace"
-   cd "$PWD/workspace"
-   timeout 900 pi -p --session-dir "$OLDPWD/session" [--no-extensions] \
-     --no-skills --skill <repo>/skills "$(cat <case>/prompt.md body)"
+   bash <this package>/scripts/run-eval.sh <case-dir> [--routing]
    ```
+   The runner copies `skills/` to a neutral temp path per case (a path that
+   names the topic becomes a content hint: 3/3 vs 2/4 on the same case,
+   2026-10-22), copies the fixture into the candidate cwd, restricts dialogue
+   cases to `read`, loads this package's extension for routing/execution cases,
+   time-limits 700s/1500s, and prints `SESSION`, `REPLY` and `CHEAT`. The
+   transcript lands under `SESSION`.
    Dialogue-kind cases run `--tools read`: the candidate can open skill files
    (the chain evidence) but cannot wander the filesystem or start executing —
-   the run stays bounded. Validation record: full-tool dialogue candidates
-   dig the repo for minutes and never reach a reply (observed 2026-10-16,
-   >7 min, killed) — that is why execution-kind cases get a fixture cwd and
-   a timeout instead of unbounded access.
-   `--no-extensions` keeps the mandate and repo-state notes out of the
-   candidate's system prompt (they would hint the chain); `--no-skills`
-   disables the user's global skills so the tree under test is all the
-   candidate sees; the transcript lands under `$PWD/session`.
+   the run stays bounded (full-tool dialogue candidates dug the repo for >7
+   min and never replied, observed 2026-10-16). `--no-extensions` keeps the
+   mandate and repo-state notes out of the plain trigger candidate's system
+   prompt; `--routing` adds them back because routing is the behavior under
+   test. `--no-skills` disables the user's global skills so the tree under
+   test is all the candidate sees.
 3. Grade: attach the transcript and reply to a judge as a fresh readonly run
    (`pi -p --no-skills --no-extensions "…grading rule… @<transcript> @<reply>"`),
    one grader rule per finding. Or grade against the rule yourself when the

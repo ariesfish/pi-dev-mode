@@ -36,6 +36,15 @@ evals/
 
 ## 运行
 
+一条命令跑一案(推荐;隔离/超时/作弊检查都在脚本里):
+
+```bash
+bash scripts/run-eval.sh <evals>/<skill>/<case> [--routing]
+```
+
+输出 `WORK/SESSION/REPLY/KIND/STATUS/CHEAT`;判分者读 `REPLY` 与 `SESSION` 下的转写。
+`--routing` 给路由行为类用例加载本包扩展(纯触发案不要加)。
+
 超时形状(2026-10-18 起):dialogue 案 700s;execution 案 1500s(视觉案刑期长——
 渲染+像素 diff 流水线是合法路径,别把它掐死在半路)。
 
