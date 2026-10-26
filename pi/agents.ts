@@ -514,30 +514,36 @@ export class AgentRunner {
   }
 
   restore(entries: readonly SessionEntry[], registry?: unknown): void {
+    // Last write per agent id wins — the record schema's own rule. Walking the
+    // raw entry stream instead let an old "running" write resurrect an agent
+    // that had finished since: the durable branch reattached to an idle bridge,
+    // read that as "the answer settled while nobody watched", and delivered the
+    // same notice again on every reload (T-042).
+    const latest = new Map<string, AgentRecord>();
     for (const entry of entries) {
       if (entry.type !== "custom" || entry.customType !== ENTRY_TYPE || !Value.Check(recordSchema, entry.data)) continue;
-      const { id } = entry.data.agent;
+      latest.set(entry.data.agent.id, entry.data);
+    }
+    for (const record of latest.values()) {
+      const { id } = record.agent;
       if (this.agents.get(id)?.kind === "local") continue;
       // A durable run never had a process to re-inspect: reattach to the
       // bridge (or close honestly when the bridge cannot open).
-      if (entry.data.agent.durable === true) {
+      if (record.agent.durable === true) {
         if (this.agents.get(id)?.kind === "durable") continue;
-        // A record that already ended stays ended. Coercing it back to
-        // "running" made the reattach read an idle bridge as "the answer
-        // settled while nobody watched" and re-deliver the same notice on
-        // every reload (T-042). An ended-but-undelivered answer is still
-        // caught by the discovery loop below; a later send resumes the
-        // conversation from the ended record (T-030).
-        if (entry.data.status !== "running") {
-          this.agents.set(id, { kind: "ended", record: entry.data });
+        // A record that already ended stays ended: its answer reached a live
+        // session (or the discovery loop below delivers it once), and a later
+        // send resumes the conversation from the ended record (T-030).
+        if (record.status !== "running") {
+          this.agents.set(id, { kind: "ended", record });
           continue;
         }
-        const state: DurableAgent = { kind: "durable", record: entry.data, spawn: Promise.resolve(), settle: this.engine.trackSettle(id) };
+        const state: DurableAgent = { kind: "durable", record, spawn: Promise.resolve(), settle: this.engine.trackSettle(id) };
         this.agents.set(id, state);
         void this.engine.reattach(state, SessionState.fromSessionDir(state.record.agent.sessionDir), registry);
         continue;
       }
-      this.agents.set(id, entry.data.status === "running" ? { kind: "remote", record: entry.data } : { kind: "ended", record: entry.data });
+      this.agents.set(id, record.status === "running" ? { kind: "remote", record } : { kind: "ended", record });
     }
     for (const state of this.agents.values()) this.refreshRestored(state);
     // Discovery (T-025): every restored record that a live session never
