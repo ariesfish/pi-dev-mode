@@ -109,22 +109,28 @@ export function writeReply(dir: string, id: string, message: string): void {
   writeFileSync(rowPath(dir, "reply", id), JSON.stringify({ id, message, repliedAt: Date.now() }), { mode: 0o600 });
 }
 
+/** The ask_parent contract both adapters register — rpc child (below) and
+ *  durable child (durable.ts). One prompt and one schema, so the two cannot
+ *  describe different tools. */
+export const ASK_PARENT_DESCRIPTION =
+  "Ask this session's parent one question (need_decision) or report progress (progress_update). You block until the parent answers or the 30-minute cap; on no answer, decide on your own and say so.";
+export const askParentParameters = Type.Object(
+  {
+    reason: Type.Union([Type.Literal("need_decision"), Type.Literal("progress_update")], { description: "need_decision blocks for an answer; progress_update reports and continues" }),
+    message: Type.String({ description: "The question or the progress note, in the parent's language" }),
+    options: Type.Optional(Type.Array(Type.String(), { maxItems: 4, description: "Candidate answers, if any" })),
+  },
+  { additionalProperties: false },
+);
+
 /** The child-side ask_parent tool; wired only when the parent passed this session the channel. */
 export function registerAskParent(pi: ExtensionAPI, channel: string): void {
   pi.registerTool({
     name: "ask_parent",
     label: "Ask parent",
     exposure: "model-only",
-    description:
-      "Ask this session's parent one question (need_decision) or report progress (progress_update). You block until the parent answers or the 30-minute cap; on no answer, decide on your own and say so.",
-    parameters: Type.Object(
-      {
-        reason: Type.Union([Type.Literal("need_decision"), Type.Literal("progress_update")], { description: "need_decision blocks for an answer; progress_update reports and continues" }),
-        message: Type.String({ description: "The question or the progress note, in the parent's language" }),
-        options: Type.Optional(Type.Array(Type.String(), { maxItems: 4, description: "Candidate answers, if any" })),
-      },
-      { additionalProperties: false },
-    ),
+    description: ASK_PARENT_DESCRIPTION,
+    parameters: askParentParameters,
     async execute(_id, params) {
       const req: IntercomRequest = {
         id: randomUUID(),

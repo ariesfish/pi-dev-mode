@@ -210,7 +210,7 @@ export class PiChild {
 
 // Splits pi's stdout into lines on LF only: a Unicode line separator is valid
 // inside a JSON string.
-export function lineSplitter(onLine: (line: string) => void): { write(chunk: Buffer | string): void; end(): void } {
+function lineSplitter(onLine: (line: string) => void): { write(chunk: Buffer | string): void; end(): void } {
   const decoder = new StringDecoder("utf8");
   let buffered = "";
   const feed = (text: string) => {
@@ -239,7 +239,7 @@ export function alive(pid: number): boolean {
   }
 }
 
-export function signalGroup(pid: number, signal: NodeJS.Signals): void {
+function signalGroup(pid: number, signal: NodeJS.Signals): void {
   try {
     process.kill(-pid, signal);
   } catch {}
@@ -249,7 +249,7 @@ export function signalGroup(pid: number, signal: NodeJS.Signals): void {
 // period. `ours` guards both signals, since a reused pid is not ours to signal.
 // Resolves when the signal attempt ends, not when the process exits. A restored
 // orphan can retry if either identity check was unavailable during this attempt.
-export function terminateGroup(pid: number, ours: () => boolean, graceMs: number): Promise<void> {
+function terminateGroup(pid: number, ours: () => boolean, graceMs: number): Promise<void> {
   if (!ours()) return Promise.resolve();
   signalGroup(pid, "SIGTERM");
   return new Promise((resolve) => {

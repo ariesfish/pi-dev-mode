@@ -13,7 +13,6 @@ const wakeupParams = Type.Object({
   delaySeconds: Type.Optional(Type.Number({ description: `Seconds until the wakeup (${MIN_DELAY_S}-${MAX_DELAY_S})` })),
   prompt: Type.Optional(Type.String({ description: "The prompt to run when the wakeup fires" })),
   reason: Type.Optional(Type.String({ description: "Why this delay, in one short sentence" })),
-  noop: Type.Optional(Type.Boolean({ description: "Mark this wakeup as a routine check; it is scheduled all the same" })),
   stop: Type.Optional(Type.Boolean({ description: "Cancel the pending wakeup; no other field is needed" })),
 });
 
@@ -180,7 +179,7 @@ export function registerSchedule(pi: ExtensionAPI, scheduler: Scheduler, oneShot
       const clamped = seconds !== params.delaySeconds ? ` (clamped from ${params.delaySeconds})` : "";
       return {
         content: [{ type: "text", text: `Wakeup scheduled in ${seconds}s${clamped}, at ${fireAt}. It replaces any earlier pending wakeup.` }],
-        details: { delaySeconds: seconds, fireAt, noop: params.noop === true },
+        details: { delaySeconds: seconds, fireAt },
       };
     },
   });

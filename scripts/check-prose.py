@@ -74,7 +74,6 @@ PATTERNS = [
      "不难看出,方案 A 更好。"),
 ]
 
-FROZEN_EXCUSES: dict[str, str] = {}
 
 
 def is_surface(p: str) -> bool:

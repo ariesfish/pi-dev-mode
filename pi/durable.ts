@@ -35,7 +35,7 @@ import { createBashTool, createEditTool, createReadTool, createWriteTool } from 
 import { NodeExecutionEnv } from "@earendil-works/pi-durable/env/node";
 
 import { SessionState } from "./session-state.ts";
-import { awaitReply, PARENT_TIMEOUT_VERDICT, PROGRESS_DELIVERED, requestPath, ASK_PARENT_TIMEOUT_MS, writeRequest } from "./intercom.ts";
+import { ASK_PARENT_DESCRIPTION, askParentParameters, awaitReply, PARENT_TIMEOUT_VERDICT, PROGRESS_DELIVERED, requestPath, ASK_PARENT_TIMEOUT_MS, writeRequest } from "./intercom.ts";
 
 // ─── The ledger document: one root conversation, agents keyed by id ──────────
 
@@ -180,20 +180,15 @@ const askId = (from: string, reason: string, message: string, options: string[] 
 // only what a durable rerun needs — the deterministic request id.
 const askParentTool = defineTool({
 	name: "ask_parent",
-	description:
-		"Ask this session's parent one question (need_decision) or report progress (progress_update). You block until the parent answers or the 30-minute cap; on no answer, decide on your own and say so.",
-	parameters: Type.Object(
-		{
-			reason: Type.Union([Type.Literal("need_decision"), Type.Literal("progress_update")]),
-			message: Type.String(),
-			options: Type.Optional(Type.Array(Type.String(), { maxItems: 4 })),
-		},
-		{ additionalProperties: false },
-	),
+	description: ASK_PARENT_DESCRIPTION,
+	parameters: askParentParameters,
 	// A rerun after a crash finds the same row again: no second row, no second ask.
 	replay: "safe",
 	async execute(args) {
 		const channel = askChannel ?? "";
+		// The ledger names this agent; the row cannot (the tool is installed once
+		// per bridge, before any agent exists), so the parent addresses it by
+		// request id — the notice carries that id.
 		const from = "durable-child";
 		const row = {
 			id: askId(from, args.reason, args.message, args.options),

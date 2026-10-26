@@ -1,5 +1,5 @@
 import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
-import { type Static, Type } from "typebox";
+import { Type } from "typebox";
 import { fuzzyFilter, Input, Key, matchesKey, SelectList, type SelectListTheme, Text, truncateToWidth, type SelectItem, type TUI } from "@earendil-works/pi-tui";
 
 import type { Attention } from "./attention.ts";
@@ -54,7 +54,6 @@ const questionSchema = Type.Object({
   multiSelect: Type.Optional(Type.Boolean({ description: "Allow more than one answer" })),
 });
 const questionParams = Type.Object({ questions: Type.Array(questionSchema, { minItems: 1, maxItems: 4 }) });
-export type AskToolParams = Static<typeof questionParams>;
 
 export interface AskAnswer {
   question: string;
