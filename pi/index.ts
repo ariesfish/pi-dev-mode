@@ -14,6 +14,12 @@ import { registerPromptSections } from "./prompt.ts";
 import { registerSchedule, Scheduler } from "./schedule.ts";
 import { registerStatusBar } from "./status.ts";
 
+// Flags are typed string|boolean|undefined by the host; these two carry paths.
+function stringFlag(pi: ExtensionAPI, name: string): string | undefined {
+  const value = pi.getFlag(name);
+  return typeof value === "string" && value ? value : undefined;
+}
+
 export function install(pi: ExtensionAPI, settings: Settings): void {
   // T-041: background work and blocking dialogs are invisible to pi core's
   // program status (it owns the root record and only sees its own dialogs).
@@ -69,7 +75,7 @@ export function install(pi: ExtensionAPI, settings: Settings): void {
     stopIntercom?.();
     // A child session writes its own artifact first: the run's durable output
     // must not ride on its parent noticing the exit.
-    writeSelfArtifact(stringFlag(ARTIFACT_FLAG), readIdentitySidecar(stringFlag(IDENTITY_FLAG)), () => ctx.sessionManager.getBranch() as unknown[]);
+    writeSelfArtifact(stringFlag(pi, ARTIFACT_FLAG), readIdentitySidecar(stringFlag(pi, IDENTITY_FLAG)), () => ctx.sessionManager.getBranch() as unknown[]);
     oneShot.dispose();
     scheduler.stopAll();
     // Children are detached in their own process groups: they keep running,
@@ -85,11 +91,6 @@ export function install(pi: ExtensionAPI, settings: Settings): void {
 }
 
 export default function piDevStack(pi: ExtensionAPI): void {
-  // Flags are typed string|boolean|undefined by the host; these two carry paths.
-  const stringFlag = (name: string): string | undefined => {
-    const value = pi.getFlag(name);
-    return typeof value === "string" && value ? value : undefined;
-  };
   pi.registerFlag(DEPTH_FLAG, { type: "string", description: "Layers below the main session; pi-dev sets it on the agents it starts." });
   pi.registerFlag(ARTIFACT_FLAG, { type: "string", description: "Where this child session writes its run artifact at shutdown." });
   pi.registerFlag(IDENTITY_FLAG, { type: "string", description: "Sidecar JSON with the identity fields the self-written artifact quotes." });

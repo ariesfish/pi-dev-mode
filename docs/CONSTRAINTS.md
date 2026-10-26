@@ -37,7 +37,7 @@ Last reviewed: 2026-10-26 by the review-gate round (quantitative gate: CRAP / du
 | test-gates 断言数 | 29 | must not fall(降 = 逃逸) |
 | adapters 缝测试 | 12/12 | must not fall |
 | pi 扩展测试 | 159/159 | must not fall |
-| pi 类型精确化噪音(tsc 错误实例,非行数) | 43 | ratchet 向下(增量严化,不走一次性清零) |
+| pi 类型精确化噪音(tsc 错误实例,非行数) | 26(2026-10-26 审计后;原 43 含 11 处幻影 import) | ratchet 向下(增量严化,不走一次性清零) |
 | 账本 D 门首过率 | 0.56 | 观察(RED-first 纪律刻意压低,非事故) |
 | blocked items / verdict flips | 0 / 0 | 0 |
 | 重放函数覆盖数 | 2(AgentRunner.restore / DurableEngine.reattach) | must not fall |
