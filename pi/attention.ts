@@ -125,8 +125,9 @@ export function formatNotification(body: string): string {
  * One OSC 99 (kitty) notification as the two frames the protocol expects: a
  * title frame and a final body frame. VS Code implements exactly this
  * sequence and nothing else — its terminal registers an OSC 99 handler only,
- * so an OSC 9 there is inert. `o=unfocused` asks the terminal to stay quiet
- * while its window has focus; the user is already looking at the session then.
+ * so an OSC 9 there is inert. No `o=` occasion key is sent: the notification
+ * shows whether or not the window has focus (owner's call, 2026-10-26), and
+ * the 2s throttle plus same-text dedupe in Attention keep it from nagging.
  */
 export function formatKittyNotification(title: string, body: string, id: string): string {
   const cleanBody = clipText(oneLine(body), MAX_NOTIFICATION_CHARS);
@@ -134,7 +135,7 @@ export function formatKittyNotification(title: string, body: string, id: string)
   const cleanTitle = clipText(oneLine(title), 60) || TITLE;
   const safeId = id.replace(/[^A-Za-z0-9_+.-]/g, "").slice(0, 32) || "pi-dev";
   const frame = (kind: "title" | "body", text: string, last: boolean) =>
-    `${ESC}]99;i=${safeId}:p=${kind}:e=1:o=unfocused${last ? "" : ":d=0"};${Buffer.from(text, "utf8").toString("base64")}${ST}`;
+    `${ESC}]99;i=${safeId}:p=${kind}:e=1${last ? "" : ":d=0"};${Buffer.from(text, "utf8").toString("base64")}${ST}`;
   return frame("title", cleanTitle, false) + frame("body", cleanBody, true);
 }
 

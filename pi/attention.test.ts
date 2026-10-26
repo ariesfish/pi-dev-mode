@@ -112,12 +112,14 @@ describe("notificationChannel", () => {
 });
 
 describe("formatKittyNotification", () => {
-  test("a title frame then a final body frame, base64, quiet while focused", () => {
+  test("a title frame then a final body frame, base64, no focus occasion", () => {
     const frames = formatKittyNotification("pi-dev", "smoke completed", "pi-dev-1");
     expect(frames).toBe(
-      `\x1b]99;i=pi-dev-1:p=title:e=1:o=unfocused:d=0;${Buffer.from("pi-dev").toString("base64")}${ST}` +
-        `\x1b]99;i=pi-dev-1:p=body:e=1:o=unfocused;${Buffer.from("smoke completed").toString("base64")}${ST}`,
+      `\x1b]99;i=pi-dev-1:p=title:e=1:d=0;${Buffer.from("pi-dev").toString("base64")}${ST}` +
+        `\x1b]99;i=pi-dev-1:p=body:e=1;${Buffer.from("smoke completed").toString("base64")}${ST}`,
     );
+    // No o= key: the notification shows whether or not the window has focus.
+    expect(frames).not.toContain("o=");
   });
 
   test("ids are sanitized and free text stays one line", () => {
