@@ -104,6 +104,29 @@ function readModels(modelsFile: string): Static<typeof modelsConfig> {
   return raw;
 }
 
+/** Does the operator's catalog carry this provider/id? undefined when there is
+ *  no readable catalog (a portable package must not depend on one). */
+function catalogHas(agentDir: string, target: string): boolean | undefined {
+  const [provider, ...rest] = target.split("/");
+  const id = rest.join("/");
+  if (!provider || !id) return undefined;
+  let text: string;
+  try {
+    text = readFileSync(join(agentDir, "models.json"), "utf8");
+  } catch {
+    return undefined;
+  }
+  try {
+    const providers = (JSON.parse(text) as { providers?: Record<string, { models?: { id?: string }[] }> }).providers;
+    if (!providers) return undefined;
+    const entry = providers[provider];
+    if (!entry) return false;
+    return (entry.models ?? []).some((m) => m?.id === id);
+  } catch {
+    return undefined;
+  }
+}
+
 // Returns the provider/id for --model, or undefined when the child should run
 // on Pi's default because the parent model is unknown.
 export function resolveModel(
@@ -127,6 +150,11 @@ export function resolveModel(
   const id = sheet?.piModels.get(requested) ?? table[requested];
   if (!id) {
     throw new Error(`No Pi model mapped for "${requested}": add a "pi models: ${requested}=<provider>/<id>" line to the override sheet.`);
+  }
+  // A typo in models.json used to surface inside the spawned pi as an opaque
+  // model error; the operator's own catalog is the ground truth when present.
+  if (catalogHas(settings.agentDir, id) === false) {
+    throw new Error(`Model "${id}" (alias "${requested}") is not in ${join(settings.agentDir, "models.json")}; fix the alias map or add the provider.`);
   }
   return id;
 }

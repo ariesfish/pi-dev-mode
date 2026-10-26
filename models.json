@@ -17,7 +17,7 @@
       "*": {
         "fable": "funai/gpt-5.6-sol",
         "opus": "cfgpu/glm-5-3",
-        "sonnet": "deepseek/deepseek-flash"
+        "sonnet": "zai/glm-5.3-flash"
       }
     }
   }
