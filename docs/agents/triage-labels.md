@@ -12,4 +12,4 @@ The skills speak in terms of five canonical triage roles. This file maps those r
 
 When a skill mentions a role (e.g. "apply the AFK-ready triage label"), use the corresponding label string from this table.
 
-Edit the right-hand column to match whatever vocabulary you actually use.
+This repo keeps the canonical strings unchanged (AGENTS.md); a target repo's copy edits the right-hand column. The seed is `skills/setup/references/triage-labels.md`.

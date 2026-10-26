@@ -30,13 +30,9 @@ Two **category** roles:
 - `bug` — something is broken
 - `enhancement` — new feature or improvement
 
-Five **state** roles:
-
-- `needs-triage` — maintainer needs to evaluate
-- `needs-info` — waiting on reporter for more information
-- `ready-for-agent` — fully specified, ready for an AFK agent
-- `ready-for-human` — needs human implementation
-- `wontfix` — will not be actioned
+Five **state** roles — vocabulary and meanings single-sourced in
+`skills/setup/references/triage-labels.md`; the tracker's marker form in
+`skills/setup/references/issue-tracker.md` § Labeling.
 
 Every triaged issue should carry exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
 

@@ -1,0 +1,26 @@
+<!doctype html>
+<!-- The shipped badge row. Render it (file:// or any static server), capture,
+     and compare against reference.png. Tokens mirror src/theme.ts. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>badge-row</title>
+    <style>
+      body { margin: 24px; font: 14px/1.2 system-ui, sans-serif; background: #ffffff; }
+      .badge-row { display: flex; gap: 4px; }
+      .badge {
+        background: #ef4444;
+        color: #111111;
+        border-radius: 2px;
+        padding: 4px 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="badge-row">
+      <span class="badge">status</span>
+      <span class="badge">review</span>
+      <span class="badge">done</span>
+    </div>
+  </body>
+</html>

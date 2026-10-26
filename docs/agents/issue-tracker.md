@@ -1,6 +1,6 @@
 # Issue Tracker: local files (`.dev/`)
 
-This repo tracks implementation work as local files under `.dev/` — per-developer process memory (`/.dev/` in `.gitignore`). The durable record is commits + `docs/` + ADRs. Seeded in-place by `tickets` (one confirmation), per the router's no-detour bootstrap policy. Source template: `skills/setup/references/issue-tracker.md`.
+This repo tracks implementation work as local files under `.dev/` — per-developer process memory (`/.dev/` in `.gitignore`). The durable record is commits + `docs/` + ADRs. Seeded in-place by the carriers named in the seed's bootstrap oath (`tickets`, `implement`, `code-review`, `triage-issue`, `scout`), per the router's no-detour bootstrap policy. Source template: `skills/setup/references/issue-tracker.md`.
 
 ## Layout
 

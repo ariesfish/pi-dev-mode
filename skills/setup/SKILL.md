@@ -72,15 +72,7 @@ When the tracker is GitHub, also create each configured label the tracker lacks 
 
 ### 4. Decide triage labels
 
-Explain that triage-aware skills use five canonical roles and need the actual label/status strings for this repo:
-
-- `needs-triage` — maintainer needs to evaluate.
-- `needs-info` — waiting on reporter.
-- `ready-for-agent` — fully specified and agent-ready.
-- `ready-for-human` — needs human implementation.
-- `wontfix` — will not be actioned.
-
-Use `references/triage-labels.md` as the seed. Default to the canonical strings unless existing repo labels or the user specify different strings.
+Explain that triage-aware skills use five canonical roles and need the actual label/status strings for this repo; the roles, their meanings and the tracker marker form are single-sourced in `references/triage-labels.md`. Default to the canonical strings unless existing repo labels or the user specify different strings.
 
 ### 5. Decide domain docs layout
 

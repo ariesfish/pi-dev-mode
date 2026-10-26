@@ -49,7 +49,7 @@ you did not read from it.
 
 ## The five lenses (parallel readonly reviewers)
 
-Spawn all five with this package's `agent` tool — one call carrying five readonly `tasks` (one per lens, keyed standards/spec/doubt/constraints/design) — with the diff
+Spawn all five with this package's `agent` tool — one call carrying five readonly `tasks` (one per lens, keyed standards-spec/comments/doubt/constraints/design) — with the diff
 command + commit list, skill pointers instead of pasted payloads where a
 pointer reaches:
 
