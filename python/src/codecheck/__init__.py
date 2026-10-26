@@ -9,4 +9,4 @@ three used to duplicate - the source walker, the tree-sitter helpers, the EDN
 reader, the report loader, the snapshot path - lives once at package level.
 """
 
-__all__ = ["crap", "dry", "mutate"]
+__all__ = ["crap", "dupes", "mutants"]

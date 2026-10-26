@@ -27,6 +27,9 @@
 #                           (check-evidence.py 无 .dev 时 no-op,exit 0) +
 #                           重放函数(restore/reattach/replay*)必须有测试引用
 #                           (check-replay.py,T-042))
+# 9. codecheck doctor      (quantitative-gate engine imports and names what each
+#                           language still needs; corpus suite is opt-in via
+#                           `check-code.sh setup --self-test`)
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
@@ -93,3 +96,15 @@ bash scripts/check-types.sh
 python3 scripts/check-evidence.py
 python3 scripts/check-evidence.py --selftest
 python3 scripts/check-replay.py
+
+# 9. quantitative-gate toolchain: doctor proves the codecheck package imports
+#    and names what each language still needs. The package's own suite stays
+#    opt-in (29s): bash scripts/check-code.sh setup --self-test.
+runtime="${XDG_DATA_HOME:-$HOME/.local/share}/check-code"
+if [ -x "$runtime/bin/python" ]; then
+  engine="$("$runtime/bin/python" -c 'import codecheck,os;print(os.path.dirname(os.path.dirname(codecheck.__file__)))' 2>/dev/null || true)"
+  echo "check-code: engine ${engine:-unresolved}"
+  bash scripts/check-code.sh doctor 2>&1 | sed 's/^/  /'
+else
+  echo "check-code: SKIP (runtime missing — bash scripts/check-code.sh setup once; docs/CONSTRAINTS.md)"
+fi
