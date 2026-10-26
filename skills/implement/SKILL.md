@@ -33,15 +33,14 @@ and build inside it — a spec whose status row says absent routes through the
 `ui-design` skill before UI work; and pre-flight the diff against the
 pre-flight checklist in `skills/ui-design/references/taste.md`.
 
-If the ticket's criteria are visual — layout, styling, reference-image parity — never self-assess on a model that cannot see. `read` the reference image or a screenshot once: a "model does not support images" reply is the signal to delegate, not to fall back to code archaeology. Spawn the `agent` tool with `subagent_type: pi-dev:image-reader` (multimodal, pinned to a fast model), the reference path, and your captures, in the foreground so its report returns to this session. If your agent tool doesn't resolve that type, fall back: spawn `general-purpose` with the image-reading brief, `model` on a multimodal fast model, `readonly: true`, foreground. Its report is your evidence — quote it in the ticket trail as `[evidence: image-reader report]`, never paraphrase visual claims as your own.
-
-Ladder, in order:
+A ticket whose criteria are visual — layout, styling, reference-image parity —
+is never self-assessed. Evidence ladder, in order:
 
 1. **Render + pixel-diff first** when the artifact renders headless (chrome/screenshot, then `magick compare`/SSIM against the reference) — mechanical evidence, no model in the loop. Render evidence in hand? **The visual gate closes there.**
-2. **Image-reader agent, spawned by TYPE — never by model string**: `subagent_type: pi-dev:image-reader`. The type carries its pinned multimodal model. As an *enhancement* over render evidence, spawn it in the BACKGROUND (`run_in_background: true`) and never await it — the report lands when it lands. In the foreground only when no headless render exists at all. Hand-picking a model string for the spawn (a bare alias like `sonnet`, or a provider/id dug from config files) is a **bug shape, not a judgment call** — the TYPE already carries its pinned model, and a wrong string can HANG the turn. No viewer TYPE resolves → fall straight to (3).
+2. **Image-reader agent, spawned with the `agent` tool by TYPE — never by model string**: `subagent_type: pi-dev:image-reader`. The type carries its pinned multimodal model. As an *enhancement* over render evidence, spawn it in the BACKGROUND (`run_in_background: true`) and never await it — the report lands when it lands. In the foreground only when no headless render exists at all. Hand-picking a model string for the spawn (a bare alias like `sonnet`, or a provider/id dug from config files) is a **bug shape, not a judgment call** — the TYPE already carries its pinned model, and a wrong string can HANG the turn. If your agent tool does not resolve that type, spawn `general-purpose` with the image-reading brief, `model` on a multimodal fast model, `readonly: true`, in the foreground.
 3. **Explicit CANNOT-VERIFY** to the user. Blocking evidence beats absent evidence; a hung spawn is absent.
 
-Acceptable evidence = a render+diff of the actual artifact, or a viewer report. Pixel archaeology — extracting colors from the reference and redrawing them — verifies your extraction, not the app; a circular reconstruction ("RMSE=0" against your own redraw) is a FAIL shape, not a pass.
+Acceptable evidence = a render+diff of the actual artifact, or a viewer report — quote it in the ticket trail as `[evidence: image-reader report]`, never paraphrase visual claims as your own. Pixel archaeology — extracting colors from the reference and redrawing them — verifies your extraction, not the app; a circular reconstruction ("RMSE=0" against your own redraw) is a FAIL shape, not a pass.
 
 Once done, call the Skill tool with `code-review` to review the work.
 
