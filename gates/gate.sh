@@ -31,7 +31,6 @@ command -v "$PY" >/dev/null 2>&1 || { echo "gate.sh: python3 required" >&2; exit
 
 die() { echo "gate.sh: $*" >&2; exit 2; }
 refuse() { echo "gate.sh: $*" >&2; exit 2; }  # without-ledger / bad-arg refusals
-blockrefuse() { echo "gate.sh: BLOCKED item $1 — gate ${2:-?}: ${3:-?} (${4:-?}). Resume with: gate.sh resume $1 --note \"<human reason>\"" >&2; exit 4; }
 usage() {
   cat <<'EOF'
 Usage: gate.sh <command> [args]        (run from the target project root)
@@ -72,7 +71,9 @@ case "$cmd" in
     budget=3
     while [ $# -gt 0 ]; do
       case "$1" in
-        --budget) budget="${2:-}"; shift 2 ;;
+        --budget)
+          [ $# -ge 2 ] || usage
+          budget="$2"; shift 2 ;;
         *) usage ;;
       esac
     done
@@ -126,8 +127,12 @@ PYEOF
     dir="."; note=""
     while [ $# -gt 0 ]; do
       case "$1" in
-        -d) dir="$2"; shift 2 ;;
-        --note) note="$2"; shift 2 ;;
+        -d)
+          [ $# -ge 2 ] || usage
+          dir="$2"; shift 2 ;;
+        --note)
+          [ $# -ge 2 ] || usage
+          note="$2"; shift 2 ;;
         --) shift; break ;;
         *) usage ;;
       esac
@@ -178,10 +183,19 @@ PYEOF
     ;;
 
   verdict)
-    file="${1:-}"; [ -n "$file" ] || usage
-    case "$file" in --from) file="${2:-}"; shift 2 ;; esac
-    shift 2 2>/dev/null || true
-    note=""; while [ $# -gt 0 ]; do case "$1" in --note) note="$2"; shift 2;; *) shift;; esac; done
+    file=""; note=""
+    if [ "${1:-}" = "--from" ]; then
+      [ $# -ge 2 ] || usage
+      file="$2"; shift 2
+    else
+      file="${1:-}"; [ -n "$file" ] || usage; shift
+    fi
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --note) [ $# -ge 2 ] || usage; note="$2"; shift 2 ;;
+        *) usage ;;
+      esac
+    done
     exec "$PY" - "$GATE_HOME" "$id" "$file" "$note" <<'PYEOF'
 import json, hashlib, sys, pathlib, datetime
 item, file, note = sys.argv[2], sys.argv[3], sys.argv[4]
@@ -239,7 +253,12 @@ PYEOF
 
   resume)
     note=""
-    while [ $# -gt 0 ]; do case "$1" in --note) note="$2"; shift 2;; *) shift;; esac; done
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --note) [ $# -ge 2 ] || usage; note="$2"; shift 2 ;;
+        *) usage ;;
+      esac
+    done
     [ -n "$note" ] || die "resume needs --note \"<human reason>\""
     exec "$PY" - "$GATE_HOME" "$id" "$note" <<'PYEOF'
 import json, sys, pathlib, datetime
@@ -266,7 +285,13 @@ PYEOF
     ;;
 
   close)
-    note=""; while [ $# -gt 0 ]; do case "$1" in --note) note="$2"; shift 2;; *) shift;; esac; done
+    note=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --note) [ $# -ge 2 ] || usage; note="$2"; shift 2 ;;
+        *) usage ;;
+      esac
+    done
     exec "$PY" - "$GATE_HOME" "$id" "$note" <<'PYEOF'
 import json, sys, pathlib, datetime
 item, note = sys.argv[2], sys.argv[3]

@@ -19,7 +19,7 @@ Last reviewed: 2026-10-26 by the review-gate round (quantitative gate: CRAP / du
 | Dimension | Rule | Checked by | Runs at |
 |-----------|------|-----------|---------|
 | Skill-tree integrity | frontmatter/H1/交叉引用/指针 lint exit 0 | `python3 scripts/check-skills.py` | task end + CI(check.sh) |
-| Gates semantics | test-gates 全断言绿(当前 23) | `bash scripts/test-gates.sh` | task end + CI(check.sh) |
+| Gates semantics | test-gates 全断言绿(当前 29) | `bash scripts/test-gates.sh` | task end + CI(check.sh) |
 | Prose(deslop) | 新增行 slop 命中 = 0 | `python3 scripts/check-prose.py`(增量,环境感知 base) | task end + CI(check.sh) |
 | Full acceptance | 一条命令全绿:skills/gates/prose/ADR checker selftest + adapters 12 件缝测试 + pi 扩展套件(在场时)+ numbers sync + pi typecheck + tsv 证据指针 | `bash scripts/check.sh` | task end + CI |
 | Review gate | `review` / `code-review` 开跑前先量同一固定点,evidence 落 `.dev/audit/evidence/check-code-*.txt`;裁决首行与 evidence 的 gate 结果一致,`broken`(每个函数 0% 覆盖 = 测试命令没匹配到测试)按失败处理 | `bash scripts/check-code.sh review --since <fixed-point>`(工具链缺场用 `check-code.sh setup`;装不上 = 该 review 标 INCONCLUSIVE,不算通过) | review 开始前 |
@@ -34,7 +34,7 @@ Last reviewed: 2026-10-26 by the review-gate round (quantitative gate: CRAP / du
 
 | Metric | Today (2026-10-22) | Direction |
 |--------|-------|-----------|
-| test-gates 断言数 | 23 | must not fall(降 = 逃逸) |
+| test-gates 断言数 | 29 | must not fall(降 = 逃逸) |
 | adapters 缝测试 | 12/12 | must not fall |
 | pi 扩展测试 | 158/158 | must not fall |
 | pi 类型精确化噪音(tsc 错误实例,非行数) | 43 | ratchet 向下(增量严化,不走一次性清零) |

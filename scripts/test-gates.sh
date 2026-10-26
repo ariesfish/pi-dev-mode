@@ -36,6 +36,11 @@ t "mine without ledger refused (exit 2)" 2 "$GATE" mine
 
 # --- open, budget 2 --------------------------------------------------------
 t "open --budget 2 exits 0" 0 "$GATE" open T-9 "scenario item" --budget 2
+t "open --budget without a value refused (exit 2)" 2 "$GATE" open T-7 "no budget" --budget
+
+# --- option values are required where documented ----------------------------
+t "run -d without a value refused (exit 2)" 2 "$GATE" run T-9 g -d
+t "run --note without a value refused (exit 2)" 2 "$GATE" run T-9 g --note
 
 # --- D-class budget: two consecutive FAILs trip item-level BLOCKED ----------
 t "D-run #1 FAIL (exit 1)" 1 "$GATE" run T-9 g -- false
@@ -61,6 +66,14 @@ t "second FAIL verdict trips budget -> exit 4" 4 "$GATE" verdict T-9 --from "$S/
 t "verdict while blocked refused (exit 4)" 4 "$GATE" verdict T-9 --from "$S/v-pass.json"
 "$GATE" resume T-9 --note "reset after FAIL verdicts" >/dev/null 2>&1
 t "verdict PASS exits 0" 0 "$GATE" verdict T-9 --from "$S/v-pass.json"
+t "verdict --note with a value exits 0" 0 "$GATE" verdict T-9 --from "$S/v-pass.json" --note "reviewed by hand"
+if "$GATE" show T-9 2>&1 | grep -q '"note": "reviewed by hand"'; then
+  echo "ok: verdict --note landed in history"
+else
+  echo "FAIL: verdict --note was dropped"
+  fails=$((fails + 1))
+fi
+t "unknown option refused (exit 2)" 2 "$GATE" resume T-9 --bogus
 
 # --- open idempotence (skills promise reuse-if-open) -------------------------
 t "re-open the same id reuses (exit 0)" 0 "$GATE" open T-9 "duplicate open"
