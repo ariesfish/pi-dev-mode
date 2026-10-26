@@ -522,7 +522,17 @@ export class AgentRunner {
       // bridge (or close honestly when the bridge cannot open).
       if (entry.data.agent.durable === true) {
         if (this.agents.get(id)?.kind === "durable") continue;
-        const state: DurableAgent = { kind: "durable", record: entry.data.status === "running" ? entry.data : { ...entry.data, status: "running" }, spawn: Promise.resolve(), settle: this.engine.trackSettle(id) };
+        // A record that already ended stays ended. Coercing it back to
+        // "running" made the reattach read an idle bridge as "the answer
+        // settled while nobody watched" and re-deliver the same notice on
+        // every reload (T-042). An ended-but-undelivered answer is still
+        // caught by the discovery loop below; a later send resumes the
+        // conversation from the ended record (T-030).
+        if (entry.data.status !== "running") {
+          this.agents.set(id, { kind: "ended", record: entry.data });
+          continue;
+        }
+        const state: DurableAgent = { kind: "durable", record: entry.data, spawn: Promise.resolve(), settle: this.engine.trackSettle(id) };
         this.agents.set(id, state);
         void this.engine.reattach(state, SessionState.fromSessionDir(state.record.agent.sessionDir), registry);
         continue;
