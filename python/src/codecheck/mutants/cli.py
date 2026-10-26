@@ -13,6 +13,7 @@ from codecheck.cli import (
     apply_filters,
     changed_source_files,
     positionals as _positionals,
+    show_help as _show_help,
     skipped_directory_text as _skipped_directory_text,
     take as _take,
 )
@@ -346,13 +347,6 @@ def _coverage_for(options: Options, root: Path, path: Path) -> set[int] | None:
     return covered_lines(root, path, language)
 
 
-def _print_help(options: Options) -> int:
-    stream = sys.stdout if options.exit_code == 0 else sys.stderr
-    ending = "" if options.message.endswith("\n") else "\n"
-    print(options.message, file=stream, end=ending)
-    return options.exit_code
-
-
 def _require_reader() -> str | None:
     """The CRAP engine ships inside this package, so a failure here is a broken install."""
     try:
@@ -442,7 +436,7 @@ def _mutate_files(options: Options, root: Path, files: list[Path]) -> int:
 def run(argv: list[str] | None = None) -> int:
     options = parse_args(argv)
     if options.action == "help":
-        return _print_help(options)
+        return _show_help(options)
     missing = _require_reader()
     if missing:
         print(missing, file=sys.stderr)

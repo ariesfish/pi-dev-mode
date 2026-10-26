@@ -21,7 +21,7 @@ Last reviewed: 2026-10-26 by the review-gate round (quantitative gate: CRAP / du
 | Skill-tree integrity | frontmatter/H1/交叉引用/指针 lint exit 0 | `python3 scripts/check-skills.py` | task end + CI(check.sh) |
 | Gates semantics | test-gates 全断言绿(当前 29) | `bash scripts/test-gates.sh` | task end + CI(check.sh) |
 | Prose(deslop) | 新增行 slop 命中 = 0 | `python3 scripts/check-prose.py`(增量,环境感知 base) | task end + CI(check.sh) |
-| Full acceptance | 一条命令全绿:skills/gates/prose/ADR checker selftest + adapters 16 件缝测试 + pi 扩展套件(在场时)+ numbers sync + pi typecheck + tsv 证据指针 + codecheck doctor(引擎在验收面内) | `bash scripts/check.sh` | task end + CI |
+| Full acceptance | 一条命令全绿:skills/gates/prose/ADR checker selftest + adapters 16 件缝测试 + pi 扩展套件(在场时)+ numbers sync + pi typecheck + tsv 证据指针 + codecheck doctor + 327-test 套件(引擎在验收面内) | `bash scripts/check.sh` | task end + CI |
 | Review gate | `review` / `code-review` 开跑前先量同一固定点,evidence 落 `.dev/audit/evidence/check-code-*.txt`;裁决首行与 evidence 的 gate 结果一致,`broken`(每个函数 0% 覆盖 = 测试命令没匹配到测试)按失败处理 | `bash scripts/check-code.sh review --since <fixed-point>`(工具链缺场用 `check-code.sh setup`;装不上 = 该 review 标 INCONCLUSIVE,不算通过) | review 开始前 |
 | pi 扩展套件 | bun test 163/163(15 文件) | `bash scripts/check.sh` 第 6 级:pi 运行时 + bun 在场时执行,缺场**可见 SKIP**(CI 无 pi 运行时——证据层不是静默通过);bun 由 devDependencies 提供(`node_modules/.bin`,仓库根 `npm install` 一次) | task end(本机满装时) |
 | pi 类型闸 | pi/ 源码缺失名字/缺失导出类(TS2304/TS2552/TS2305/TS2459/TS2614)= 0——imports 缺口即运行时炸弹(2026-10-22 事故类:dirname/inspect 未导入致前台 spawn 崩溃),导出缺口是类型洞(2026-10-26 审计:agents.ts 11 处幻影 import 在 bun 擦除下绿着跑) | `bash scripts/check-types.sh`(check.sh 第 8 级;tsc 来自 devDependencies,缺场可见 SKIP;.bin 缺链接但 typescript 包在场时走包内 tsc) | task end + CI(装依赖后) |

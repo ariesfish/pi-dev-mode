@@ -13,6 +13,7 @@ from codecheck.cli import (
     explicit_source_files as _explicit_files,
     positionals as _positionals,
     select_sources as _select_sources,
+    show_help as _show_help,
     skipped_directory_text as _skipped_directory_text,
     take as _take,
     tracked_source as _tracked_source,
@@ -174,9 +175,7 @@ def select_files(options: Options) -> list[Path]:
 def run(argv: list[str] | None = None) -> int:
     options = parse_args(argv)
     if options.action == "help":
-        stream = sys.stdout if options.exit_code == 0 else sys.stderr
-        print(options.message, file=stream, end="" if options.message.endswith("\n") else "\n")
-        return options.exit_code
+        return _show_help(options)
     if options.action == "format":
         print(options.message, file=sys.stderr, end="")
         return options.exit_code

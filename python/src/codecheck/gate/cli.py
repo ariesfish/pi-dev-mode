@@ -17,6 +17,7 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from codecheck.cli import take as shared_take
 from codecheck.reports.paths import metrics_root
 
 from . import collect as collect_module
@@ -86,9 +87,11 @@ class Options:
 
 
 def _take(argv: list[str], index: int, option: str) -> str:
-    if index + 1 >= len(argv) or not argv[index + 1] or argv[index + 1].startswith("-"):
-        raise UsageError(f"{option} requires a value")
-    return argv[index + 1]
+    """The shared taker, with this CLI's refusal type."""
+    try:
+        return shared_take(argv, index, option)
+    except ValueError as exc:
+        raise UsageError(str(exc)) from exc
 
 
 def parse_args(argv: list[str]) -> Options:
@@ -304,7 +307,7 @@ def _run(options: Options, root: Path) -> int:
                 f"(budget {options.max_dupes}), survivors 0"
             ),
             runtime=str(Path(sys.executable).parent),
-            metrics=str(Path(".dev/metrics")),
+            metrics=str(metrics),
         )
         say("")
         say(f"evidence  {path}")
