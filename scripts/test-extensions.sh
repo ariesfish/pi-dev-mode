@@ -12,6 +12,21 @@ pi_launcher="$(command -v pi)" || { echo "test-extensions: pi not on PATH" >&2; 
 pi_launcher="$(readlink -f "$pi_launcher")"
 agent_dir="$(dirname "$(dirname "$pi_launcher")")"
 version_file="$agent_dir/install/current-version"
+# check.sh puts the repo's node_modules/.bin first (bun lives there), which also
+# puts the devDependency's pi shim ahead of the managed install; that shim has no
+# install/ layout, so walk every candidate and take the first managed one.
+if [ ! -r "$version_file" ]; then
+  while IFS= read -r candidate; do
+    candidate="$(readlink -f "$candidate" 2>/dev/null || printf '%s' "$candidate")"
+    candidate_dir="$(dirname "$(dirname "$candidate")")"
+    if [ -r "$candidate_dir/install/current-version" ]; then
+      pi_launcher="$candidate"
+      agent_dir="$candidate_dir"
+      version_file="$agent_dir/install/current-version"
+      break
+    fi
+  done < <(type -ap pi 2>/dev/null || true)
+fi
 [ -r "$version_file" ] || { echo "test-extensions: no managed pi install at $agent_dir" >&2; exit 2; }
 pi_nm="$agent_dir/install/releases/$(cat "$version_file")/node_modules"
 [ -d "$pi_nm/@earendil-works" ] || { echo "test-extensions: runtime node_modules missing: $pi_nm" >&2; exit 2; }

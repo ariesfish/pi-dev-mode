@@ -173,6 +173,13 @@ export class AgentRunner {
   // change that reaches the session passes through, so the footer sees a
   // spawn or a settle the moment it is recorded.
   onChange?: () => void;
+  // pi/attention.ts's record seam: the same funnel, one record at a time, so
+  // the terminal hears about running/settled agents without probing processes.
+  onRecord?: (record: AgentRecord) => void;
+  // pi/attention.ts's notice seam: every message this runner pushes into the
+  // session (background completion, batch, intercom) passes here first, so the
+  // terminal can say the same thing the transcript just did.
+  onNotice?: (message: Parameters<ExtensionAPI["sendMessage"]>[0]) => void;
   // Set once the session tears its agents down; a launch after that would
   // start a child nothing stops.
   private closed = false;
@@ -305,6 +312,7 @@ export class AgentRunner {
   // batch notices go through here. triggerTurn starts the next run; a stop
   // notice joins without one.
   notify(text: Parameters<ExtensionAPI["sendMessage"]>[0], triggerTurn = true): void {
+    this.onNotice?.(text);
     this.pi.sendMessage(text, triggerTurn ? { triggerTurn: true, deliverAs: "steer" } : { triggerTurn: false });
   }
 
@@ -471,6 +479,7 @@ export class AgentRunner {
   private persist(record: AgentRecord): void {
     this.pi.appendEntry(ENTRY_TYPE, record);
     this.onChange?.();
+    this.onRecord?.(record);
   }
 
   private refreshRestored(state: AgentState): AgentState {

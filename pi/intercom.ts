@@ -16,6 +16,7 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import { Type } from "typebox";
 
 import type { Settings } from "./config.ts";
+import type { Attention } from "./attention.ts";
 import { SessionState } from "./session-state.ts";
 
 export type Notify = (message: Parameters<ExtensionAPI["sendMessage"]>[0]) => void;
@@ -148,7 +149,7 @@ export function registerAskParent(pi: ExtensionAPI, channel: string): void {
 }
 
 /** The parent-side answer tool: reply to one pending request of this session's channel. */
-export function registerAnswerChild(pi: ExtensionAPI, settings: Settings): void {
+export function registerAnswerChild(pi: ExtensionAPI, settings: Settings, attention?: Attention): void {
   const channelOf = (ctx: ExtensionContext) => new SessionState(settings.agentDir, ctx.sessionManager.getSessionId()).intercom;
   pi.registerTool({
     name: "answer_child",
@@ -178,6 +179,8 @@ export function registerAnswerChild(pi: ExtensionAPI, settings: Settings): void 
         };
       }
       writeReply(dir, target.req.id, params.message);
+      // The child was the one waiting; this record said so. Nothing waits now.
+      attention?.askAnswered();
       return { content: [{ type: "text", text: `Answer delivered to ${target.req.from} (${target.req.fromDescription}).` }] };
     },
   });
@@ -195,7 +198,7 @@ export function watchIntercom(notifyFn: Notify, dir: string): () => void {
         customType: "pi-dev-intercom",
         content: `pi-dev child asks${req.reason === "need_decision" ? " for a decision" : ""}:\nfrom: ${req.from} (${req.fromDescription})\nrequest: ${req.id}\n${req.message}${options}\nAnswer with answer_child (to = ${req.id}).`,
         display: true,
-        details: { request: req.id, from: req.from, reason: req.reason },
+        details: { request: req.id, from: req.from, description: req.fromDescription, reason: req.reason, message: req.message },
       });
     }
   };

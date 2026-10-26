@@ -54,6 +54,6 @@ export function noticeOf(record: EndedRecord): Parameters<ExtensionAPI["sendMess
     customType: NOTICE_TYPE,
     content: `pi-dev agent finished.\n${header(record)}${record.outputFile ? `\nfull output: ${record.outputFile}` : ""}\n\n${report(record)}`,
     display: true,
-    details: { agentId: record.agent.id, status: record.status, exitCode: record.exitCode, outputFile: record.outputFile },
+    details: { agentId: record.agent.id, description: record.agent.description, status: record.status, exitCode: record.exitCode, outputFile: record.outputFile },
   };
 }

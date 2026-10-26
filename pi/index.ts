@@ -3,6 +3,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerAgentTools } from "./agent-tools.ts";
 import { AgentRunner } from "./agents.ts";
 import { writeSelfArtifact, readIdentitySidecar } from "./artifacts.ts";
+import { Attention } from "./attention.ts";
 import { registerAsk } from "./ask.ts";
 import { ARTIFACT_FLAG, DEPTH_FLAG, IDENTITY_FLAG, defaultSettings, type Settings } from "./config.ts";
 import { INTERCOM_FLAG, registerAnswerChild, registerAskParent, watchIntercom } from "./intercom.ts";
@@ -14,11 +15,17 @@ import { registerSchedule, Scheduler } from "./schedule.ts";
 import { registerStatusBar } from "./status.ts";
 
 export function install(pi: ExtensionAPI, settings: Settings): void {
+  // T-041: background work and blocking dialogs are invisible to pi core's
+  // program status (it owns the root record and only sees its own dialogs).
+  // This reporter feeds child records plus desktop notifications.
+  const attention = new Attention();
   const runner = new AgentRunner(pi, settings);
+  runner.onRecord = (record) => attention.record(record);
+  runner.onNotice = (message) => attention.notice(message);
   const scheduler = new Scheduler(pi);
   const oneShot = registerOneShot(pi, settings, runner);
   registerAgentTools(pi, runner);
-  registerAsk(pi, oneShot);
+  registerAsk(pi, oneShot, attention);
   registerSchedule(pi, scheduler, oneShot);
   registerPromptSections(pi, settings);
   registerPathSkills(pi, settings);
@@ -26,12 +33,21 @@ export function install(pi: ExtensionAPI, settings: Settings): void {
   // after the restore handler, so the first agents line sees post-restore
   // records.
   registerStatusBar(pi, runner, settings);
+  // Bound before restore runs: records this session discovers for runs that
+  // ended while pi was away are exactly what the user should hear about.
+  pi.on("session_start", (_event, ctx) => attention.bind(settings.depth === 0 && ctx.mode === "tui"));
+  // A record that says "done" is about work the user has not seen yet; the
+  // moment they type again, it has been seen. Extension-triggered turns (a
+  // notice waking the session) must not clear it.
+  pi.on("input", (event) => {
+    if (event.source === "interactive") attention.acknowledge();
+  });
   // T-026: the intercom lives in the parent session — answer_child plus one
   // notice per pending ask_parent request. Children register ask_parent
   // themselves from the channel flag this process passes them.
   let stopIntercom: (() => void) | undefined;
   if (settings.depth === 0) {
-    registerAnswerChild(pi, settings);
+    registerAnswerChild(pi, settings, attention);
     pi.on("session_start", (_event, ctx) => {
       stopIntercom?.();
       stopIntercom = watchIntercom(
@@ -62,6 +78,9 @@ export function install(pi: ExtensionAPI, settings: Settings): void {
     // park their storage instead (T-030): in-flight work is written back
     // pending, and the session that reopens their sqlite resumes it.
     runner.parkDurable();
+    // Leave no record behind: the terminal drops working records on its own,
+    // but ours would sit there saying "done" for a session that is gone.
+    attention.dispose();
   });
 }
 

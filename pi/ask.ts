@@ -2,6 +2,7 @@ import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-c
 import { type Static, Type } from "typebox";
 import { fuzzyFilter, Input, Key, matchesKey, SelectList, type SelectListTheme, Text, truncateToWidth, type SelectItem, type TUI } from "@earendil-works/pi-tui";
 
+import type { Attention } from "./attention.ts";
 import type { OneShot } from "./one-shot.ts";
 
 // Rich ask dialog, native pi-dev implementation. Interaction model:
@@ -385,7 +386,7 @@ async function askOne(ui: Ui, q: AskQuestion, signal: AbortSignal | undefined): 
 }
 
 // model-only exposure keeps the tool declared under codemode.mode "only".
-export function registerAsk(pi: ExtensionAPI, oneShot: OneShot): void {
+export function registerAsk(pi: ExtensionAPI, oneShot: OneShot, attention?: Attention): void {
   pi.registerTool({
     name: "ask_user_question",
     label: "Ask user",
@@ -403,9 +404,17 @@ export function registerAsk(pi: ExtensionAPI, oneShot: OneShot): void {
         );
       }
       const outcomes: (AskOutcome | null)[] = [];
-      for (const q of params.questions as AskQuestion[]) {
-        outcomes.push(await askOne(ctx.ui, q, signal));
-        if (outcomes[outcomes.length - 1] === null) break;
+      // The dialog is a custom component, so pi core's blocked reporting (which
+      // knows select/confirm/input/editor) does not see it: say it ourselves.
+      const questions = params.questions as AskQuestion[];
+      attention?.askOpened(questions[0]?.question ?? "");
+      try {
+        for (const q of questions) {
+          outcomes.push(await askOne(ctx.ui, q, signal));
+          if (outcomes[outcomes.length - 1] === null) break;
+        }
+      } finally {
+        attention?.askClosed();
       }
       const { text, allAnswered } = formatAnswers(outcomes);
       const answered = text ? `User has answered your questions: ${text}. ` : "";
