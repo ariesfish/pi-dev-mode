@@ -150,7 +150,7 @@ export function registerAskParent(pi: ExtensionAPI, channel: string): void {
 
 /** The parent-side answer tool: reply to one pending request of this session's channel. */
 export function registerAnswerChild(pi: ExtensionAPI, settings: Settings, attention?: Attention): void {
-  const channelOf = (ctx: ExtensionContext) => new SessionState(settings.agentDir, ctx.sessionManager.getSessionId()).intercom;
+  const channelOf = (ctx: ExtensionContext) => SessionState.forSession(settings.agentDir, ctx.sessionManager.getSessionId()).intercom;
   pi.registerTool({
     name: "answer_child",
     label: "Answer child",

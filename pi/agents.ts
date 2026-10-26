@@ -1,7 +1,6 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { inspect } from "node:util";
 import type { ExtensionAPI, ExtensionContext, SessionEntry } from "@earendil-works/pi-coding-agent";
 import { Value } from "typebox/value";
 
@@ -10,7 +9,7 @@ import { INTERCOM_FLAG } from "./intercom.ts";
 import { noticeOf, OUTPUT_CAP_BYTES, truncateUtf8 } from "./agent-text.ts";
 import type { AgentParams } from "./agent-tools.ts";
 import { type ChildExit, PiChild } from "./child.ts";
-import { fateOf } from "./fate.ts";
+import { fateOf, inspect as inspectProcess } from "./fate.ts";
 import { ARTIFACT_FLAG, DEPTH_FLAG, GENERAL_PURPOSE, IDENTITY_FLAG, loadAgentTypes, readSheet, resolveModel, type Settings } from "./config.ts";
 import { SessionState } from "./session-state.ts";
 import { DurableEngine } from "./durable-engine.ts";
@@ -144,7 +143,7 @@ export class AgentRunner {
     const model = resolveModel(params.model ?? def.model, this.settings, readSheet(this.settings.agentDir), parentModel);
 
     const background = params.run_in_background === true || hint?.background === true;
-    const state = new SessionState(this.settings.agentDir, ctx.sessionManager.getSessionId());
+    const state = SessionState.forSession(this.settings.agentDir, ctx.sessionManager.getSessionId());
     if (background && this.settings.depth === 0 && !this.closed) {
       // Spec D2: background runs behind the durable bridge when it can open —
       // depth 0 only; children of children stay rpc.
@@ -203,7 +202,7 @@ export class AgentRunner {
       { cwd: identity.cwd, exitGraceMs: this.settings.exitGraceMs, env },
       prompt,
     );
-    const pidStart = child.pid === undefined ? undefined : inspect(child.pid)?.start;
+    const pidStart = child.pid === undefined ? undefined : inspectProcess(child.pid)?.start;
     const record: RunningRecord = { agent: identity, status: "running", pid: child.pid, pidStart, parentPid: process.pid, background: background || undefined };
     const run: Run = { child, background, done: child.exited.then((exit) => this.finish(identity, run, exit)) };
     this.agents.set(identity.id, { kind: "local", record, run });

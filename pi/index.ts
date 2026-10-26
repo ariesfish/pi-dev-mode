@@ -52,7 +52,7 @@ export function install(pi: ExtensionAPI, settings: Settings): void {
       stopIntercom?.();
       stopIntercom = watchIntercom(
         (message) => runner.notify(message, true),
-        new SessionState(settings.agentDir, ctx.sessionManager.getSessionId()).intercom,
+        SessionState.forSession(settings.agentDir, ctx.sessionManager.getSessionId()).intercom,
       );
     });
   }
@@ -69,7 +69,7 @@ export function install(pi: ExtensionAPI, settings: Settings): void {
     stopIntercom?.();
     // A child session writes its own artifact first: the run's durable output
     // must not ride on its parent noticing the exit.
-    writeSelfArtifact(pi.getFlag(ARTIFACT_FLAG), readIdentitySidecar(pi.getFlag(IDENTITY_FLAG)), () => ctx.sessionManager.getBranch() as unknown[]);
+    writeSelfArtifact(stringFlag(ARTIFACT_FLAG), readIdentitySidecar(stringFlag(IDENTITY_FLAG)), () => ctx.sessionManager.getBranch() as unknown[]);
     oneShot.dispose();
     scheduler.stopAll();
     // Children are detached in their own process groups: they keep running,
@@ -85,6 +85,11 @@ export function install(pi: ExtensionAPI, settings: Settings): void {
 }
 
 export default function piDevStack(pi: ExtensionAPI): void {
+  // Flags are typed string|boolean|undefined by the host; these two carry paths.
+  const stringFlag = (name: string): string | undefined => {
+    const value = pi.getFlag(name);
+    return typeof value === "string" && value ? value : undefined;
+  };
   pi.registerFlag(DEPTH_FLAG, { type: "string", description: "Layers below the main session; pi-dev sets it on the agents it starts." });
   pi.registerFlag(ARTIFACT_FLAG, { type: "string", description: "Where this child session writes its run artifact at shutdown." });
   pi.registerFlag(IDENTITY_FLAG, { type: "string", description: "Sidecar JSON with the identity fields the self-written artifact quotes." });

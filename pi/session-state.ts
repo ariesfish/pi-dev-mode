@@ -5,7 +5,7 @@
 // Records persist these paths (a record's sessionDir is <root>/agents), so
 // fromSessionDir is the accepted way from a record back to its state.
 
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 import { STATE_DIR } from "./config.ts";
 
@@ -17,25 +17,26 @@ export class SessionState {
   readonly intercom: string;
   readonly durableSqlite: string;
 
-  constructor(agentDir: string, sessionId: string) {
-    this.root = join(agentDir, STATE_DIR, sessionId);
-    this.agents = join(this.root, "agents");
-    this.prompts = join(this.root, "prompts");
-    this.identities = join(this.root, "identities");
-    this.intercom = join(this.root, "intercom");
-    this.durableSqlite = join(this.root, "durable.sqlite");
+  // Both ways in go through a factory: the layout is derived once here, so
+  // no caller (or restore path) re-derives it by string arithmetic.
+  private constructor(root: string, agents: string) {
+    this.root = root;
+    this.agents = agents;
+    this.prompts = join(root, "prompts");
+    this.identities = join(root, "identities");
+    this.intercom = join(root, "intercom");
+    this.durableSqlite = join(root, "durable.sqlite");
+  }
+
+  /** The state of one session: <agentDir>/pi-dev/<sessionId>/. */
+  static forSession(agentDir: string, sessionId: string): SessionState {
+    const root = join(agentDir, STATE_DIR, sessionId);
+    return new SessionState(root, join(root, "agents"));
   }
 
   /** The state a persisted record belongs to: records carry <root>/agents. */
   static fromSessionDir(sessionDir: string): SessionState {
-    const state = Object.create(SessionState.prototype) as SessionState;
-    state.root = sessionDir.slice(0, sessionDir.lastIndexOf("/")) || ".";
-    state.agents = sessionDir;
-    state.prompts = join(state.root, "prompts");
-    state.identities = join(state.root, "identities");
-    state.intercom = join(state.root, "intercom");
-    state.durableSqlite = join(state.root, "durable.sqlite");
-    return state;
+    return new SessionState(dirname(sessionDir), sessionDir);
   }
 
   /** The system-prompt file of one agent run (its type's body). */

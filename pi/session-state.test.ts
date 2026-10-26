@@ -7,7 +7,7 @@ import { SessionState } from "./session-state.ts";
 // bridge, restore) reads it through the object, so a layout change is one
 // diff and one test, not five files of join() arithmetic.
 describe("SessionState layout", () => {
-  const s = new SessionState("/agent", "sess-1");
+  const s = SessionState.forSession("/agent", "sess-1");
 
   test("root is <agentDir>/pi-dev/<sessionId>; children hang off it", () => {
     expect(s.root).toBe("/agent/pi-dev/sess-1");

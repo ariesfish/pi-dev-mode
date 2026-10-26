@@ -37,7 +37,7 @@ function req(over: Partial<IntercomRequest> = {}): IntercomRequest {
 
 describe("channel layout", () => {
   test("intercom dir is the session state's intercom child (pinned in session-state.test.ts)", () => {
-    expect(new SessionState("s", "state").intercom).toBe(join("s", "pi-dev", "state", "intercom"));
+    expect(SessionState.forSession("s", "state").intercom).toBe(join("s", "pi-dev", "state", "intercom"));
   });
 });
 

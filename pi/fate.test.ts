@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { fateOf, parseProcStat, parsePsLine } from "./fate.ts";
+import { fateOf, inspect, parseProcStat, parsePsLine } from "./fate.ts";
 
 // fate.test.ts — the four-state decision table of a running record's process,
 // from what the system says (or cannot). Pure: the probes and the system
@@ -61,5 +61,18 @@ describe("inspect's parsers (formats)", () => {
   test("ps -o ppid= -o lstart= line: ppid then the pinned UTC start text", () => {
     expect(parsePsLine("  42 Mon Oct 22 01:02:03 2026\n")).toEqual({ parentPid: 42, start: "Mon Oct 22 01:02:03 2026" });
     expect(parsePsLine("")).toBe(undefined);
+  });
+});
+
+describe("inspect (the pidStart probe)", () => {
+  // Regression for 2026-10-26: agents.ts imported node:util's inspect, whose
+  // string result made `inspect(pid)?.start` permanently undefined — the
+  // pid-reuse and orphan checks silently degraded. This pins the probe the
+  // spawn path must call; tsc pins the call site (string has no .start).
+  test("reads this process's parent and start time", () => {
+    if (process.platform === "win32") return; // no /proc, no ps with this shape
+    const info = inspect(process.pid);
+    expect(info?.parentPid).toBe(process.ppid);
+    expect(info?.start).toBeTruthy();
   });
 });

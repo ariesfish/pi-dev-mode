@@ -134,8 +134,9 @@ const Deliver = defineTask<
 				}
 				info.reported.push(settled.answer);
 				const answer = (await tx.entry(AssistantEntry, settled.answer))?.model?.[0];
+				const content = answer?.content;
 				const text =
-					(answer?.content ?? []).flatMap((part) => (part.type === "text" ? [part.text] : [])).join("") || "(no reply text)";
+					(typeof content === "string" ? content : (content ?? []).flatMap((part) => (part.type === "text" ? [part.text] : [])).join("")) || "(no reply text)";
 				info.lastAnswer = text;
 				return next({ agentId, description: info.description, status: "completed", text });
 			}, context);
