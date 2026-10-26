@@ -19,7 +19,7 @@
 // AgentRunner.list() may probe processes (fate checks spawn `ps` on macOS),
 // never per frame.
 import { isAbsolute, relative, resolve } from "node:path";
-import type { AgentRecord } from "./agents.ts";
+import type { AgentRecord } from "./records.ts";
 import type { ExtensionAPI, SessionEntry } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 

@@ -11,7 +11,7 @@
 // children as ordinary agents — which they are.
 import { type Static, Type } from "typebox";
 
-import type { EndedRecord } from "./agents.ts";
+import type { EndedRecord } from "./records.ts";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 export const MAX_TASKS = 8;

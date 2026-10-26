@@ -10,7 +10,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-import type { AgentIdentity, EndedRecord, RunningRecord } from "./agents.ts";
+import type { AgentIdentity, EndedRecord, RunningRecord } from "./records.ts";
 import { OUTPUT_CAP_BYTES, truncateUtf8 } from "./agent-text.ts";
 
 /** The text a record keeps: capped, with the full copy on disk when it was cut. */
@@ -26,9 +26,13 @@ export function saveOutput(identity: AgentIdentity, text: string): Pick<EndedRec
   }
 }
 
+/** The facts an artifact header prints — carried by the full identity and by
+ *  the sidecar a child recovers when its parent is already gone. */
+type HeaderIdentity = Pick<AgentIdentity, "id" | "description" | "subagentType" | "model" | "startedAt" | "cwd" | "worktree">;
+
 /** The header field list every artifact writer prints — one source for both
  *  sides (the parent's fallback record and the child's self-record). */
-function artifactHeadFields(identity: AgentIdentity, status: string, exitCodeLine: string): string[] {
+function artifactHeadFields(identity: HeaderIdentity, status: string, exitCodeLine: string): string[] {
   const lines = [
     `agent: ${identity.id}`,
     `description: ${identity.description}`,

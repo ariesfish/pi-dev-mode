@@ -2,7 +2,7 @@
 // the cap on text that stays inline. Pure functions of the persisted record.
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
-import type { AgentRecord, EndedRecord } from "./agents.ts";
+import type { AgentRecord, EndedRecord } from "./records.ts";
 
 const NOTICE_TYPE = "pi-dev-agent";
 export const OUTPUT_CAP_BYTES = 50 * 1024;

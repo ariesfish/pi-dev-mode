@@ -15,7 +15,8 @@ import { ensureArtifact, saveOutput } from "./artifacts.ts";
 import { GENERAL_PURPOSE, type Settings } from "./config.ts";
 import { DurableBridge, newDurableAgentId, type DeliverReport } from "./durable.ts";
 import { RegistryModels } from "./durable-models.ts";
-import type { AgentIdentity, AgentRecord, AgentState, DurableAgent, EndedRecord, RunningRecord } from "./agents.ts";
+import type { AgentState, DurableAgent } from "./agents.ts";
+import type { AgentIdentity, AgentRecord, EndedRecord, RunningRecord } from "./records.ts";
 import type { SessionState } from "./session-state.ts";
 import { ensureWorktree, planWorktree, settleGuarded } from "./worktree.ts";
 

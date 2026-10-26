@@ -3,7 +3,6 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { inspect } from "node:util";
 import type { ExtensionAPI, ExtensionContext, SessionEntry } from "@earendil-works/pi-coding-agent";
-import { type Static, Type } from "typebox";
 import { Value } from "typebox/value";
 
 import { ensureArtifact, saveOutput, synthesizeFromArtifact } from "./artifacts.ts";
@@ -15,84 +14,16 @@ import { fateOf } from "./fate.ts";
 import { ARTIFACT_FLAG, DEPTH_FLAG, GENERAL_PURPOSE, IDENTITY_FLAG, loadAgentTypes, readSheet, resolveModel, type Settings } from "./config.ts";
 import { SessionState } from "./session-state.ts";
 import { DurableEngine } from "./durable-engine.ts";
-import { ensureWorktree, planWorktree, settleGuarded, type Worktree, worktreeSchema } from "./worktree.ts";
+import { ensureWorktree, planWorktree, settleGuarded, type Worktree } from "./worktree.ts";
+import { ENTRY_TYPE, recordSchema, type AgentIdentity, type AgentRecord, type EndedRecord, type EndedStatus, type RunningRecord } from "./records.ts";
 
-const ENTRY_TYPE = "pi-dev-agents";
+// The record types live in records.ts; re-exported here so every existing
+// importer of this module keeps working while consumers migrate by need.
+export type { AgentIdentity, AgentRecord, EndedRecord, EndedStatus, RunningRecord } from "./records.ts";
+
 // Claude Code lets agents nest three layers below the main session and withholds
 // the Agent tool at the third.
 const MAX_SPAWN_DEPTH = 3;
-
-const endedStatus = Type.Union([Type.Literal("completed"), Type.Literal("failed"), Type.Literal("stopped")]);
-type EndedStatus = Static<typeof endedStatus>;
-
-// Fixed when the agent starts and reused by every launch of it, so a resume
-// runs the same session, model, thinking, system prompt, and worktree.
-const identitySchema = Type.Object({
-  id: Type.String(),
-  description: Type.String(),
-  subagentType: Type.String(),
-  model: Type.Optional(Type.String()),
-  thinking: Type.Optional(Type.String()),
-  readonly: Type.Optional(Type.Literal(true)),
-  // Pi's own rule for a session id (assertValidSessionId): a resume passes it
-  // to pi as an argument, so an empty or odd value must not load.
-  sessionId: Type.String({ pattern: "^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$" }),
-  sessionDir: Type.String(),
-  systemPromptFile: Type.Optional(Type.String()),
-  cwd: Type.String(),
-  worktree: Type.Optional(worktreeSchema),
-  // Where this run's durable artifact lands; the child writes it at its own
-  // shutdown, the parent only falls back when the child died first.
-  artifactFile: Type.Optional(Type.String()),
-  startedAt: Type.String(),
-  // T-030: this run lives in the session's durable bridge (pi-durable
-  // conversation), not an rpc child process — set on every durable record.
-  durable: Type.Optional(Type.Literal(true)),
-  // The durable conversation this agent is; lets a send after its end reuse
-  // the same conversation instead of relaunching a fresh rpc child.
-  durableConversation: Type.Optional(Type.String()),
-  // The lean prompt a durable child runs with (spec D4).
-  instructions: Type.Optional(Type.String()),
-});
-const runningSchema = Type.Object({
-  agent: identitySchema,
-  status: Type.Literal("running"),
-  pid: Type.Optional(Type.Number()),
-  // Restores re-notify only background runs: the flag rides the running
-  // record too, because the parent may die before the run ever finishes.
-  background: Type.Optional(Type.Boolean()),
-  // When that pid started, as the system reports it. A pid can be reused; a
-  // pid with its start time names one process. Absent when it could not be
-  // read, and on a record an earlier version wrote.
-  pidStart: Type.Optional(Type.String()),
-  // The pi process that launched it. Only that process may reap it.
-  parentPid: Type.Number(),
-});
-const endedSchema = Type.Object({
-  agent: identitySchema,
-  status: endedStatus,
-  pid: Type.Optional(Type.Number()),
-  exitCode: Type.Union([Type.Number(), Type.Null()]),
-  endedAt: Type.String(),
-  finalText: Type.String(),
-  outputFile: Type.Optional(Type.String()),
-  artifactFile: Type.Optional(Type.String()),
-  // The background notice has been delivered into a live session.
-  artifactDelivered: Type.Optional(Type.Boolean()),
-  // Restores synthesized this end from an on-disk artifact the child wrote
-  // after its parent went away.
-  restoredFromArtifact: Type.Optional(Type.Boolean()),
-  // How the run was launched: only background runs re-notify on restore.
-  background: Type.Optional(Type.Boolean()),
-  worktreeKept: Type.Optional(Type.Boolean()),
-});
-// Persisted as a session entry, last write per agent id wins.
-const recordSchema = Type.Union([runningSchema, endedSchema]);
-
-type AgentIdentity = Static<typeof identitySchema>;
-type RunningRecord = Static<typeof runningSchema>;
-export type EndedRecord = Static<typeof endedSchema>;
-export type AgentRecord = Static<typeof recordSchema>;
 
 interface Run {
   child: PiChild;
@@ -108,7 +39,7 @@ type LocalAgent = { kind: "local"; record: RunningRecord; run: Run };
 // A durable agent runs as a pi-durable conversation behind the session
 // bridge (T-030): no child pid, its lifetime is the storage's, and every
 // process that reopens the storage can act on it.
-interface DurableAgent {
+export interface DurableAgent {
   kind: "durable";
   record: RunningRecord;
   // Resolves once the spawn attempt committed (or fell back to rpc, which
@@ -120,7 +51,7 @@ interface DurableAgent {
   ending?: "stopped" | "teardown";
 }
 // Unverified restores retry identity checks; interrupted ones await termination.
-type AgentState = LocalAgent
+export type AgentState = LocalAgent
   | DurableAgent
   | { kind: "remote"; record: RunningRecord }
   | { kind: "unverified"; record: RunningRecord }
