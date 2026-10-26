@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { Attention, formatNotification, formatProgramStatus, noticeEvent, notificationsEnabled } from "./attention.ts";
+import { Attention, formatKittyNotification, formatNotification, formatProgramStatus, noticeEvent, notificationChannel, notificationsEnabled } from "./attention.ts";
 
 // Encoding is the contract here: a terminal either parses these bytes or it
 // does not. The literals below are the protocol spec's own examples' style
@@ -86,22 +86,48 @@ describe("formatNotification", () => {
   });
 });
 
-describe("notificationsEnabled", () => {
+describe("notificationChannel", () => {
   test("opt-in and opt-out win over detection", () => {
-    expect(notificationsEnabled({ PI_DEV_NOTIFY: "1" })).toBe(true);
+    expect(notificationChannel({ PI_DEV_NOTIFY: "1" })).toBe("osc9");
+    expect(notificationChannel({ PI_DEV_NOTIFY: "0", TERM_PROGRAM: "ghostty" })).toBe("none");
     expect(notificationsEnabled({ PI_DEV_NOTIFY: "0", TERM_PROGRAM: "ghostty" })).toBe(false);
   });
 
-  test("known notification-capable terminals are on by default", () => {
-    expect(notificationsEnabled({ TERM_PROGRAM: "ghostty" })).toBe(true);
-    expect(notificationsEnabled({ TERM_PROGRAM: "iTerm.app" })).toBe(true);
-    expect(notificationsEnabled({ TERM_PROGRAM: "WezTerm" })).toBe(true);
-    expect(notificationsEnabled({ TERM: "xterm-kitty" })).toBe(true);
+  test("OSC 9 terminals are on by default", () => {
+    expect(notificationChannel({ TERM_PROGRAM: "ghostty" })).toBe("osc9");
+    expect(notificationChannel({ TERM_PROGRAM: "iTerm.app" })).toBe("osc9");
+    expect(notificationChannel({ TERM_PROGRAM: "WezTerm" })).toBe("osc9");
+    expect(notificationChannel({ TERM: "xterm-kitty" })).toBe("osc9");
+  });
+
+  test("VS Code's terminal reads OSC 99 only, and is on by default", () => {
+    expect(notificationChannel({ TERM_PROGRAM: "vscode", TERM: "xterm-256color" })).toBe("osc99");
+    expect(notificationChannel({ TERM_PROGRAM: "vscode", PI_DEV_NOTIFY: "1" })).toBe("osc99");
   });
 
   test("everything else stays quiet until asked", () => {
-    expect(notificationsEnabled({ TERM: "xterm-256color" })).toBe(false);
-    expect(notificationsEnabled({ TERM_PROGRAM: "Apple_Terminal" })).toBe(false);
+    expect(notificationChannel({ TERM: "xterm-256color" })).toBe("none");
+    expect(notificationChannel({ TERM_PROGRAM: "Apple_Terminal" })).toBe("none");
+  });
+});
+
+describe("formatKittyNotification", () => {
+  test("a title frame then a final body frame, base64, quiet while focused", () => {
+    const frames = formatKittyNotification("pi-dev", "smoke completed", "pi-dev-1");
+    expect(frames).toBe(
+      `\x1b]99;i=pi-dev-1:p=title:e=1:o=unfocused:d=0;${Buffer.from("pi-dev").toString("base64")}${ST}` +
+        `\x1b]99;i=pi-dev-1:p=body:e=1:o=unfocused;${Buffer.from("smoke completed").toString("base64")}${ST}`,
+    );
+  });
+
+  test("ids are sanitized and free text stays one line", () => {
+    const frames = formatKittyNotification("pi-dev", "a\nb", "pi dev:1");
+    expect(frames).toContain("i=pidev1:p=title");
+    expect(frames).toContain(Buffer.from("a b").toString("base64"));
+  });
+
+  test("an empty body sends nothing", () => {
+    expect(formatKittyNotification("pi-dev", "  \n ", "x")).toBe("");
   });
 });
 
@@ -178,9 +204,13 @@ const running = (id: string) => ({ agent: { id, description: id }, status: "runn
 const ended = (id: string, status: "completed" | "failed") =>
   ({ agent: { id, description: id }, status, endedAt: new Date(0).toISOString() }) as never;
 
-function reporter(options: { notifications?: boolean } = {}) {
+function reporter(options: { channel?: "osc9" | "osc99" | "none"; notifications?: boolean } = {}) {
   const sink = fakeSink();
-  const attention = new Attention({ sink, notifications: options.notifications ?? true, programStatus: true });
+  const attention = new Attention({
+    sink,
+    channel: options.channel ?? (options.notifications === false ? "none" : "osc9"),
+    programStatus: true,
+  });
   return { sink, attention };
 }
 
@@ -260,6 +290,17 @@ describe("Attention", () => {
     attention.notice({ customType: "pi-dev-agent", details: { description: "audit docs", status: "completed" } });
     expect(reports(sink)).toHaveLength(1);
     expect(notifications(sink)).toHaveLength(0);
+  });
+
+  test("VS Code gets the OSC 99 frames instead of OSC 9", () => {
+    const { sink, attention } = reporter({ channel: "osc99" });
+    attention.bind(true);
+    attention.notice({ customType: "pi-dev-agent", details: { description: "audit docs", status: "completed" } });
+    expect(notifications(sink)).toHaveLength(0);
+    const kitty = sink.writes.filter((w) => w.includes("]99;"));
+    expect(kitty).toHaveLength(1); // both frames travel as one write
+    expect(kitty[0]).toContain("p=title");
+    expect(kitty[0]).toContain(Buffer.from("audit docs completed").toString("base64"));
   });
 
   test("an open ask dialog blocks, closing or answering clears it", () => {

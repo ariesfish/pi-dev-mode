@@ -121,14 +121,43 @@ export function formatNotification(body: string): string {
   return text ? `${ESC}]9;${text}${BEL}` : "";
 }
 
-/** Known notification-capable terminals. Detection only picks the default;
- * `PI_DEV_NOTIFY=1|0` overrides it either way. */
+/**
+ * One OSC 99 (kitty) notification as the two frames the protocol expects: a
+ * title frame and a final body frame. VS Code implements exactly this
+ * sequence and nothing else — its terminal registers an OSC 99 handler only,
+ * so an OSC 9 there is inert. `o=unfocused` asks the terminal to stay quiet
+ * while its window has focus; the user is already looking at the session then.
+ */
+export function formatKittyNotification(title: string, body: string, id: string): string {
+  const cleanBody = clipText(oneLine(body), MAX_NOTIFICATION_CHARS);
+  if (!cleanBody) return "";
+  const cleanTitle = clipText(oneLine(title), 60) || TITLE;
+  const safeId = id.replace(/[^A-Za-z0-9_+.-]/g, "").slice(0, 32) || "pi-dev";
+  const frame = (kind: "title" | "body", text: string, last: boolean) =>
+    `${ESC}]99;i=${safeId}:p=${kind}:e=1:o=unfocused${last ? "" : ":d=0"};${Buffer.from(text, "utf8").toString("base64")}${ST}`;
+  return frame("title", cleanTitle, false) + frame("body", cleanBody, true);
+}
+
+/** Which notification sequence this terminal reads. */
+export type NotificationChannel = "osc9" | "osc99" | "none";
+
+/** Terminals that show OSC 9 (iTerm2 growl / Ghostty / WezTerm / kitty…). */
 const NOTIFY_TERMINALS = /ghostty|iterm|wezterm|kitty|hyper|tabby/i;
+/** VS Code's integrated terminal: OSC 99 only (setting
+ * `terminal.integrated.enableNotifications`, default on). */
+const VSCODE_TERMINAL = /vscode/i;
+
+export function notificationChannel(env: NodeJS.ProcessEnv): NotificationChannel {
+  if (env.PI_DEV_NOTIFY === "0") return "none";
+  const term = `${env.TERM_PROGRAM ?? ""} ${env.TERM ?? ""}`;
+  const detected: NotificationChannel = VSCODE_TERMINAL.test(term) ? "osc99" : NOTIFY_TERMINALS.test(term) ? "osc9" : "none";
+  // Opting in on an unrecognized terminal bets on OSC 9, the wider of the two.
+  if (env.PI_DEV_NOTIFY === "1") return detected === "none" ? "osc9" : detected;
+  return detected;
+}
 
 export function notificationsEnabled(env: NodeJS.ProcessEnv): boolean {
-  if (env.PI_DEV_NOTIFY === "0") return false;
-  if (env.PI_DEV_NOTIFY === "1") return true;
-  return NOTIFY_TERMINALS.test(`${env.TERM_PROGRAM ?? ""} ${env.TERM ?? ""}`);
+  return notificationChannel(env) !== "none";
 }
 
 // ─── decoding this package's own notices ────────────────────────────────────
@@ -210,8 +239,8 @@ export interface AttentionSink {
 
 export interface AttentionOptions {
   sink?: AttentionSink;
-  /** Desktop notifications (OSC 9). Default: terminal detection. */
-  notifications?: boolean;
+  /** Desktop notifications. Default: whatever the terminal reads. */
+  channel?: NotificationChannel;
   /** Program status records (OSC 7501). Default: on unless PI_DEV_PROGRAM_STATUS=0. */
   programStatus?: boolean;
   env?: NodeJS.ProcessEnv;
@@ -224,7 +253,9 @@ export interface AttentionOptions {
  */
 export class Attention {
   private readonly sink: AttentionSink;
-  private readonly notifications: boolean;
+  private readonly channel: NotificationChannel;
+  /** Distinct ids keep one notification from updating an unrelated earlier one. */
+  private notifySeq = 0;
   private readonly programStatus: boolean;
   private active = false;
   private readonly running = new Set<string>();
@@ -239,7 +270,7 @@ export class Attention {
   constructor(options: AttentionOptions = {}) {
     const env = options.env ?? process.env;
     this.sink = options.sink ?? { write: (sequence) => process.stdout.write(sequence), now: () => Date.now() };
-    this.notifications = options.notifications ?? notificationsEnabled(env);
+    this.channel = options.channel ?? notificationChannel(env);
     this.programStatus = options.programStatus ?? env.PI_DEV_PROGRAM_STATUS !== "0";
   }
 
@@ -325,11 +356,12 @@ export class Attention {
   }
 
   private desktop(body: string): void {
-    if (!this.active || !this.notifications) return;
+    if (!this.active || this.channel === "none") return;
     const now = this.sink.now();
     if (now - this.lastNotifyAt < MIN_NOTIFY_INTERVAL_MS) return;
     if (body === this.lastBody && now - this.lastBodyAt < DEDUPE_WINDOW_MS) return;
-    const sequence = formatNotification(body);
+    const sequence =
+      this.channel === "osc99" ? formatKittyNotification(TITLE, body, `pi-dev-${++this.notifySeq}`) : formatNotification(body);
     if (!sequence) return;
     this.lastNotifyAt = now;
     this.lastBody = body;
