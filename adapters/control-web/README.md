@@ -50,6 +50,24 @@
   `$userDataDir/Default` 个别文件(chrome 主进程已死、端口已关、无功能影响);
   helper 不改,残留由调用方 `rm -rf /tmp/verify-<runId>` 收尾。
 
+### 2026-10-26:harness 自证一轮(审计驱动)
+
+审计发现 harness 的三处"文档说到了、代码没做到",本行即冻结规则 #3 的例外审批:
+
+- **浏览器解析进 harness**:`control.mjs` 原来只认 `CHROME_BIN || google-chrome-stable`
+  (Linux 名),macOS 上 README 自己的命令 12/12 失败;解析顺序改为
+  `CHROME_BIN` → macOS 应用包 → PATH 名,`check.sh` 同步删除自带的 20 行解析。
+- **归属记录**:launch 在隔离目录写 `harness.json`(runId/port/pid/userDataDir);
+  `doctor` 补上文档声称的 `port-owned-by-us` / `user-data-dir-matches` 两检(四项全),
+  `cleanup` 只关/只删这条记录指向的实例,端口有应答但无记录时**拒绝**;已清理端口的
+  重复调用幂等。原先按 `--port` 关任意浏览器、并按 mtime 删**所有** 15 秒前的
+  `/tmp/verify-*`(并发验证互删)。
+- **输出契约补齐**:launch 输出补 `targetWsUrl`(README 早已列出、代码从未发);
+  `--run-id` 限定 `[A-Za-z0-9][A-Za-z0-9._-]*`,不能逃出 `/tmp/verify-*`。
+- **测试**:12 → 16(launch 键集、run-id 越界、未认领端口拒绝、cleanup 幂等)。
+
+批准人:ariesfish——2026-10-26 会话指令("未做的按你的建议修改")。
+
 ## 三条构造约束(frozen)
 
 1. **自起隔离实例**:launch 永远 `chrome --headless=new --user-data-dir=/tmp/verify-$RUN_ID
@@ -74,13 +92,14 @@ node harness/control.mjs doctor --port P
 # 驱动 + 取证:steps.json 见下;输出 JSON report(evidence 路径在内)
 node harness/control.mjs drive --port P --steps steps.json --out DIR
 
-# 收尾:只杀自己起的 pid,只删自己的 user-data-dir;证据目录永不删
+# 收尾:只认 harness.json 记录的那次 run;端口有应答但无记录 -> 拒绝;证据目录永不删
 node harness/control.mjs cleanup --port P
 ```
 
 steps.json:`{navigate: url, settleMs?, timeoutMs?, steps: [...]}` 每步
 `{find?: {aria|selector|text|coords}, click?, type?, read?, expectVisible?,
-shot?}`——aria 走 getByLabel 子串匹配,selector 是 CSS 选择器,text 匹配
+shot?, label?, navigate?, required?}`(`required: false` 容忍该步失败;每步可自带
+`navigate` 换页;`label` 只改善报告可读性)——aria 走 getByLabel 子串匹配,selector 是 CSS 选择器,text 匹配
 可见文本;命中后由引擎(playwright-core,`connectOverCDP` 只连本目录 launch
 的隔离端口)滚动到位、等待 actionable 再驱动;`type` 是 fill 语义(清空后
 整体置值,textarea 换行原生);`shot` 是字符串标签,落 PNG 到 out 目录;
@@ -90,6 +109,10 @@ shot?}`——aria 走 getByLabel 子串匹配,selector 是 CSS 选择器,text �
 顶层另附 `pageErrors[]`(页面 uncaught 错误;干净时省略,保持旧报告兼容)。
 
 ## 依赖面
+
+launch 解析浏览器顺序:`CHROME_BIN` → macOS 应用包(Chrome/Chromium/Edge)→
+  PATH 名(`google-chrome-stable|google-chrome|chromium|chromium-browser`);
+  harness 自己解析,不依赖调用方导出 `CHROME_BIN`。
 
 依赖声明在**包根** `package.json`(`@earendil-works/chord`、
 `@earendil-works/pi-durable`、`playwright-core`,均 npm registry 正式发布),

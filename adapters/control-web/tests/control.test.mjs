@@ -3,11 +3,13 @@
 //   RED 组(旧手写 CDP 引擎失败):视口外点击必须生效 / 慢渲染自动等待 / 页面错误入报告
 //   GREEN 组(新旧都必须过的契约锚):aria 点击、type+input 事件、截图落盘、
 //     coords 兜底标记、required:false 容忍、cleanup 证据永存
-// 运行:node --test "adapters/control-web/tests/*.test.mjs"(需本机 chrome + adapters/control-web 下
-// 已 npm install;无需网络,data: URL 驱动;注意 Node 26 不再接受目录形式的 --test 参数)
+// 运行:node --test "adapters/control-web/tests/*.test.mjs"(需本机 chrome;drive 的
+// playwright-core 由包根 npm install 提供;无需网络,data: URL 驱动;注意 Node 26 不再接受
+// 目录形式的 --test 参数)。16 组:12 组引擎缝 + launch 键集 / run-id 越界 /
+// 未认领端口拒绝 / cleanup 幂等。
 
-import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { spawn, spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -21,6 +23,24 @@ const HTML = "data:text/html,";
 function run(args) {
   const r = spawnSync(process.execPath, [CONTROL, ...args], { encoding: "utf8", timeout: 60_000 });
   assert.equal(r.status, 0, `CLI failed: ${args.join(" ")}\n${r.stderr}`);
+  return JSON.parse(r.stdout.trim().split("\n").at(-1));
+}
+
+// Async variant: spawnSync blocks the test process, so a fake endpoint served
+// from this same process would never answer the child.
+function runAsync(args) {
+  return new Promise((resolve) => {
+    const child = spawn(process.execPath, [CONTROL, ...args], { stdio: ["ignore", "pipe", "pipe"] });
+    let out = "";
+    child.stdout.on("data", (d) => (out += d));
+    child.stderr.on("data", (d) => (out += d));
+    child.on("close", (status) => resolve({ status, out }));
+  });
+}
+
+function runFail(args) {
+  const r = spawnSync(process.execPath, [CONTROL, ...args], { encoding: "utf8", timeout: 60_000 });
+  assert.notEqual(r.status, 0, `CLI should have refused: ${args.join(" ")}\n${r.stdout}`);
   return JSON.parse(r.stdout.trim().split("\n").at(-1));
 }
 
@@ -52,6 +72,53 @@ test("doctor: 刚起的实例体检全绿", async (t) => {
     const d = run(["doctor", "--port", String(l.devtoolsPort)]);
     assert.equal(d.ok, true);
     assert.ok(d.checks.every((c) => c.ok));
+    assert.deepEqual(
+      d.checks.map((c) => c.name),
+      ["devtools-reachable", "page-target", "port-owned-by-us", "user-data-dir-matches"],
+    );
+  });
+});
+
+test("launch: 输出契约 = README 的六个键", async (t) => {
+  await withChrome(t, async (l) => {
+    assert.deepEqual(Object.keys(l).sort(), ["devtoolsPort", "ok", "pid", "runId", "targetWsUrl", "userDataDir"]);
+    assert.match(l.targetWsUrl, /^ws:\/\//);
+  });
+});
+
+test("launch: run id 不能逃出 /tmp/verify-*", () => {
+  const r = runFail(["launch", "--run-id", "../evil"]);
+  assert.equal(r.ok, false);
+});
+
+test("cleanup: 有进程应答但无归属记录 -> 拒绝,别的 verify 目录不受牵连", async () => {
+  const { createServer } = await import("node:http");
+  const server = createServer((req, res) => {
+    res.setHeader("content-type", "application/json");
+    res.end(JSON.stringify({ Browser: "NotOurs/1.0" }));
+  });
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const port = server.address().port;
+  const foreign = join(tmpdir(), `verify-foreign-${Date.now()}`);
+  mkdirSync(foreign, { recursive: true });
+  writeFileSync(join(foreign, "keep.txt"), "evidence");
+  try {
+    const r = await runAsync(["cleanup", "--port", String(port)]);
+    assert.notEqual(r.status, 0, "cleanup must refuse a port it does not own");
+    assert.match(r.out, /refusing to close or delete/);
+    assert.ok(existsSync(join(foreign, "keep.txt")), "foreign verify dir must survive");
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+    rmSync(foreign, { recursive: true, force: true });
+  }
+});
+
+test("cleanup: 已清理的端口重复调用是幂等的", async (t) => {
+  await withChrome(t, async (l) => {
+    run(["cleanup", "--port", String(l.devtoolsPort)]);
+    const again = run(["cleanup", "--port", String(l.devtoolsPort)]);
+    assert.equal(again.ok, true);
+    assert.deepEqual(again.userDataDirs, []);
   });
 });
 

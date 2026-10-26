@@ -12,11 +12,57 @@
 // 用法见 README。子命令:launch | doctor | drive | cleanup
 
 import { spawn } from "node:child_process";
-import { existsSync, mkdirSync, rmSync, writeFileSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync, readFileSync } from "node:fs";
+import { homedir } from "node:os";
 import { setTimeout as delay } from "node:timers/promises";
 import { join } from "node:path";
 
-const CHROME = process.env.CHROME_BIN || "google-chrome-stable";
+// Resolve a browser instead of assuming a Linux binary name: the documented
+// command has to work on macOS (bundled app), Linux (PATH names), and an
+// explicit CHROME_BIN override. An explicit override never falls through.
+function chromeCandidates() {
+	if (process.env.CHROME_BIN) return [process.env.CHROME_BIN];
+	return [
+		"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+		"/Applications/Chromium.app/Contents/MacOS/Chromium",
+		"/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+		join(homedir(), "Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
+		"google-chrome-stable",
+		"google-chrome",
+		"chromium",
+		"chromium-browser",
+	];
+}
+
+async function spawnChrome(args) {
+	const tried = [];
+	for (const bin of chromeCandidates()) {
+		try {
+			const child = spawn(bin, args, { stdio: "ignore", detached: true });
+			await new Promise((resolve, reject) => {
+				child.once("spawn", resolve);
+				child.once("error", reject);
+			});
+			return child;
+		} catch (err) {
+			tried.push(`${bin} (${err.code ?? err.message})`);
+		}
+	}
+	fail(`no browser found; set CHROME_BIN. Tried: ${tried.join(", ")}`);
+}
+
+/** The run that owns a port, from the record launch writes beside its profile. */
+function ownedRun(port) {
+	for (const name of readdirSync("/tmp").filter((d) => d.startsWith("verify-"))) {
+		try {
+			const record = JSON.parse(readFileSync(join("/tmp", name, "harness.json"), "utf8"));
+			if (Number(record.port) === Number(port)) return record;
+		} catch {
+			/* not a harness profile */
+		}
+	}
+	return undefined;
+}
 
 // ---------- 小工具 ----------
 
@@ -87,11 +133,16 @@ class Cdp {
 
 async function cmdLaunch(args) {
 	const runId = argValue(args, "--run-id") || `run-${Date.now()}`;
+	// The id names a directory under /tmp; a separator or dot-dot would escape it.
+	if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(runId) || runId.includes("..")) {
+		fail("--run-id must be [A-Za-z0-9][A-Za-z0-9._-]* (it names /tmp/verify-<id>)");
+	}
+	const userDataDir = `/tmp/verify-${runId}`;
 	const headless = !args.includes("--no-headless");
 	// auto 端口:绑 0 让内核分,再从 DevToolsActivePort 读回
 	const chromeArgs = [
 		...(headless ? ["--headless=new"] : []),
-		`--user-data-dir=/tmp/verify-${runId}`,
+		`--user-data-dir=${userDataDir}`,
 		"--remote-debugging-port=0",
 		"--no-first-run",
 		"--no-default-browser-check",
@@ -99,7 +150,7 @@ async function cmdLaunch(args) {
 		"--disable-dev-shm-usage",
 		"about:blank",
 	];
-	const child = spawn(CHROME, chromeArgs, { stdio: "ignore", detached: true });
+	const child = await spawnChrome(chromeArgs);
 	child.unref();
 	const deadline = Date.now() + 15000;
 	while (Date.now() < deadline) {
@@ -107,17 +158,24 @@ async function cmdLaunch(args) {
 		if (child.exitCode !== null) fail(`chrome exited early (code ${child.exitCode})`);
 		try {
 			// DevToolsActivePort 文件由 chrome 写入 user-data-dir,含真实端口
-			const portFile = `/tmp/verify-${runId}/DevToolsActivePort`;
+			const portFile = `${userDataDir}/DevToolsActivePort`;
 			if (existsSync(portFile)) {
 				const port = Number(readFileSync(portFile, "utf8").split("\n")[0]);
 				const version = await fetchJson(`http://127.0.0.1:${port}/json/version`);
 				if (version && version.Browser) {
+					// The ownership record doctor/cleanup act on: port -> run, written
+					// by us (not inferred from whoever answers on the port).
+					writeFileSync(
+						join(userDataDir, "harness.json"),
+						JSON.stringify({ runId, port, pid: child.pid, userDataDir, startedAt: new Date().toISOString() }),
+					);
 					log({
 						ok: true,
 						runId,
 						pid: child.pid,
 						devtoolsPort: port,
-						userDataDir: `/tmp/verify-${runId}`,
+						userDataDir,
+						targetWsUrl: version.webSocketDebuggerUrl,
 					});
 					return;
 				}
@@ -152,6 +210,19 @@ async function cmdDoctor(args) {
 		const page = list.find((t) => t.type === "page");
 		if (!page) throw new Error("no page target");
 		return { url: page.url };
+	});
+	await check("port-owned-by-us", async () => {
+		const owned = ownedRun(port);
+		if (!owned) throw new Error("no harness.json names this port; it is not our instance");
+		return { runId: owned.runId, pid: owned.pid };
+	});
+	await check("user-data-dir-matches", async () => {
+		const owned = ownedRun(port);
+		if (!owned) throw new Error("no owning run");
+		const expected = `/tmp/verify-${owned.runId}`;
+		if (owned.userDataDir !== expected) throw new Error(`record says ${owned.userDataDir}; layout says ${expected}`);
+		if (!existsSync(expected)) throw new Error(`isolation dir missing: ${expected}`);
+		return { userDataDir: expected };
 	});
 	const ok = checks.every((c) => c.ok);
 	log({ ok, checks });
@@ -266,7 +337,23 @@ async function cmdDrive(args) {
 async function cmdCleanup(args) {
 	const port = Number(argValue(args, "--port"));
 	if (!port) fail("cleanup requires --port");
-	const { execSync } = await import("node:child_process");
+	// Ownership first: a mistyped port must never close the user's own browser
+	// (construction constraint #1), and a run's dir is the only one deleted.
+	// Nothing listening = already cleaned (idempotent); something listening
+	// without a harness record is not ours and must not be touched.
+	const owned = ownedRun(port);
+	if (!owned) {
+		let answers = false;
+		try {
+			await fetchJson(`http://127.0.0.1:${port}/json/version`, 1500);
+			answers = true;
+		} catch {
+			/* nothing there */
+		}
+		if (answers) fail(`port ${port} answers but no harness.json owns it; refusing to close or delete anything`);
+		log({ ok: true, devtoolsDown: true, userDataDirs: [] });
+		return;
+	}
 	const removed = { devtoolsDown: false, userDataDirs: [] };
 	try {
 		// 经 CDP Browser.close 优雅关停(只作用于该隔离实例)
@@ -278,18 +365,14 @@ async function cmdCleanup(args) {
 		// 端口已死也算完成目标
 		removed.devtoolsDown = true;
 	}
-	// 清理 15 秒前仍存在的本次 verify-* 隔离目录(保守:只删 >15s 的)
-	const { readdirSync, statSync, rmSync: rm } = await import("node:fs");
-	const cutoff = Date.now() - 15000;
-	for (const dir of readdirSync("/tmp").filter((d) => d.startsWith("verify-"))) {
-		const full = `/tmp/${dir}`;
+	// Chrome may still be flushing the profile; retry instead of the old broad sweep.
+	for (let attempt = 0; attempt < 5; attempt++) {
 		try {
-			if (statSync(full).mtimeMs < cutoff) {
-				rm(full, { recursive: true, force: true });
-				removed.userDataDirs.push(full);
-			}
+			rmSync(owned.userDataDir, { recursive: true, force: true });
+			removed.userDataDirs.push(owned.userDataDir);
+			break;
 		} catch {
-			/* 竞态即忽略 */
+			await delay(200);
 		}
 	}
 	log({ ok: true, ...removed });
