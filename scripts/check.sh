@@ -37,7 +37,34 @@ python3 scripts/check-skills.py
 bash scripts/test-gates.sh 2>&1 | tee "$logs/gates.log"
 python3 scripts/check-prose.py
 python3 scripts/check-adrs.py --selftest
-node --test "adapters/control-web/tests/*.test.mjs" 2>&1 | tee "$logs/adapters.log"
+# The harness launches a real Chrome and reads CHROME_BIN (its documented
+# override). Resolve one here so the same command works on macOS and Linux; no
+# browser means a visible SKIP, never a silent pass.
+resolve_chrome() {
+  if [ -n "${CHROME_BIN:-}" ]; then
+    if [ -x "$CHROME_BIN" ] || command -v "$CHROME_BIN" >/dev/null 2>&1; then
+      printf '%s' "$CHROME_BIN"; return 0
+    fi
+    echo "check.sh: CHROME_BIN=$CHROME_BIN is not executable" >&2
+    return 1
+  fi
+  for candidate in \
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+    "/Applications/Chromium.app/Contents/MacOS/Chromium" \
+    "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge" \
+    "$HOME/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"; do
+    [ -x "$candidate" ] && { printf '%s' "$candidate"; return 0; }
+  done
+  for candidate in google-chrome-stable google-chrome chromium chromium-browser; do
+    command -v "$candidate" >/dev/null 2>&1 && { command -v "$candidate"; return 0; }
+  done
+  return 1
+}
+if chrome_bin="$(resolve_chrome)"; then
+  CHROME_BIN="$chrome_bin" node --test "adapters/control-web/tests/*.test.mjs" 2>&1 | tee "$logs/adapters.log"
+else
+  echo "adapters: SKIP (no Chrome/Chromium found — set CHROME_BIN; see adapters/control-web/README.md, docs/CONSTRAINTS.md)"
+fi
 # bun resolves project-first: devDependencies' bun (from the package-root
 # `npm install`) shadows any system bun; test-extensions.sh calls bare `bun`,
 # so PATH has to carry it in.
@@ -50,7 +77,10 @@ else
   echo "test-extensions: SKIP (no local pi runtime + bun (node_modules/.bin or PATH) — evidence tier, docs/CONSTRAINTS.md)"
 fi
 
-numbers_args=(--gates-log "$logs/gates.log" --adapters-log "$logs/adapters.log")
+numbers_args=(--gates-log "$logs/gates.log")
+if [ -f "$logs/adapters.log" ]; then
+  numbers_args+=(--adapters-log "$logs/adapters.log")
+fi
 if [ -f "$logs/pi.log" ]; then
   numbers_args+=(--pi-log "$logs/pi.log")
 fi
