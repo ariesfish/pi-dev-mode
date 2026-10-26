@@ -22,9 +22,11 @@
 # 7. numbers sync           (counts claimed in docs/CONSTRAINTS.md vs the
 #                           suites this run — suite outputs tee into a scratch
 #                           dir; claims cross-check even where a suite skipped)
-# 8. pi typecheck + evidence (undefined-name 类闸(TS2304/TS2552 = imports
-#                           缺口、运行时炸弹) + tsv 证据指针可达/非空
-#                           (check-evidence.py 无 .dev 时 no-op,exit 0))
+# 8. pi typecheck + evidence + replay (undefined-name 类闸(TS2304/TS2552 =
+#                           imports 缺口、运行时炸弹) + tsv 证据指针可达/非空
+#                           (check-evidence.py 无 .dev 时 no-op,exit 0) +
+#                           重放函数(restore/reattach/replay*)必须有测试引用
+#                           (check-replay.py,T-042))
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
@@ -58,3 +60,4 @@ python3 scripts/check-numbers.py "${numbers_args[@]}"
 # check-evidence.py 在无 .dev 的环境 no-op 退出 0)
 bash scripts/check-types.sh
 python3 scripts/check-evidence.py
+python3 scripts/check-replay.py
