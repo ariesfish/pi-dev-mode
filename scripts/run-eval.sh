@@ -57,22 +57,43 @@ fi
 
 SESSION="$WORK/session"
 REPLY="$WORK/reply.txt"
-ARGS=(--no-extensions --no-skills)
-TOOLS=(--tools read)
-if [ "$KIND" = execution ]; then
-  TOOLS=()
-  ARGS+=(-e "$ROOT/pi/index.ts")
-elif [ "$ROUTING" -eq 1 ]; then
-  ARGS+=(-e "$ROOT/pi/index.ts")
-fi
+# Timeouts per evals/README.md: a dialogue case is a conversation; an
+# execution case may render, drive, or diff, which takes longer than 700s.
 TIMEOUT=700
 [ "$KIND" = execution ] && TIMEOUT=1500
+# Three explicit lanes, no empty array expansions: macOS ships bash 3.2, where
+# "${arr[@]}" on an empty array is an unbound-variable error under set -u.
+LANE=dialogue
+[ "$KIND" = execution ] && LANE=execution
+[ "$ROUTING" -eq 1 ] && [ "$KIND" = dialogue ] && LANE=routing
 
 set +e
-( cd "$WORK/repo" && timeout "$TIMEOUT" pi -p --session-dir "$SESSION" "${ARGS[@]}" "${TOOLS[@]}" \
-    --skill "$SKILLS" "$BODY" >"$REPLY" 2>"$WORK/stderr.txt" )
+case "$LANE" in
+  dialogue)
+    ( cd "$WORK/repo" && timeout "$TIMEOUT" pi -p --session-dir "$SESSION" \
+        --no-extensions --no-skills --tools read \
+        --skill "$SKILLS" "$BODY" >"$REPLY" 2>"$WORK/stderr.txt" ) ;;
+  routing)
+    # The mandate and repo-state notes are part of the routing product.
+    ( cd "$WORK/repo" && timeout "$TIMEOUT" pi -p --session-dir "$SESSION" \
+        --no-extensions --no-skills --tools read -e "$ROOT/pi/index.ts" \
+        --skill "$SKILLS" "$BODY" >"$REPLY" 2>"$WORK/stderr.txt" ) ;;
+  execution)
+    # Full tools: the case's behavior includes acting on the fixture.
+    # --no-extensions is still required beside -e: a git-installed copy of this
+    # same package would auto-load and collide tool-for-tool with the copy under
+    # test (evals/README.md records that trap).
+    ( cd "$WORK/repo" && timeout "$TIMEOUT" pi -p --session-dir "$SESSION" \
+        --no-extensions --no-skills -e "$ROOT/pi/index.ts" \
+        --skill "$SKILLS" "$BODY" >"$REPLY" 2>"$WORK/stderr.txt" ) ;;
+esac
 STATUS=$?
 set -e
+
+if [ ! -s "$REPLY" ]; then
+  echo "run-eval: the candidate produced no reply (status $STATUS); stderr:" >&2
+  sed 's/^/  /' "$WORK/stderr.txt" >&2
+fi
 
 CHEAT=no
 if [ -d "$SESSION" ] && grep -rqE "pi-dev-mode/evals/|evals/fixtures/" "$SESSION" 2>/dev/null; then
