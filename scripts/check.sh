@@ -95,6 +95,7 @@ bash scripts/check-types.sh
 python3 scripts/check-evidence.py
 python3 scripts/check-evidence.py --selftest
 python3 scripts/check-replay.py
+python3 scripts/check-replay.py --selftest
 
 # 9. quantitative-gate toolchain: doctor proves the codecheck package imports
 #    and names what each language still needs. The package's own suite stays
