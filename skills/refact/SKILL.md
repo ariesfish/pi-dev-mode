@@ -52,6 +52,8 @@ Apply the **deletion test** to anything you suspect is shallow: would deleting i
 
 ### 2. Present candidates
 
+The first reply is a **pick-list, not a plan**. It ends with the numbered candidates and one question — "which would you like to explore?" — and contains **no interface signatures, no recommended winner, no ordering of the work**. A reply that picks a design and sequences it has skipped this skill's whole point: the human chooses the cut, the deeper module is designed afterwards.
+
 Present a numbered list of deepening opportunities. For each candidate:
 
 - **Files** — which files/modules are involved

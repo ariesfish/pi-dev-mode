@@ -37,7 +37,7 @@ Last reviewed: 2026-10-26 by the review-gate round (quantitative gate: CRAP / du
 | adapters 缝测试 | 16/16 | must not fall |
 | pi 扩展测试 | 163/163 | must not fall |
 | pi 类型精确化噪音(tsc 错误实例,非行数) | 26(2026-10-26 审计后;原 43 含 11 处幻影 import) | ratchet 向下(增量严化,不走一次性清零) |
-| eval 覆盖技能 | 19/30 | ratchet 向上(有 fires 案的技能/总技能;2026-10-26 触发拆分同轮补 6 案;description 变更前先补案) |
+| eval 覆盖技能 | 30/30 | must not fall(有 fires 案的技能/总技能);含 2 个已知红案(research/refact,见 evals/skill-impact.md)——红案是记录中的缺口,不是待办 |
 | 账本 D 门首过率 | 0.56 | 观察(RED-first 纪律刻意压低,非事故) |
 | blocked items / verdict flips | 0 / 0 | 0 |
 | 重放函数覆盖数 | 2(AgentRunner.restore / DurableEngine.reattach) | must not fall |

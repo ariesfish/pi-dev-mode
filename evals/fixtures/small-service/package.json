@@ -1,0 +1,11 @@
+{
+  "name": "accounts-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "verify": "bash scripts/verify.sh"
+  }
+}

@@ -107,3 +107,10 @@ cwd(候选的 cwd 即项目根)供 read 考察;execution 档以 fixture 内容�
 **用例环境分两档(2026-10-16 增补)**:
 - **触发判别类**(fires/stays-quiet 单技能):候选不带扩展(`--no-extensions`)——看纯 description 的自然命中;
 - **路由行为类**(多区域拆分等):候选带扩展(`-e <repo>/pi/index.ts`)——mandate/repo-state 是产品的一部分,路由判别必须在真实环境里测。
+
+## 覆盖状态(2026-10-26)
+
+30/30 技能有 `:fires` 案;`docs/CONSTRAINTS.md` 的 Measured 行由
+`check-numbers.py` 从树里派生(fires 案标记的技能 ∩ `skills/*`),对不上即红。
+新增一张 fires 案的最小形状:一个有机 prompt + 一条能真红的 grader——判分点
+写成"PASS 需要什么、FAIL 的典型形态",不要写成"看起来专业即通过"。
