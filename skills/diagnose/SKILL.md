@@ -5,7 +5,7 @@ description: >-
   feedback-loop-first process: reproduce, minimise, hypothesise, instrument,
   fix, and regression-test. Use when something is broken, failing, throwing,
   flaky, slow, regressed, unclear, or when the user says diagnose/debug this.
-  Chinese triggers: 排查 bug, 定位原因, 复现问题, 性能回归, 变慢了.
+  Chinese triggers: 排查 bug, 复现问题, 变慢了.
 ---
 
 # Diagnose

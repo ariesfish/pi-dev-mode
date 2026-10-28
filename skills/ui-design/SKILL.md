@@ -1,6 +1,6 @@
 ---
 name: ui-design
-description: "Own the DESIGN.md lifecycle: pin the design contract before UI-bearing work, from a brief, from references, from an existing interface, or as an audit-first redesign. DESIGN.md is the design counterpart of AGENTS.md — a repo-root, plain-markdown control document (frontmatter tokens + eleven fixed sections) that every visual change reads first. Use when the repo has no DESIGN.md and UI work is starting, when a design direction must be pinned, or when 'make it feel like X' must become Keep/Change/Do-not-copy semantics. Chinese triggers: 设计规范, 设计决策, 建设计系统, 配色字体, 做同款, 改版设计, 设计宪法, DESIGN.md."
+description: "Own the DESIGN.md lifecycle: pin the design contract before UI-bearing work, from a brief, from references, from an existing interface, or as an audit-first redesign. DESIGN.md is the design counterpart of AGENTS.md — a repo-root, plain-markdown control document (frontmatter tokens + eleven fixed sections) that every visual change reads first. Use when the repo has no DESIGN.md and UI work is starting, when a design direction must be pinned, or when 'make it feel like X' must become Keep/Change/Do-not-copy semantics. Chinese triggers: 设计规范, 配色字体, 做同款."
 ---
 
 # UI design
