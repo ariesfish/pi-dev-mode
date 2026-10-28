@@ -62,7 +62,7 @@ ROW_PATTERNS: dict[str, list[tuple[str, re.Pattern[str], tuple[str, ...]]]] = {
         ),
     ],
     "evals": [
-        ("Measured/eval 覆盖技能", re.compile(r"\| eval 覆盖技能 \| (\d+)/(\d+) \|"), ("covered", "skills")),
+        ("Measured/eval 覆盖技能", re.compile(r"\| eval 覆盖技能[^|]*\| (\d+)/(\d+) \|"), ("covered", "skills")),
     ],
     "pi": [
         (
@@ -147,7 +147,15 @@ LIVE_FROM: dict[str, tuple[str, object]] = {
 
 
 def live_evals(root: Path) -> dict[str, int]:
-    skills = {p.parent.name for p in (root / "skills").glob("*/SKILL.md")}
+    """Model-invoked skills only: a `disable-model-invocation: true` skill never
+    reaches the model's prompt, so it has no trigger surface a case could test.
+    Counting it in the denominator would demand a case that cannot exist."""
+    skills = set()
+    for p in (root / "skills").glob("*/SKILL.md"):
+        fm = re.match(r"^---\n(.*?)\n---\n", p.read_text(encoding="utf-8"), re.S)
+        if fm and re.search(r"^disable-model-invocation:\s*true\s*$", fm.group(1), re.M):
+            continue
+        skills.add(p.parent.name)
     covered = {p.name for p in (root / "evals").iterdir() if p.is_dir() and any(p.glob("*/prompt.md"))}
     return {"covered": len(covered & skills), "skills": len(skills)}
 

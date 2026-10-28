@@ -59,4 +59,4 @@ pi-dev-mode          # the router that picks between all of these
 - Session over, before handoff: `retro`; its skill edits feed this stack itself.
 - If something is broken or slow, use `diagnose` before refactoring.
 - If code friction remains after implementation or diagnosis, use `refact`.
-- Browsing/unsure what to pick: `dev-mode-help`, or say it in plain words and let `pi-dev-mode` route.
+- Browsing/unsure what to pick: say it in plain words and let `pi-dev-mode` route; the human opens the full catalog with `/skill:dev-mode-help`.

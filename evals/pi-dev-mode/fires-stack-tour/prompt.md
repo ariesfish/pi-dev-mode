@@ -1,10 +1,9 @@
 ---
 description: >-
-  An orientation request from a new teammate must get the whole stack tour —
-  what the pieces are, how they chain, where things live — not a route for one
-  task.
+  An orientation request from a new teammate must be answered from the router —
+  the pieces, how they chain, where things live — not a route for one task.
 kind: dialogue
-target: dev-mode-help:fires
+target: pi-dev-mode:fires
 expected_outcome: >-
   The reply gives a stack map: the pieces grouped by stage, how they chain into a
   lifecycle, and where the mode/mandate/config live.

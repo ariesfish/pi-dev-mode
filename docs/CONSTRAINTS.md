@@ -18,7 +18,7 @@ Last reviewed: 2026-10-26 by the review-gate round (quantitative gate: CRAP / du
 
 | Dimension | Rule | Checked by | Runs at |
 |-----------|------|-----------|---------|
-| Skill-tree integrity | frontmatter/H1/交叉引用/指针 lint exit 0 | `python3 scripts/check-skills.py` | task end + CI(check.sh) |
+| Skill-tree integrity | frontmatter/H1/交叉引用/指针/跨技能重复/描述词数上限 lint exit 0 | `python3 scripts/check-skills.py` | task end + CI(check.sh) |
 | Gates semantics | test-gates 全断言绿(当前 29) | `bash scripts/test-gates.sh` | task end + CI(check.sh) |
 | Prose(deslop) | 新增行 slop 命中 = 0 | `python3 scripts/check-prose.py`(增量,环境感知 base) | task end + CI(check.sh) |
 | Full acceptance | 一条命令全绿:skills/gates/prose/ADR checker selftest + adapters 16 件缝测试 + pi 扩展套件(在场时)+ numbers sync + pi typecheck + tsv 证据指针 + codecheck doctor + 327-test 套件(引擎在验收面内) | `bash scripts/check.sh` | task end + CI |
@@ -37,7 +37,8 @@ Last reviewed: 2026-10-26 by the review-gate round (quantitative gate: CRAP / du
 | adapters 缝测试 | 16/16 | must not fall |
 | pi 扩展测试 | 163/163 | must not fall |
 | pi 类型精确化噪音(tsc 错误实例,非行数) | 26(2026-10-26 审计后;原 43 含 11 处幻影 import) | ratchet 向下(增量严化,不走一次性清零) |
-| eval 覆盖技能 | 30/30 | must not fall(有 fires 案的技能/总技能);含 2 个已知红案(research/refact,见 evals/skill-impact.md)——红案是记录中的缺口,不是待办 |
+| description 总词数(常驻指针) | 2384 | 只降不升:新增分支先删旧分支;单条上限 120 由 check-skills 硬拦,总量是 review 时的判断线 |
+| eval 覆盖技能(model-invoked) | 29/29 | must not fall(有 fires 案的技能/总技能;`dev-mode-help` 是 user-invoked,没有模型侧触发面);含 2 个已知红案(research/refact,见 evals/skill-impact.md)——红案是记录中的缺口,不是待办 |
 | 账本 D 门首过率 | 0.56 | 观察(RED-first 纪律刻意压低,非事故) |
 | blocked items / verdict flips | 0 / 0 | 0 |
 | 重放函数覆盖数 | 2(AgentRunner.restore / DurableEngine.reattach) | must not fall |

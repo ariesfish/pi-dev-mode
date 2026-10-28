@@ -10,7 +10,7 @@
 
 | 阶段 | 技能 | 做什么 |
 |---|---|---|
-| 路由 | pi-dev-mode / dev-mode-help | 按任务类型自动进对应流程; 一张技能地图 |
+| 路由 | pi-dev-mode / dev-mode-help | 按任务类型自动进对应流程; 完整技能地图手动打开 (`/skill:dev-mode-help`) |
 | 探路 | scout / research / proto | 方向不明时先调研、做原型, 把关键决策定下来再动手 |
 | 立项 | spec / grill-me / constraints / ui-design | 把想法写成带验收标准的规格, 接受方案拷问, 定下质量门槛; UI 承重工作先落 DESIGN.md 设计契约 |
 | 拆票 | tickets / triage-issue | 规格拆成可独立实现的工单, Issue 分诊进状态机 |

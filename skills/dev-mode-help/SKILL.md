@@ -1,15 +1,16 @@
 ---
 name: dev-mode-help
 description: >-
-  One-page discovery map for this stack: which skill for which situation, how
-  they chain into a lifecycle, and where the mode, mandate, and host mapping
-  live. Use when exploring the stack, or when introducing it to a new session
-  or teammate. Chinese triggers: 这个栈怎么用, 技能地图, 介绍给新队友.
+  One-page discovery map for this stack: the skill catalog, how the pieces
+  chain into a lifecycle, and where the mode, mandate, and host mapping live.
+  Read it when you want the tour; the router that picks the next skill is
+  `pi-dev-mode`.
+disable-model-invocation: true
 ---
 
 # Dev Mode Help
 
-Skill catalog, not a second router. When in doubt, say what you want in plain words and let `pi-dev-mode` route — the situation→skill routing table lives once, in its **Routing** section. This page is what each skill is, how they chain, and where things live.
+Skill catalog, not a second router. Read by hand (`/skill:dev-mode-help`), never auto-invoked: when in doubt, say what you want in plain words and let `pi-dev-mode` route — the situation→skill routing table lives once, in its **Routing** section. This page is what each skill is, how they chain, and where things live.
 
 ```text
 setup ─→ repo-map ─→ code-map ─→ research ─→ grill-me ─→ proto ─→ spec ─→

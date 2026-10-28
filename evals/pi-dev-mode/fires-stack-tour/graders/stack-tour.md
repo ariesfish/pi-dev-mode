@@ -4,7 +4,8 @@ type: llm
 
 PASS if the reply gives the whole map: the pieces grouped by lifecycle stage,
 how they chain, where the mode/mandate/config live — orientation for someone who
-has no task yet.
+has no task yet. It may read the catalog file if it finds it; the point is the
+router carried the tour.
 
 FAIL if it routes a single task, asks what the user wants to build before
 explaining anything, or lists only a handful of skills with no chain and no

@@ -47,7 +47,7 @@ Three questions, in order: **which stage, what shape, how much fog?**
 | A git commit message is about to be written | `commit` (English conventional subject, staged-files-only, never push; squash/rebase are NOT its lane) |
 | Release notes / the changelog needs updating (ship prep) | `changelog` (Unreleased section, last tag..HEAD, the file's own style) |
 | Unfamiliar code area / whole repo | `code-map` / `repo-map` |
-| "Which skill for what" — stack overview for a new session or teammate | `dev-mode-help` |
+| "Which skill for what" — stack overview for a new session or teammate | answer from this Routing table; the human opens the `dev-mode-help` catalog with `/skill:dev-mode-help` |
 
 **Scope test (before the fog test):** count the areas or modules the task names. More than one is not a ticket — it is a ticket graph missing its split. Routing a multi-area blob to `implement` buries the split, the tracker bootstrap, and the frontier; sort it into tickets first.
 

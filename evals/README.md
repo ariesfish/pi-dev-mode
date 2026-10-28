@@ -110,7 +110,7 @@ cwd(候选的 cwd 即项目根)供 read 考察;execution 档以 fixture 内容�
 
 ## 覆盖状态(2026-10-26)
 
-30/30 技能有 `:fires` 案;`docs/CONSTRAINTS.md` 的 Measured 行由
+29/29 个 model-invoked 技能有 `:fires` 案(`dev-mode-help` 是 user-invoked:frontmatter `disable-model-invocation: true`,不进系统提示,只走 `/skill:dev-mode-help`,没有模型侧触发面可测);`docs/CONSTRAINTS.md` 的 Measured 行由
 `check-numbers.py` 从树里派生(fires 案标记的技能 ∩ `skills/*`),对不上即红。
 新增一张 fires 案的最小形状:一个有机 prompt + 一条能真红的 grader——判分点
 写成"PASS 需要什么、FAIL 的典型形态",不要写成"看起来专业即通过"。
