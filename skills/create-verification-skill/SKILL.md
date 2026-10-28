@@ -40,9 +40,21 @@ steps.
 
 ## 2. Generate the skill
 
-Write `.pi/skills/verify-<app>/SKILL.md` (`name: verify-<app>`, description
-naming the app, the main surface, and when to use it) with these sections, each grounded in what the interview
-actually found (no placeholders left):
+Write `.pi/skills/verify-<app>/SKILL.md` with these sections, each grounded
+in what the interview actually found (no placeholders left). The generated
+file is a skill, so it follows the same bar as this package's own
+(`../../references/skill-writing.md`):
+
+- **Description:** what it verifies plus the distinct situations that should
+  reach it — one trigger per situation, no synonym pile, 120 words or fewer.
+  It is loaded every turn; the body loads only when it fires.
+- **Body is a router:** launch, doctor, drive, evidence, cleanup each appear
+  once. Feature-specific routes and end states live in `features/` and point
+  back at the shared recipe instead of restating it.
+- **Completion criterion per section:** ready means usable, doctor is one
+  command, drive names real handles, evidence survives cleanup.
+
+Sections:
 
 - **Launch:** the exact command that starts the app for verification and how to
   tell it's ready (a log line, a prompt). Ready means usable, not just answering.
@@ -74,7 +86,10 @@ how to reach it, how to drive it with the harness, and what observable end state
 proves it works — four H2s: `Sub-features` / `How to get to it (user POV)` /
 `Driving it with <harness>` / `Gotchas`. A journey whose seed data lacks
 preconditions must FAIL honestly with the reason recorded in Gotchas — never
-loosen it green. The map is the repo's maintained verification
+loosen it green. A feature file is done when its four H2s carry observed
+values, its end state is one observable predicate, and every Gotcha names the
+trigger that reveals it. Past one screen, split it by sub-feature; the map
+README stays an index, not a second copy of the files. The map is the repo's maintained verification
 source — the domain-skills compounding mechanism: every fixed pitfall
 deposits its recipe into the map. A frozen repro loop (`diagnose`'s
 freeze-the-loop section) is a first-class seed: when one exists for a

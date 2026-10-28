@@ -15,6 +15,8 @@ pi-dev-mode routes to the right skill from there; when the intent is already spe
 
 Tool and host conventions: the skills occasionally name Claude Code conventions (the Skill tool, the Agent tool, AskUserQuestion) or model family names. `references/pi-host.md` is the single translation authority — read it when one appears.
 
+Writing or editing a skill, a description, or an AGENTS.md pointer: read this package's `references/skill-writing.md` first.
+
 Headless one-shot sessions (-p / no user present): nobody will answer mid-run
 questions — an ask is terminal, not a pause. For a multi-area or whole-set task,
 the final reply IS the deliverable: the split table (tickets + scope + one-line
