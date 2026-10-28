@@ -6,21 +6,26 @@ Validated, in order:
      (a regex frontmatter check let a broken quoted description through once —
      see benchmark-checklist's P2.1 changelog)
   2. name present and equals the skill's directory name (skills only)
-  3. description present, non-empty, and carries Chinese triggers
+  3. description present and non-empty; model-invoked descriptions carry
+     Chinese triggers and stay under the 120-word pointer budget (user-invoked
+     descriptions are human-facing: no trigger list, no budget)
   4. H1 agrees with the frontmatter name: normalize (lowercase alphanumerics,
      drop a/an/the from the H1), then name must equal or be contained in the
      H1 (the P5.2/P6 renames once left three stale H1s behind — # Tasks,
      # Align, # Use the Stack — nothing caught them)
   5. no duplicated long paragraph (>=80 chars, verbatim): a P0 audit found
      one in grill-me riding as tokens on every firing
-  6. cross-references on every authored surface (skills, agents, package
+  6. no clause (>=14 normalized words) repeated across two skills: the
+     duplicate-paragraph pass above keeps `seen` inside one file, so cross-file
+     boilerplate (the tracker-bootstrap oath sat in five skills) rode unseen
+  7. cross-references on every authored surface (skills, agents, package
      README, references/, hooks/, gates/): a backtick `skill-name` token
      directly adjacent to "skill/技能" must resolve to an existing skill
-     directory or be a mounted upstream name (see check 8), and must never
+     directory or be a mounted upstream name (see check 9), and must never
      be a RETIRED name (died in the P5.2/P6 rename waves: issues, tasks,
      wayfinder, align, use-the-stack, prd). references/README.md once
      mapped `spec → issues` for weeks because the scan stopped at skills/.
-  7. pointer files in skill bodies: backticked or md-linked paths under this
+  8. pointer files in skill bodies: backticked or md-linked paths under this
      package's own trees (references/ scripts/ gates/ skills/ agents/
      adapters/ hooks/ pi/ evals/) resolve from the skill's own directory or
      the package root. Target-repo placeholders (docs/GLOSSARY.md, .dev/*,
@@ -28,7 +33,7 @@ Validated, in order:
      A tool that only resolves at the package root (gates/gate.sh,
      scripts/check-code.sh, …) must be qualified "this package's …": bare, it
      reads as a target-repo path that does not exist there.
-  8. phantom agents (the drift class of 2026-10-22's audit, caught alive:
+  9. phantom agents (the drift class of 2026-10-22's audit, caught alive:
      skills taught `ask_user` (real tool: ask_user_question) and a `viewer`
      agent type this package never registers (it ships image-reader)):
      - a backticked token directly adjacent to "skill/技能" must be an
@@ -49,6 +54,7 @@ Exit 0 = green. Requires PyYAML (python3 -m pip install pyyaml).
 
 from __future__ import annotations
 
+import itertools
 import re
 import sys
 from pathlib import Path
@@ -138,6 +144,37 @@ PACKAGE_TOOLS = ("scripts/check-code.sh", "scripts/assert-branch.sh",
                  "scripts/task.sh", "gates/gate.sh")
 
 H1_STOPWORDS = {"a", "an", "the"}
+
+# A model-invoked description is an always-loaded pointer: every word rides on
+# every turn. 120 is the current worst case (show-me), so this is a guardrail
+# against growth, not a ratchet — pruning needs the eval gate.
+DESCRIPTION_MAX_WORDS = 120
+
+# Cross-file duplication threshold, in normalized words. 14 catches the
+# tracker-bootstrap oath, the acceptance-label triad, the adversarial prompt
+# and the check-code preamble; shorter shared runs are ordinary domain
+# vocabulary (module, interface, seam) and are not findings.
+CLAUSE_WORDS = 14
+
+
+def is_user_invoked(fm: dict) -> bool:
+    """True when the frontmatter hides the skill from the model. The stdlib
+    fallback parser returns strings, PyYAML returns a bool — accept both, or the
+    trigger check fails only on machines without PyYAML."""
+    value = fm.get("disable-model-invocation")
+    return value is True or (isinstance(value, str) and value.strip().lower() == "true")
+
+
+def word_count(text: str) -> int:
+    """Mixed CJK/Latin count: one CJK char = one word, Latin token = one word."""
+    return len(re.findall(r"[\u4e00-\u9fff]|[A-Za-z][A-Za-z0-9_.-]*", text))
+
+
+def body_tokens(text: str) -> list[str]:
+    """Lowercased ASCII word tokens for clause comparison (CJK text is not
+    scanned: the 14-word threshold is calibrated on English prose, and a CJK
+    n-gram would flag ordinary domain vocabulary)."""
+    return re.findall(r"[a-z0-9][a-z0-9'_.-]*", text.lower())
 
 # pi core tools (this package's own come from pi/*.ts registerTool calls).
 # pi's built-ins a skill body may name beside the word "tool".
@@ -247,8 +284,15 @@ def main() -> int:
         fm_names[f] = str(fm["name"])
         if f.parent.name != "agents" and fm["name"] != f.parent.name:
             failures.append(f"{rel}: name {fm['name']!r} != directory {f.parent.name!r}")
-        if "Chinese triggers" not in re.sub(r"\s+", " ", fm["description"]):
-            failures.append(f"{rel}: description carries no Chinese triggers")
+        if not is_user_invoked(fm):
+            if "Chinese triggers" not in re.sub(r"\s+", " ", fm["description"]):
+                failures.append(f"{rel}: description carries no Chinese triggers")
+            words = word_count(fm["description"])
+            if words > DESCRIPTION_MAX_WORDS:
+                failures.append(
+                    f"{rel}: description is {words} words (cap {DESCRIPTION_MAX_WORDS}) — "
+                    "the pointer rides on every turn; prune a synonym or a lane restatement"
+                )
         # duplicate ## headings: P4 once landed two "## Reply contract"
         # sections in one skill; nothing caught it. Proven on that history.
         heads = re.findall(r"^## (.+)$", text, re.M)
@@ -375,6 +419,40 @@ def main() -> int:
             if n != inv and f"`{n}`" not in t:
                 failures.append(f"skills/{inv}/SKILL.md: skill `{n}` missing from this inventory surface")
 
+    # cross-file duplication: a clause repeated in two skills is a second
+    # maintenance point, and the per-file pass above cannot see it. Same
+    # normalized 14-word window in two different skills = one finding per
+    # contiguous shared run.
+    tokens_by_skill = {}
+    for f in skill_files:
+        text = f.read_text(encoding="utf-8")
+        m = re.match(r"^---\n(.*?)\n---\n", text, re.S)
+        if m:
+            tokens_by_skill[f.relative_to(root)] = body_tokens(text[m.end():])
+    shingle_sets = {
+        rel: {tuple(toks[i:i + CLAUSE_WORDS]) for i in range(len(toks) - CLAUSE_WORDS + 1)}
+        for rel, toks in tokens_by_skill.items()
+    }
+    for a, b in itertools.combinations(sorted(tokens_by_skill), 2):
+        ta = tokens_by_skill[a]
+        sb = shingle_sets[b]
+        hits = [
+            i for i in range(len(ta) - CLAUSE_WORDS + 1)
+            if tuple(ta[i:i + CLAUSE_WORDS]) in sb
+        ]
+        runs: list[list[int]] = []
+        for i in hits:
+            if runs and i == runs[-1][1] + 1:
+                runs[-1][1] = i
+            else:
+                runs.append([i, i])
+        for start, end in runs:
+            span = ta[start:end + CLAUSE_WORDS]
+            failures.append(
+                f"{a} / {b}: {len(span)}-word clause duplicated across skills "
+                f"({' '.join(span)[:120]!r}…) — keep it in one skill and point the other at it"
+            )
+
     # evals/: structure + leak lint (cases are candidate-facing)
     evals_root = root / "evals"
     fx_root = evals_root / "fixtures"
@@ -429,7 +507,7 @@ def main() -> int:
         for f in failures:
             print(f"FAIL {f}")
         return 1
-    print("OK: frontmatter, names, triggers, H1s, cross-references (retired-safe), pointers, duplicate paragraphs")
+    print("OK: frontmatter, names, triggers, H1s, cross-references (retired-safe), pointers, duplicate paragraphs, cross-file clauses")
     return 0
 
 

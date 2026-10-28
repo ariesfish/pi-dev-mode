@@ -36,7 +36,7 @@ Five **state** roles — vocabulary and meanings single-sourced in
 
 Every triaged issue should carry exactly one category role and one state role. If state roles conflict, flag it and ask the maintainer before doing anything else.
 
-These are canonical role names — the actual label strings used in the issue tracker may differ. The mapping should have been provided by `setup`. If missing, bootstrap it in place under the one-confirmation oath (single source: `skills/setup/references/issue-tracker.md`) — evidence-read, one confirmation, seed `docs/agents/`, then continue the triage this skill was invoked for. Never stop and send the user away, and never open a second interrogation turn for the tracker alone.
+These are canonical role names — the actual label strings used in the issue tracker may differ. The mapping should have been provided by `setup`. If missing, run the one-confirmation bootstrap in `skills/setup/references/issue-tracker.md`, then continue this triage. Never stop and send the user away, and never open a second interrogation turn for the tracker alone.
 
 State transitions: an unlabeled issue normally goes to `needs-triage` first; from there it moves to `needs-info`, `ready-for-agent`, `ready-for-human`, or `wontfix`. `needs-info` returns to `needs-triage` once the reporter replies. The maintainer can override at any time — flag transitions that look unusual and ask before proceeding.
 

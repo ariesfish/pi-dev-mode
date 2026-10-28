@@ -38,30 +38,11 @@ Where the content comes from, in order:
 ## Scope test: one module or a capability map
 
 Default to a single spec. Recurse only when the requirement names distinct
-capabilities with their own consumers or data (identity, billing,
-notifications), when acceptance criteria cluster into separately shippable
-groups, or when one capability could be cut without rewriting the others.
-
-**Propose a capability map before writing any module spec** — a module table
-plus a build order, reviewed like every gate:
-
-```markdown
-# Capability Map: [Initiative]
-
-| Module id | Responsibility | Depends on |
-|---|---|---|
-| identity | Accounts, sessions, SSO | — |
-| billing | Plans, invoices, payments | identity |
-
-Build order: identity → billing
-```
-
-- Stable kebab-case ids, chosen once. Specs, slices, and builds select work
-  by these ids.
-- Dependency arrows point one way; a cycle means one module.
-- The map, not filename guessing, is the index: a multi-module initiative
-  lands inside that initiative's feature dir `.dev/<initiative>/` — `map.md`
-  plus one `SPEC-<id>.md` per module alongside it.
+capabilities with their own consumers or data, when acceptance criteria
+cluster into separately shippable groups, or when one capability could be cut
+without rewriting the others. The map format, id rules, and feature-dir layout
+are in [references/capability-map.md](references/capability-map.md) — read it
+when the scope test says "capability map".
 
 ## Phase 2: Write the spec
 

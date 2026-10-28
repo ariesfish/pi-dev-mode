@@ -18,9 +18,9 @@ Implement the work described by the user in the spec or tickets.
 
 If the user passes a ticket reference, fetch it from the issue tracker and state its title before starting. If the reference is ambiguous, ask.
 
-If the tracker config is missing, bootstrap it in place under the one-confirmation oath (single source: `skills/setup/references/issue-tracker.md`) — then fetch the ticket. Never a detour through `setup`.
+If the tracker config is missing, bootstrap per `skills/setup/references/issue-tracker.md` (one confirmation), then fetch the ticket — never a detour through `setup`.
 
-Read the ticket's acceptance criteria before starting. Three labels: `[check: <command>]` runs the command; `[evidence: <procedure>]` follows the procedure and captures the artifact; `[judgment: <who>]` surfaces the question instead of deciding it. A `[judgment]` you find yourself deciding is a stop-and-ask.
+Read the ticket's acceptance criteria before starting: `[check]` runs, `[evidence]` captures, `[judgment]` is a stop-and-ask; `spec` owns their definitions.
 
 Call the Skill tool with `tdd` where possible, at pre-agreed seams. The `tdd` cost gate applies: an expensive test path falls back to the closest executable check, recorded as `skip-test: <reason> | fallback: <check>` in the decision trail.
 

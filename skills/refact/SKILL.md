@@ -52,28 +52,31 @@ Apply the **deletion test** to anything you suspect is shallow: would deleting i
 
 ### 2. Present candidates
 
-The first reply is a **pick-list, not a plan**. It ends with the numbered candidates and one question — "which would you like to explore?" — and contains **no interface signatures, no recommended winner, no ordering of the work**. A reply that picks a design and sequences it has skipped this skill's whole point: the human chooses the cut, the deeper module is designed afterwards.
+The first reply is a **pick-list**. Fill this shape, one block per candidate,
+then close with the question; the step is done when the user picks:
 
-Present a numbered list of deepening opportunities. For each candidate:
+```
+1. Files — <which files/modules are involved>
+   Problem — <why the current architecture causes friction>
+   Solution — <plain English: what would change>
+   Benefits — <locality and leverage, and how tests improve>
+2. …
 
-- **Files** — which files/modules are involved
-- **Problem** — why the current architecture is causing friction
-- **Solution** — plain English description of what would change
-- **Benefits** — explained in terms of locality and leverage, and also in how tests would improve
+Which would you like to explore?
+```
+
+A reply that also designs the chosen interface has run ahead of the user; the
+human picks the cut, the deeper module is designed in step 3. The pick-list
+leaves interface signatures, a recommended winner, and work ordering to that
+step.
 
 **Use docs/GLOSSARY.md vocabulary for the domain, and [references/LANGUAGE.md](references/LANGUAGE.md) vocabulary for the architecture.** If `docs/GLOSSARY.md` defines "Order," talk about "the Order intake module" — not "the FooBarHandler," and not "the Order service."
 
 **ADR conflicts**: if a candidate contradicts an existing ADR, only surface it when the friction is real enough to warrant revisiting the ADR. Mark it clearly (e.g. _"contradicts ADR-0007 — but worth reopening because…"_). Don't list every theoretical refactor an ADR forbids.
 
-Do NOT propose interfaces yet. Ask the user: "Which of these would you like to explore?"
-
 ### 3. Grilling loop
 
-Once the user picks a candidate, drop into a grilling conversation. Walk the design tree with them — constraints, dependencies, the shape of the deepened module, what sits behind the seam (the dependency classes that decide how a deepened module crosses its seam sit in [references/DEEPENING.md](references/DEEPENING.md)), what tests survive.
-
-Side effects happen inline as decisions crystallize:
-
-- **Naming a deepened module after a concept not in `GLOSSARY.md`?** Add the term to `docs/GLOSSARY.md` — same discipline as `grill-me` (see [../../references/glossary-format.md](../../references/glossary-format.md)). Create the file lazily if it doesn't exist.
-- **Sharpening a fuzzy term during the conversation?** Update `docs/GLOSSARY.md` right there.
-- **User rejects the candidate with a load-bearing reason?** Offer an ADR, framed as: _"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"_ Only offer when the reason would actually be needed by a future explorer to avoid re-suggesting the same thing — skip ephemeral reasons ("not worth it right now") and self-evident ones. See [../../references/adr-format.md](../../references/adr-format.md).
-- **Want to explore alternative interfaces for the deepened module?** See [references/INTERFACE-DESIGN.md](references/INTERFACE-DESIGN.md).
+Once the user picks a candidate, read
+[references/DEEPENING-CONVERSATION.md](references/DEEPENING-CONVERSATION.md)
+and run that loop. The pick-list is the whole first reply; the loop starts
+after the pick.

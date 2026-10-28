@@ -26,13 +26,9 @@ spawning anything.
 ## Step 0 — the numbers
 
 Run the quantitative gate over the same fixed point before any lens reads the
-diff:
-
-```bash
-# PKG = this package's root (its skill directory's ../..); run from the target repo
-PKG=<pi-dev-mode-package>
-bash "$PKG/scripts/check-code.sh" review --since <fixed-point> --evidence
-```
+diff — the exact command is
+[references/quantitative-gate.md](references/quantitative-gate.md) §Commands
+(`review --since <fixed-point> --evidence`, from the target repo).
 
 It measures CRAP per function, structural duplication, and (with `--mutants`)
 mutation survivors, then writes `.dev/audit/evidence/check-code-<sha>-<stamp>.txt`.
@@ -79,14 +75,9 @@ action (delete / rewrite as WHY / encode as check).
 
 ### Lens 3 — Adversarial doubt
 
-```
-Adversarial review. Find what is WRONG with this diff. Assume the author is
-overconfident. Look for: unstated assumptions, unhandled edge cases, hidden
-coupling or shared state, ways the change breaks under unexpected input,
-conventions it violates, failure modes in the error paths themselves. Do NOT
-validate. Do NOT summarize. Find issues, or state explicitly that you cannot
-find any. Under 400 words.
-```
+Point the reviewer at `skills/doubt/SKILL.md` §3 DOUBT and paste its
+adversarial prompt unchanged, with this diff as the ARTIFACT and the review
+scope as the CONTRACT. Under 400 words.
 
 ### Lens 4 — Constraints audit
 
@@ -106,25 +97,10 @@ a finding at the same severity as a weakened check.
 
 Runs only when the diff touches UI-bearing code (TSX/JSX/HTML/CSS/SCSS,
 Flutter dart, React Native); no UI code in the diff → the lens reports "no
-UI-bearing changes, design axis n/a" and nothing else.
-
-- **Mechanical tier**: run `node skills/ui-design/scripts/audit-ui.mjs
-  <changed-file-dirs>` (zero-dependency, 182 rules: web/css/flutter/
-  react-native) — findings are objective file:line report rows carrying the
-  audit's severity. Then check the diff's UI values against the repo-root
-  DESIGN.md tokens: a color/size/spacing not in the contract is a finding,
-  citing both the file:line and the DESIGN.md section it violates (no
-  DESIGN.md → say so, the way lens 1 says "no spec available").
-- **Guidelines tier**: judge the diff's UI craft against the vendored Vercel
-  web interface guidelines at `skills/ui-design/references/web-guidelines.md`
-  (layout, typography, color, motion, accessibility) — a violation cites the
-  guideline and the file:line.
-- **Visual tier**: any claim about how things LOOK must come from the
-  `pi-dev:image-reader` agent — spawn it with `subagent_type:
-  pi-dev:image-reader` (capture-based: it reads the rendered screenshot,
-  never the code). A reviewer inferring visual conclusions from code is a
-  protocol violation — the same never-self-assess-on-a-model-that-cannot-see
-  rule `implement` runs on builders.
+UI-bearing changes, design axis n/a" and nothing else. The mechanical,
+guidelines, and visual tiers live in
+[references/design-lens.md](references/design-lens.md); the lens prompt points
+the reviewer there.
 
 ## Aggregate
 

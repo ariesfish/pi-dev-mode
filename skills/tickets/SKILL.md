@@ -11,7 +11,7 @@ description: >-
 
 Break a plan into independently-grabbable tickets (vertical slices, tracer bullets). This skill sits after `grill-me` or `spec` in the developer workflow and before `tdd` implementation; incoming reports route to `triage-issue`.
 
-The tracker and triage label vocabulary should have been provided by `setup`. If missing, bootstrap it in place under the one-confirmation oath (single source: `skills/setup/references/issue-tracker.md`): read the repo evidence, seed `docs/agents/` from the setup references, continue slicing — never send the user away. Slicing-specific fold: the tracker choice joins the ONE bundle confirmation of Step 4, never its own interrogation turn.
+The tracker and triage label vocabulary should have been provided by `setup`. If missing, bootstrap per `skills/setup/references/issue-tracker.md` (one confirmation; seed `docs/agents/`), then continue slicing — never send the user away. Slicing-specific fold: the tracker choice joins the ONE bundle confirmation of Step 4, never its own interrogation turn.
 
 ## Process (slicing)
 
