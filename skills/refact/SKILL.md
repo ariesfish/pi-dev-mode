@@ -61,14 +61,18 @@ then close with the question; the step is done when the user picks:
    Solution — <plain English: what would change>
    Benefits — <locality and leverage, and how tests improve>
 2. …
+```
 
+Then close with your cut and the question:
+
+```
+My cut: <candidate N> — <one-line why, tied to leverage and locality>.
 Which would you like to explore?
 ```
 
-A reply that also designs the chosen interface has run ahead of the user; the
-human picks the cut, the deeper module is designed in step 3. The pick-list
-leaves interface signatures, a recommended winner, and work ordering to that
-step.
+Naming a cut and a suggested order is allowed: it is a judgement the user can
+override. Designing the chosen interface belongs to step 3 — the step is done
+when the user picks.
 
 **Use docs/GLOSSARY.md vocabulary for the domain, and [references/LANGUAGE.md](references/LANGUAGE.md) vocabulary for the architecture.** If `docs/GLOSSARY.md` defines "Order," talk about "the Order intake module" — not "the FooBarHandler," and not "the Order service."
 
