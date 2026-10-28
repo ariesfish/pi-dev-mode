@@ -1,0 +1,8 @@
+{
+  "name": "flaky-login",
+  "private": true,
+  "scripts": {
+    "test": "node test/login.test.js",
+    "repro": "node src/login.js 3"
+  }
+}
