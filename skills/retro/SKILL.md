@@ -90,8 +90,10 @@ findings; a class counts once it has happened twice.
    findings about this stack's skills.
 
 5. **Apply with approval.** Present the full list; the user picks the subset
-   and may redirect routings — skill edits affect every future agent. Trivial
-   edits (a line, a stale fact) apply directly after approval; **substantive
+   and may redirect routings — skill edits affect every future agent. Read
+   `../../references/skill-writing.md` before drafting (the one-page bar for
+   pointers, hierarchy, completion criteria, pruning). Trivial edits (a line,
+   a stale fact) apply directly after approval; **substantive
    edits (a description/trigger change, a changed protocol) route through the
    `eval` skill first**: trigger changes rerun the case bank, protocol changes
    run a variant A/B — only eval-passing edits apply, and rejected ones get a

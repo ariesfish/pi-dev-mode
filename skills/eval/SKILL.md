@@ -76,6 +76,10 @@ stay quiet where it must not.
 The promotion experiment: does the candidate change outcomes, and is that
 better?
 
+0. **Name the lever.** Read `../../references/skill-writing.md` first: is the
+   variant pulling the pointer, the hierarchy, a completion criterion, or a
+   negation? The framing sentence should name which one — a variant that changes
+   two levers cannot teach which one worked.
 1. **Frame.** One sentence: what variant is under test, what observable
    behavior counts as success. Write a 3–6 criterion rubric **for the judge
    only**. Hold it back from candidates.
@@ -93,9 +97,30 @@ better?
    Judge-vs-you disagreement means either a biased judge or an ambiguous
    rubric — resolve it, don't average it.
 
+## Mode C — equivalence ablation (for pruning / no-op claims)
+
+Pruning claims a sentence buys nothing. That is an equivalence question, and
+Mode B's "is the candidate better?" verdict cannot answer it.
+
+1. Same task, same prompt, two trees differing by **one** clause or paragraph.
+2. Run N per arm exactly as Mode B.
+3. Judge blind on two things: did the observable outcome hold (same chain
+   opened, same decision, same artifact), and did the reply shape change?
+4. Accept only when the outcome holds **and** the cost drops — description
+   words of the tree, body words the candidate actually opened. An equivalence
+   win with no cost drop is churn; a cost drop with a changed outcome is a
+   Mode B question.
+
+## Cost ledger (both modes)
+
+Record on every run: description words of the tree under test; body words of
+the skills the transcript actually opened; tool calls to the first correct
+action. A pointer edit that keeps triggering but adds words is not a win:
+`docs/CONSTRAINTS.md` carries the budget row, and the verdict cites the delta.
+
 ## Reply
 
-Variant under test, rubric, per-candidate notes (transcript evidence, not
-self-report), judge's verdict, your synthesis, and a recommendation: promote,
-revise, or reject-with-ledger-row. Never promote on judge verdict alone when
-your own reading disagrees.
+Variant under test, the lever it pulls, rubric, per-candidate notes (transcript
+evidence, not self-report), cost delta, judge's verdict, your synthesis, and a
+recommendation: promote, revise, or reject-with-ledger-row. Never promote on
+judge verdict alone when your own reading disagrees.

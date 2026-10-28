@@ -25,6 +25,7 @@
 - security-checklist / accessibility-checklist → `code-review` Standards 轴(域命中时审)
 - performance-checklist / observability-checklist → `constraints` 维度素材
 - definition-of-done → `implement` 完成报告前的常设门槛
+- skill-writing → `retro` / `eval` 的写作判据(**本仓原创**,非挂载;原文依据 mattp `writing-for-agents`)
 - testing-patterns → `tdd` 原则的 JS/TS 示例
 - orchestration-patterns → `implement-all` PARALLEL 编排纪律(含 persona 资料)
 
