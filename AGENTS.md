@@ -12,7 +12,7 @@ pi-dev-mode 的仓库指令。本仓库是一个 pi 包(pi 包清单见 package.
 ### Issue tracker
 
 本地文件 tracker：实现工作记录在 `.dev/` 下(feature-first，每需求一个
-`feature-<slug>/` 目录；未归属入件进 `.dev/inbox/`;`/.dev/` 属 gitignore,
+`feature-<slug>/` 目录；未归属入件进 `.dev/inbox/`;`/.dev/` 是否纳入 git 由 repo 决定,
 单开发者的过程记忆，从不推送)。T-id 跨需求全库唯一，只追加不重排。
 见 `docs/agents/issue-tracker.md`。
 

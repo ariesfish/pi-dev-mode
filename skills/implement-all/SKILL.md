@@ -28,7 +28,7 @@ this skill hands work to.
    Multiple features in flight: glob `.dev/*/plan.md` and take the union of
    per-feature frontiers. If absent, invoke `tickets` to generate one.
 3. **A clean baseline**: `git status --porcelain` shows nothing outside
-   expected planning artifacts (`.dev/*` — process memory, gitignored).
+   expected planning artifacts (`.dev/*` — process memory).
    Autonomous and parallel commits must not absorb unrelated local work, or
    the clean-rollback guarantee breaks.
 

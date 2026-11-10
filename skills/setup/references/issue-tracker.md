@@ -1,11 +1,27 @@
 # Issue Tracker: Local Files (.dev/)
 
-This repo tracks issues as plain files under `.dev/` — per-developer process
-memory. Put `/.dev/` in `.gitignore`: its contents are one developer's
-in-flight working set, never pushed, never shared as team record. The durable,
-team-shared record is the merged code, commits, and `docs/adr/`. No tracker
-service, no CLI — every skill reads and writes these files through plain file
-edits.
+This repo tracks issues as plain files under `.dev/` — process memory for the
+work in flight. No tracker service, no CLI: every skill reads and writes these
+files through plain file edits. The durable, team-shared record is always the
+merged code, commits, and `docs/adr/`.
+
+## Track it or ignore it — decide by who works on the repo
+
+Put `/.dev/` in `.gitignore`, **or track it. This is a decision, not a
+default**, and getting it wrong is expensive in exactly one direction: an
+ignored `.dev/` is a ticket graph that exists on one machine and vanishes when
+the work moves.
+
+| Situation | Track `.dev/`? | Why |
+|---|---|---|
+| one owner, more than one machine | **yes** | the graph, the spec and the evidence are the only things a clone does not carry; a half-done feature dir lost on a laptop is the cost |
+| a team, or a public repo | no | it churns in every commit and the shared record is the code, commits and ADRs |
+| shared repo, heavy artifacts | the text yes, the artifacts no | `runs/`, screenshots and fixtures are evidence, not source |
+
+Two things stay ignored either way: `.dev/worktrees/` (physical git worktrees)
+and `*.sqlite` / agent session state. A tracked `.dev/` whose artifacts are
+large is the one version that costs more than it buys — if `du -sh .dev` clears
+a few MB, ignore the heavy subdirectory instead of the whole tree.
 
 ## Layout: feature-first
 
@@ -117,7 +133,7 @@ tracker the repo shows no evidence for. The stance, in full:
    (a bundle the skill was about to ask anyway) takes it in; no separate
    interrogation turn is opened for the tracker alone.
 3. On no signal at all, recommend local files under `.dev/`: zero service
-   dependencies, per-developer, gitignored.
+   dependencies. Track or ignore it by the rule above; ask which, don't assume.
 4. Seed `docs/agents/` from this skill set's (`setup`'s) references, then
    continue the work the invoking skill was invoked for — never a detour.
 

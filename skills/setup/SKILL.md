@@ -63,7 +63,7 @@ Explain that engineering skills publish, read, label, and close work items throu
 Default to:
 
 - **GitHub** when a remote points at GitHub. Use `references/issue-tracker-github.md` as the seed.
-- **Local files (.dev/, feature-first)** when the repo shows `.dev/<slug>/plan.md` or `.dev/inbox/`, or has no remote issue tracker, or the user prefers local files. Use `references/issue-tracker.md` as the seed: one slugged directory per feature — `spec.md` + `plan.md` + `todo.md` + `tickets/`; unattributed intake in `.dev/inbox/`; `/.dev/` is gitignored — per-developer process memory, never pushed; skills read and write through plain file edits.
+- **Local files (.dev/, feature-first)** when the repo shows `.dev/<slug>/plan.md` or `.dev/inbox/`, or has no remote issue tracker, or the user prefers local files. Use `references/issue-tracker.md` as the seed: one slugged directory per feature — `spec.md` + `plan.md` + `todo.md` + `tickets/`; unattributed intake in `.dev/inbox/`; tracked or ignored per the same reference; skills read and write through plain file edits.
 - **Other** for Jira, Linear, custom trackers, or unknown workflows. Use `ask_user_question` to ask for the workflow and write `docs/agents/issue-tracker.md` from scratch.
 
 Do not offer or generate GitLab setup in this skill.

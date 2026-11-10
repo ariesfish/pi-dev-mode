@@ -4,8 +4,8 @@ description: >-
   Turn a conversation into an approved spec — the building contract a plan
   slices and an autonomous build trusts. Decision-only template: objective,
   implementation decisions, out of scope, three-label acceptance criteria,
-  ask-first triggers, open questions. Lives at .dev/<slug>/spec.md as per-developer
-  process memory (gitignored); recurses per capability module with a map when
+  ask-first triggers, open questions. Lives at .dev/<slug>/spec.md as process
+  memory; recurses per capability module with a map when
   the work spans modules. Use at the start of feature-sized work, or when a
   build needs an authoritative contract. Chinese triggers: 写 SPEC, 定规格, 规格文档, 立项, 需求文档.
 ---
@@ -58,9 +58,9 @@ ASSUMPTIONS I'M MAKING:
 **Template** (write to `.dev/<slug>/spec.md` inside the feature's own
 feature-first directory — slug mandatory and it starts with `feature-`, the
 whole dir name being the slug (naming contract: setup references/issue-tracker.md);
-this is the only landing implement-all looks in. Create `.dev/<slug>/` if absent and make sure `/.dev/`
-is gitignored: the spec is per-developer process memory, not shared repo
-content):
+this is the only landing implement-all looks in. Create `.dev/<slug>/` if absent; whether `/.dev/`
+is tracked is this repo's call (setup references/issue-tracker.md), and either way the spec is process
+memory, not shared repo content):
 
 ```markdown
 # Spec: [slug]
