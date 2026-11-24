@@ -52,7 +52,8 @@ Report with evidence, not self-report: the failing-test output (or the skip-test
 
 When the target repo carries `.dev/lifecycle/` (ledger on; tool = this
 package's `../../gates/gate.sh`, run from the repo): open the ticket with
-`gate.sh open <id> "<title>"` (reuse if already open), record every passed
+`gate.sh open <slug>/<T-id> "<title>"` (reuse if already open; the id is
+feature-qualified, e.g. `feature-sdlc-wiring/T-004`), record every passed
 D-class gate with `gate.sh run <id> tdd -- <test command>` (FAILs recorded
 too — a first-pass red is a fact), and close with `gate.sh close <id> --note
 "<one line>"`. A gate that exits 4 is BLOCKED — the item's rework budget

@@ -16,15 +16,26 @@
 ## CLI
 
 ```
-gates/gate.sh open <票号> "<标题>" [--budget N]   # 开账本(.dev/lifecycle/ 由此建立)+ 开票;幂等,重开=复用
-gates/gate.sh run <票号> <门名> -d <dir> -- <cmd...>   # D 类门:tdd/check/repro/land...
-gates/gate.sh verdict <票号> --from <verdict.json>     # A 类门:裁决入账(PASS/PASS+NOTES→0,FAIL/BLOCKED→1)
-gates/gate.sh resume <票号> --note "<理由>"            # 人解除 blocked(必填理由),清零计数
-gates/gate.sh close <票号> --note "<理由>"             # 关票(blocked 时拒绝)
-gates/gate.sh show <票号>     # 看状态(blocked 时可用)
-gates/gate.sh replay <票号>   # 只读重放:重跑 D 类 + 复哈希 A 类,报漂移
+gates/gate.sh open <id> "<标题>" [--budget N]   # 开账本(.dev/lifecycle/ 由此建立)+ 开票;幂等,重开=复用
+gates/gate.sh run <id> <门名> -d <dir> -- <cmd...>   # D 类门:tdd/check/repro/land...
+gates/gate.sh verdict <id> --from <verdict.json>     # A 类门:裁决入账(PASS/PASS+NOTES→0,FAIL/BLOCKED→1)
+gates/gate.sh resume <id> --note "<理由>"            # 人解除 blocked(必填理由),清零计数
+gates/gate.sh close <id> --note "<理由>"             # 关票(blocked 时拒绝)
+gates/gate.sh show <id>     # 看状态(blocked 时可用)
+gates/gate.sh replay <id>   # 只读重放:重跑 D 类 + 复哈希 A 类,报漂移
 gates/gate.sh mine            # retro 三率之两率:D 门首过率 + A 裁决翻转数 + blocked 数
 ```
+
+## item id → 路径
+
+id 两种形状,`/` 分层;裸 id 的落位与旧账逐字节一致:
+
+| id | state.json |
+|---|---|
+| `T-XXX`(旧账/全库) | `.dev/lifecycle/items/T-XXX/state.json` |
+| `<slug>/T-XXX`(需求限定,如 `feature-sdlc-wiring/T-004`) | `.dev/lifecycle/items/<slug>/T-XXX/state.json` |
+
+每段只允许 `[A-Za-z0-9._-]` 且首字符不是 `.`;空段、`..`、绝对路径、三段以上一律 exit 2 拒绝——id 不逃出 `items/`。`mine` 递归扫 `items/**/state.json`,行首保留完整 id(`<slug>/T-XXX`),两个特性的 `T-9` 互不覆盖。
 
 退出码:**0 = 门过;1 = 门败(裁决 FAIL 同);4 = BLOCKED(预算熔断或 blocked 拒绝);2 = 拒绝(无账本/用法错);3 = 缺 python3**。implement/implement-all 把 exit 4 当机器 stop-condition。关闭账本时所有命令拒绝且不触碰任何目标仓文件——技能一律把它当"无账本,走 P1-P4 原行为"。
 
@@ -39,7 +50,7 @@ gates/gate.sh mine            # retro 三率之两率:D 门首过率 + A 裁决�
 skip_test 率标准挖法(不手搓,retro 直接用):
 
 ```
-awk -F'\t' 'NR>1 && $1!="id" && $6!="" && $6!="N/A" {n++} END{print "skip:", n, "/", NR-1}' .dev/audit/T-*.tsv
+awk -F'\t' 'NR>1 && $1!="id" && $6!="" && $6!="N/A" {n++} END{print "skip:", n, "/", NR-1}' .dev/audit/*T-*.tsv
 ```
 
 实现:状态机在 `gates/ledger.py`(仅 python3 标准库),`gate.sh` 只剩 shim 与 python3 在场检查;退出码 0/1/2/3/4 与 `state.json` 形状不变。

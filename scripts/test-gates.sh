@@ -5,7 +5,9 @@
 #   open --budget 2 -> D-run FAIL x2 trips budget (exit 4) -> run/verdict/close
 #   refused (exit 4) -> resume (note required) -> FAIL-verdict budget on the
 #   A-class gate -> PASS verdict clears -> idempotent re-open -> replay CLEAN
-#   -> mine reports blocked items.
+#   -> mine reports blocked items -> two features' T-9 are separate items
+#   (nested paths, per-item blocking) while bare T-9 keeps its flat path ->
+#   ids that would escape items/ are refused.
 # Keep it self-contained (mktemp scratch, plain bash); run from anywhere:
 #   bash scripts/test-gates.sh   (exit 0 = green)
 GATE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/gates/gate.sh"
@@ -98,6 +100,39 @@ else
   echo "FAIL: state.json shows no blocked field"
   fails=$((fails + 1))
 fi
+
+# --- per-feature namespace: two features' T-9 are separate items ------------
+t "open feature-alpha/T-9 exits 0" 0 "$GATE" open feature-alpha/T-9 "alpha item" --budget 2
+t "open feature-beta/T-9 exits 0" 0 "$GATE" open feature-beta/T-9 "beta item"
+if [ -f .dev/lifecycle/items/feature-alpha/T-9/state.json ] \
+  && [ -f .dev/lifecycle/items/feature-beta/T-9/state.json ] \
+  && [ -f .dev/lifecycle/items/T-9/state.json ]; then
+  echo "ok: namespaced items nest under items/<slug>/<id>, bare ids keep the flat path"
+else
+  echo "FAIL: item paths do not follow the documented scheme"
+  fails=$((fails + 1))
+fi
+if "$GATE" show feature-beta/T-9 2>&1 | grep -q '"title": "beta item"'; then
+  echo "ok: feature-beta/T-9 keeps its own title (no collision with feature-alpha/T-9)"
+else
+  echo "FAIL: feature-beta/T-9 collided with another item"
+  fails=$((fails + 1))
+fi
+t "alpha T-9 fail #1 exits 1" 1 "$GATE" run feature-alpha/T-9 g -- false
+t "alpha T-9 fail #2 trips its own budget (exit 4)" 4 "$GATE" run feature-alpha/T-9 g -- false
+t "beta T-9 unaffected by alpha's block" 0 "$GATE" run feature-beta/T-9 g -- true
+if "$GATE" mine 2>&1 | grep -q "feature-alpha/T-9"; then
+  echo "ok: mine reports the namespaced id in full"
+else
+  echo "FAIL: mine lost the namespaced id"
+  fails=$((fails + 1))
+fi
+
+# --- item ids cannot escape .dev/lifecycle/items/ ---------------------------
+t "id with .. refused (exit 2)" 2 "$GATE" open ../evil "escape"
+t "absolute-path id refused (exit 2)" 2 "$GATE" open /etc/passwd "escape"
+t "empty id segment refused (exit 2)" 2 "$GATE" open feature-alpha/ "escape"
+t "three-level id refused (exit 2)" 2 "$GATE" open a/b/c "too deep"
 
 echo "----"
 if [ "$fails" -gt 0 ]; then

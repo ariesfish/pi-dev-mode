@@ -64,7 +64,7 @@ For every task, in either mode:
 - Commit **only the files that task touched** plus its task-status update —
   never `git add -A` — one commit per task, message per the `commit` skill,
   so any point is a clean rollback.
-- Append one row per decision to the trail (`.dev/audit/<ticket-slug>.tsv`). Final format
+- Append one row per decision to the trail (`.dev/audit/<slug>-T-XXX.tsv`). Final format
   (final since P3): columns `id, decision, reason, evidence, verdict, skip_test, show` —
   cells single-line, evidence is a pointer (commit / file:line / artifact path),
   never prose; verdict is a predicate state (`green` / `red` / `reverted` /
@@ -104,7 +104,8 @@ For every task, in either mode:
    least one RED per task (or its skip-test line), suite and build results,
    commit hashes. "Inconclusive" is not a pass; flag it instead.
 6. **Ledger (opt-in)**: when the target repo carries `.dev/lifecycle/`, open
-   each ticket with this package's `gates/gate.sh open`; passed D-class gates ride
+   each ticket with this package's `gates/gate.sh open <slug>/<T-id> "<title>"`
+   (the feature-qualified id); passed D-class gates ride
    `implement`'s ledger clause (tdd/check; a FAIL is recorded too — a
    first-pass red is a fact); a landed ticket closes with
    `close --note`. Blocker tickets stay open for the human verdict, then

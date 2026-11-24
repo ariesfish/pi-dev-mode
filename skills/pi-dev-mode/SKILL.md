@@ -131,7 +131,7 @@ One line each — enough to steer when the owning skill is not loaded.
 Overnight autonomy = **`implement-all auto` + `/loop` heartbeat + decisions tsv**, each with its own job:
 
 1. **Daytime**: `spec` → `tickets` slices the work into bounded tickets (1-3 frontier tickets per round, HITL items pushed last); the human approves once.
-2. **Launch**: `implement-all auto` works the tickets — one commit per ticket + one row per decision in `.dev/audit/T-XXX.tsv` (seven columns, final: the show column shows the human the work, the skip_test column records honest skips); stop conditions per that skill (failing test / spec gap / a human decision needed → stop and write it in the replies, never push through vaguely).
+2. **Launch**: `implement-all auto` works the tickets — one commit per ticket + one row per decision in `.dev/audit/<slug>-T-XXX.tsv` (seven columns, final: the show column shows the human the work, the skip_test column records honest skips); stop conditions per that skill (failing test / spec gap / a human decision needed → stop and write it in the replies, never push through vaguely).
 3. **Heartbeat**: `/loop 30m check the frontier: advance ready tickets, stop on stop-conditions, wrap up and settle accounts when clear` — interval as you like; in print mode, `schedule_wakeup` is the equivalent.
 4. **Morning audit**: the decisions tsv passes audit when every row carries before/after/evidence pointers; `review` spot-checks high-risk tickets; `retro` closes the loop.
 

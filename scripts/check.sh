@@ -6,7 +6,7 @@
 #   bash scripts/check.sh
 #
 # 1. skill-tree integrity  (frontmatter / cross-refs / pointers / phantom names)
-# 2. gates regression      (budget semantics, 23 assertions)
+# 2. gates regression      (budget semantics, 41 assertions)
 # 3. prose lint            (slop on added lines; CI-aware base resolution
 #                           lives in check-prose.py)
 # 4. ADR checker selftest  (installable scripts/check-adrs.py — each check

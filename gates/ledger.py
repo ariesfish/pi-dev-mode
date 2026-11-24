@@ -2,9 +2,12 @@
 """gates/ledger.py — the SDLC ledger state machine (stdlib only).
 
 `gates/gate.sh` is a shim over this module. The ledger lives in the TARGET
-project: `.dev/lifecycle/items/<id>/state.json`. Its absence is the OFF state —
-every command refuses (exit 2) without one, so a closed ledger never changes
-skill behavior.
+project: `.dev/lifecycle/items/<id>/state.json`, where `<id>` is either a bare
+`T-XXX` (repo-wide legacy namespace) or a namespaced `<slug>/T-XXX` (one
+feature, e.g. `feature-sdlc-wiring/T-004`). A namespaced id nests one level:
+`items/<slug>/T-XXX/state.json`; a bare id keeps its old flat path. Its absence
+is the OFF state — every command refuses (exit 2) without one, so a closed
+ledger never changes skill behavior.
 
 Gate classes:
   D — deterministic script gate: run a command, record its exit + output tail;
@@ -27,6 +30,7 @@ from __future__ import annotations
 import datetime
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -34,6 +38,7 @@ from pathlib import Path
 USAGE = """\
 Usage: gate.sh <command> [args]        (run from the target project root)
   open <id> "<title>" [--budget N]     open item ledger (.dev/lifecycle/, opt-in);
+                                       <id> = T-XXX or <slug>/T-XXX;
                                        --budget N = consecutive-FAIL budget (default 3).
                                        Idempotent: re-open of a live item reuses it.
   run <id> <gate> [-d dir] [--note s] -- <cmd...>
@@ -54,6 +59,7 @@ Usage: gate.sh <command> [args]        (run from the target project root)
 PASS_WORDS = {"PASS", "PASS+NOTES"}
 KNOWN_VERDICTS = PASS_WORDS | {"FAIL", "BLOCKED"}
 ITEMS = Path(".dev/lifecycle/items")
+ITEM_COMPONENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 
 def usage() -> "NoReturn":  # noqa: F821 - typing only
@@ -65,8 +71,20 @@ def stamp() -> str:
     return datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def item_dir(item: str) -> Path:
+    parts = item.split("/")
+    if len(parts) > 2 or not all(ITEM_COMPONENT.match(p) for p in parts):
+        raise SystemExit(
+            _refuse(
+                f'gate.sh: bad item id "{item}" — use T-XXX or <slug>/T-XXX '
+                "(segments: letters, digits, dot, dash, underscore; no leading dot)"
+            )
+        )
+    return ITEMS.joinpath(*parts)
+
+
 def state_file(item: str) -> Path:
-    return ITEMS / item / "state.json"
+    return item_dir(item) / "state.json"
 
 
 def load(item: str) -> dict:
@@ -140,7 +158,8 @@ def cmd_open(item: str, args: list[str]) -> int:
             "# .dev/lifecycle/ ledger (opt-in)\n\n"
             "Opened by gate.sh (pi-dev-mode P5). Removing/renaming this dir closes the\n"
             "ledger — all skills then behave exactly as P1-P4 (no .dev/lifecycle, no ledger).\n\n"
-            "- items/<id>/state.json — gates + append-only history (replayable)\n"
+            "- items/<id>/state.json — gates + append-only history (replayable);\n"
+            "  <id> = T-XXX or <slug>/T-XXX (nested: items/<slug>/T-XXX/state.json)\n"
             "- item rework budget: consecutive gate FAILs (default 3) block the item until\n"
             '  `gate.sh resume <id> --note "<human reason>"` (see gates/README.md)\n'
             "- observe/ — L4 tail stub (post-deploy baseline loop; intentionally unimplemented)\n",
@@ -406,7 +425,7 @@ def cmd_mine(args: list[str]) -> int:
         return 2
     rows: list[tuple[str, str, str, str]] = []
     states = []
-    for path in sorted(sdlc.glob("items/*/state.json")):
+    for path in sorted(sdlc.glob("items/**/state.json")):
         state = json.loads(path.read_text(encoding="utf-8"))
         states.append(state)
         for gate, d in sorted(state.get("gates", {}).items()):

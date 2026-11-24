@@ -37,13 +37,14 @@ a few MB, ignore the heavy subdirectory instead of the whole tree.
 │   └── tickets/T-XXX.md       # 全文票(plan 行装不下时才建,可选)
 ├── inbox/                     # 未归属需求的入件(归属定了就过继进特性目录)
 ├── lifecycle/                 # gates 账本(机器,跨需求,仅 opt-in 时存在)
-└── audit/                     # 决策台账 tsv + 证据(跨需求)
+└── audit/                     # 决策台账 tsv + 证据(跨需求;tsv 名 <slug>-T-XXX)
 ```
 
 - **特性目录命名契约**:顶层特性目录以 `feature-` 起头,**整名(含前缀)即 slug**;保留名 `inbox/` `lifecycle/` `audit/` 永不取该前缀。不以 `feature-` 起头的非保留顶层目录即违规——`ls .dev/` 一眼分区,违规即显眼异类。slug 定名三出生点(spec/research/scout)同守此约。
-- **T-id 全局唯一,跨需求不重号**:下一个 id = `.dev/` 下任何地方出现的最大号 + 1;永不重排。
+- **T-id 在需求内唯一,跨需求可重号**:每个 `feature-<name>/` 与 `inbox/` 各自从 `T-001` 起编号,下一个 id = 本目录内最大号 + 1;目录内永不重排。过继是跨目录换号:在目标需求取新号、记 `formerly inbox/T-XXX`、旧号 `close --note` 指向新号——这不是重排。跨需求引用必须限定:`feature-<name>/T-XXX`(或 `inbox/T-XXX`);裸 `T-XXX` 只在拥有它的目录里成立。
+- **跨需求的台账同样限定**:gates 账本 item id 用 `<slug>/T-XXX`(`inbox/` 入件用 `inbox/T-XXX`);决策 tsv 落 `.dev/audit/<slug>-T-XXX.tsv`。
 - **scout**(探路):地图落 `.dev/<slug>/scout-map.md`,决策票就在同一目录的 plan/tickets 里;路清了 spec.md 进同一目录,slug 贯穿始终。
-- **triage-issue**(入件):无归属的报文落 `.dev/inbox/T-XXX.md`(`Status:` 行带角色);route 定了(哪个需求)就把票过继进该特性的 plan/todo。
+- **triage-issue**(入件):无归属的报文落 `.dev/inbox/T-XXX.md`(`Status:` 行带角色);route 定了(哪个需求)就把票过继进该特性的 plan/todo,取该特性下一个 id,并记一行 `formerly inbox/T-XXX`——id 从不重排:feature 侧另开账本条目,旧 `inbox/T-XXX` 条目 `close --note` 指向新 id。
 - 根下不再有共享 plan/todo——frontier 是单需求内的事;跨需求并行跑 `implement-all` 时,glob `.dev/*/plan.md`,frontier = 各需求 frontier 的并集。
 
 ## Creating an issue (in a feature's dir; unattributed intake → inbox/)
@@ -77,8 +78,9 @@ carries its triage state; comments append at the bottom under `## Comments`.
 
 Unattributed intake (`triage-issue`): file `inbox/T-XXX.md` with the report
 body and a `Status:` line; when its route settles, add its plan section and
-todo block to the owning feature (or a new feature dir) and mark the inbox
-file fostered with a pointer.
+todo block to the owning feature (or a new feature dir), taking that feature's
+next id and recording `formerly inbox/T-XXX`, then mark the inbox file fostered
+with a pointer.
 
 ## Reading an issue
 
