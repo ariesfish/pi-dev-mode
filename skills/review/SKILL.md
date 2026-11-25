@@ -60,17 +60,41 @@ Spec axis reports "no spec available" and says so.
 Brief, inlined verbatim into the reviewer prompt:
 
 ```
-Strip and tighten comments in this diff. A comment may stay only for a
-non-obvious WHY the code cannot express. Delete on sight:
-- what-comments and restatements of the code
-- phase-narrating comments ("// Step 2: add X") — the assertion or symbol
-  name documents the step
-- TODO/FIXME without an owner or ticket
-- commented-out code
-Review the tests/verify scripts too. A constraint a comment claims (TODO
-refactor, must not X) becomes a finding: propose the check or type that
-enforces it instead. Report each as file:line + the offending text + the
-action (delete / rewrite as WHY / encode as check).
+A comment is a cost the reader pays; the default is none. A comment may stay
+only if it is one of:
+- a contract doc comment on an EXPORTED identifier (units, nil/empty
+  semantics, ownership, ordering, side effects) that the signature cannot
+  carry — and it must not restate the identifier's name;
+- a non-obvious invariant/ordering a future editor could silently break;
+- a workaround with the reason it exists;
+- an externally mandated constraint or a subtle side effect.
+Everything else goes. Delete on sight:
+- what-comments and restatements ("// increment i", "// return the error");
+- section banners ("// --- helpers ---", "// ====");
+- step/phase narration ("// Step 2", "// First, ...", "// Now build ...");
+- change narration ("// now ...", "// previously ...", "// added ...");
+- TODO/FIXME without an owner and a trigger;
+- commented-out code;
+- doc comments on unexported helpers that only expand the name.
+
+Start with the scan, then read every surviving comment in context:
+
+  git diff -U0 <base>...HEAD -- '*.go' '*.ts' '*.tsx' '*.yaml' '*.sh' \
+    | grep -E '^\+[^+].*(//|#)' \
+    | grep -vE '^\+\+\+'
+
+Flag, at minimum, added comment text matching:
+  ^\s*//\s*(Step|First|Then|Next|Finally|Now)\b
+  ^\s*//\s*(increment|decrement|return|set|get|create|loop|iterate|check|handle|call|read|write|build|compute|parse|find|resolve|collect|apply)\b
+  ^\s*//\s*(-{2,}|={2,}|#{2,})
+  ^\s*//\s*(now|previously|was|changed|added|updated|removed)\b
+  ^\s*//\s*[a-zA-Z_][a-zA-Z0-9_]*\s*[=(]   (commented-out code)
+
+Review tests and scripts too. A constraint a comment claims (TODO refactor,
+"must not X") becomes a finding: propose the check or type that enforces it.
+Report every surviving comment as file:line + text + the allowed category it
+claims, and every deletion as file:line + text + the rule it broke. Also report
+the count of added comment lines before and after the pass.
 ```
 
 ### Lens 3 — Adversarial doubt

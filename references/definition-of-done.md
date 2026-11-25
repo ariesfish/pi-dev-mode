@@ -27,6 +27,7 @@ Apply this to every change before declaring it done.
 
 ### Quality
 - [ ] Code reveals intent through naming and structure; no comments needed to explain *what* it does
+- [ ] Comments are limited to exported-identifier contract docs, non-obvious invariants, workarounds with a reason, and mandated constraints — none inside function bodies by default, no banners/step narration/change history
 - [ ] No duplicated business logic
 - [ ] No dead code, debug output, or commented-out blocks left behind
 - [ ] Changes are scoped to the task; no unrelated refactors snuck in
